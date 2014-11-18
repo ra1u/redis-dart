@@ -10,7 +10,8 @@ part of redis_parser;
 class LazyStream{
   Stream _stream;
   StreamSubscription _sub;
-  LazyStream(this._stream){
+  LazyStream(){}
+  LazyStream.fromstream(this._stream){
     _sub = _stream.listen((_){})
     ..pause();
   }

@@ -10,12 +10,12 @@ class RedisConnection{
     .then((Socket sock){
       _socket = sock;
       _socket.setOption(SocketOption.TCP_NODELAY,true);
-      _stream =new LazyStream(_socket.expand((v)=>(v)));
+      _stream =new LazyStream.fromstream(_socket.expand((v)=>(v)));
       return _this;
     });
   }
   
-  Future SendString(String lst){
+  Future sendstring(String lst){
     _socket.write(lst);
     Completer completer = new Completer();
     _future = _future.then((_) =>
@@ -26,8 +26,7 @@ class RedisConnection{
   }
   
   Future send(object){
-    var l = RedisSerialise.Serialise(object);
-    var s = ASCII.decode(l);
-    return SendString(s);
+    var s = RedisSerialise.Serialise(object);
+    return sendstring(s);
   }
 }

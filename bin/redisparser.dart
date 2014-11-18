@@ -3,6 +3,7 @@ library redis_parser;
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
+import 'dart:collection';
 
 part './redisserialise.dart';
 part './connection.dart';
