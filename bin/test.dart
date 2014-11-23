@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import './redisparser.dart';
+import 'dart:collection';
+
 
 testparser(){
   List data =  new Utf8Encoder().convert("*3\r\n*1\r\n:3\r\n+Foo\r\n+Barzor\r\n ");
@@ -16,6 +18,7 @@ main(){
   const int K = N ; //concurrent executions
   int count=0;
   int start;
+  
   void test_send(RedisConnection conn,int n,int step,int max){
     if(n>max){
       count++;
@@ -35,7 +38,10 @@ main(){
   conn.connect('localhost',6379).then((_){
     print("test started, please wait ...");
     start =  new DateTime.now().millisecondsSinceEpoch;
-    for(int i=0;i<K;i++)
+    conn.pipe_start();
+    for(int i=0;i<K;i++){
       test_send(conn,i,K,N);
+    }
+    conn.pipe_end();
    });
 }

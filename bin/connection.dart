@@ -10,14 +10,14 @@ class RedisConnection{
     .then((Socket sock){
       _socket = sock;
       _socket.setOption(SocketOption.TCP_NODELAY,true);
-      _stream =new LazyStream.fromstream(_socket.expand((v)=>(v)));
+      _stream =new LazyStreamFast.fromstream(_socket);
       return _this;
     });
   }
   
   Future sendstring(String lst){
     _socket.write(lst);
-    Completer completer = new Completer();
+    Completer completer = new Completer.sync();
     _future = _future.then((_) =>
         RedisParser.parseredisresponse(_stream)
         .then((v) => completer.complete(v))
@@ -28,5 +28,12 @@ class RedisConnection{
   Future send(object){
     var s = RedisSerialise.Serialise(object);
     return sendstring(s);
+  }
+  
+  void pipe_start(){
+    _socket.setOption(SocketOption.TCP_NODELAY,false);
+  }
+  void pipe_end(){
+    _socket.setOption(SocketOption.TCP_NODELAY,true);
   }
 }

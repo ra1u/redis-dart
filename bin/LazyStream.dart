@@ -48,3 +48,130 @@ class LazyStream{
     return comp.future;
   }
 }
+
+
+
+//LazyStreamFast is faster implementation of LazyStream
+//it does listen to stream bytes as they arrive as messages
+//but receives arrays (SocketStream is Stream<List<byte>> not Strem<byte>)
+class LazyStreamFast implements LazyStream {
+  Stream _stream;
+  StreamSubscription _sub;
+  Queue<List> _queue;
+  var _ondata;
+  Iterator _iter;
+  List _return;
+  
+  
+  LazyStreamFast(){}
+  LazyStreamFast.fromstream(this._stream){
+    _return = new List();
+    _queue = new Queue();
+    _sub = _stream.listen((List data){
+      if(data.length == 0)
+        return;
+      if(_queue.isEmpty){
+        _iter = data.iterator;
+      }
+      _queue.add(data);
+      if(_ondata != null) {
+        _ondata(data);
+      }
+    });
+  }
+  
+  LazyStreamFast.fromqueuelist(this._queue){
+    _return = new List();
+    if(!_queue.isEmpty){
+      _iter = _queue.first.iterator;
+    }
+  }
+  
+  //tryto take n from current buffer
+  //returns how much was not taken and still waits to be taken
+  int take_n_now(int n){
+    assert(n>=0);
+    if(_queue.isEmpty){
+      return n;
+    }
+    while(n>0){
+      if(!_iter.moveNext()){
+        _queue.removeFirst();
+        if(_queue.isEmpty){
+          return n;
+        }
+        else {
+          _iter = _queue.first.iterator;
+          continue;
+        }
+      }
+      _return.add(_iter.current);
+      --n;
+    }
+    return n;
+  }
+  
+  void take_n_helper(int n,Completer comp){
+    int remains =  take_n_now(n);
+    if(remains==0){
+      comp.complete(_return);
+      _return = new List();  
+      _ondata = null;
+    }
+    else{
+      _ondata = (_){
+        take_n_helper(remains,comp);
+      };
+    }
+  }
+  
+  Future<List> take_n(int n){
+     Completer comp = new Completer();
+     take_n_helper(n,comp);
+     return comp.future;
+  }
+  
+  bool take_while_now(f){
+    if(_queue.isEmpty){
+      return false;
+    }
+    while(true){
+      if(!_iter.moveNext()){
+        _queue.removeFirst();
+        if(_queue.isEmpty){
+          return false;
+        }
+        else {
+          _iter = _queue.first.iterator;
+          continue;
+        }
+      }
+      var cur = _iter.current;
+      bool pred = f(cur);
+      if(pred)
+         _return.add(cur);
+      else
+        return false;
+    }
+  }
+  
+  void take_while_helper(f,Completer comp){
+    bool r =  take_while_now(f);
+    if(!r){
+      comp.complete(_return);
+      _return = new List();  
+      _ondata = null;
+    }
+    else{
+      _ondata = (_){
+        take_while_helper(f,comp);
+      };
+    }
+  }
+  
+  Future<List> take_while(f){
+     Completer comp = new Completer();
+     take_while_helper(f,comp);
+     return comp.future;
+  }
+}
