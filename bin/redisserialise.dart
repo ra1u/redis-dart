@@ -5,24 +5,41 @@ Utf8Encoder RedisSerialiseEncoder = new Utf8Encoder();
 
 class RedisSerialise {
   static String Serialise(object){
+     String s="";
+     SerialiseConsumable(object,(v){
+       s=s+v;
+     });
+     return s;
+  }
+  
+  static void SerialiseConsumable(object,Function consumer(String s)){
      if(object is String){
        int len=object.length;
-       return "\$"+ len.toString() + "\r\n" + object + "\r\n";
+       consumer("\$");
+       consumer(len.toString());
+       consumer("\r\n");
+       consumer(object);
+       consumer("\r\n");
      }
-     if(object is int){
-       return ":$object\r\n";
+     else if(object is int){
+       consumer(":");
+       consumer(object.toString());
+       consumer("\r\n");
      }
-     if(object is List){
-         int len=object.length;
-         String r ="\*"+len.toString()+"\r\n";
-         for(int i=0;i<len;++i){
-            r += Serialise(object[i]);
-         }
-         return r;
+     else if(object is List){
+       int len=object.length;
+       consumer("\*");
+       consumer(len.toString());
+       consumer("\r\n");
+       for(int i=0;i<len;++i){
+         SerialiseConsumable(object[i],consumer);
+       }
      }
-     if(object == null){
-       return "\$-1"; //null bulk
+     else if(object == null){
+       consumer("\$-1"); //null bulk
      }
-     throw("cant serialise such type");
+     else{
+       throw("cant serialise such type");
+     }
   }
 }
