@@ -8,7 +8,7 @@ import 'dart:collection';
 part './redisserialise.dart';
 part './connection.dart';
 part './LazyStream.dart';
-
+part './transaction.dart';
 
 class RedisError{
   String e;
