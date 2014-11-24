@@ -51,17 +51,19 @@ class LazyStream{
 
 
 
-//LazyStreamFast is faster implementation of LazyStream
-//it does listen to stream bytes as they arrive as messages
-//but receives arrays (SocketStream is Stream<List<byte>> not Strem<byte>)
+
+//LazyStreamFast is speed optimised implementation of LazyStream
+//take note that StreamSocket is Stream<List<byte>> 
+//received buffers are pushed on queue and
+//iterator is used for storing current position
+
 class LazyStreamFast implements LazyStream {
   Stream _stream;
-  StreamSubscription _sub;
   Queue<List> _queue;
   var _ondata;
   Iterator _iter;
   List _return;
-  
+  StreamSubscription _sub;
   
   LazyStreamFast(){}
   LazyStreamFast.fromstream(this._stream){
