@@ -1,12 +1,19 @@
+/*
+ * Free software licenced under 
+ * GNU AFFERO GENERAL PUBLIC LICENSE
+ * 
+ * Check for document LICENCE forfull licence text
+ * 
+ * Luka Rahne
+ */
+
 part of redis;
 
-
-class Transation extends Command{
+class Transation extends Command{ 
     Queue<Completer> _queue;
     Transation(RedisConnection conn):super(conn){
       _queue = new Queue();
     }
-    
 
     Future _send(object){
       Completer c= new Completer();

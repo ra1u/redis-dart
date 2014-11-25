@@ -1,4 +1,12 @@
 part of redis;
+/*
+ * Free software licenced under 
+ * GNU AFFERO GENERAL PUBLIC LICENSE
+ * 
+ * Check for document LICENCE forfull licence text
+ * 
+ * Luka Rahne
+ */
 
 
 Utf8Encoder RedisSerialiseEncoder = new Utf8Encoder();

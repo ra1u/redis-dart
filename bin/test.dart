@@ -1,3 +1,12 @@
+/*
+ * Free software licenced under 
+ * GNU AFFERO GENERAL PUBLIC LICENSE
+ * 
+ * Check for document LICENCE forfull licence text
+ * 
+ * Luka Rahne
+ */
+
 import 'dart:async';
 import 'dart:convert';
 import './redis.dart';

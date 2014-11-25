@@ -1,3 +1,12 @@
+/*
+ * Free software licenced under 
+ * GNU AFFERO GENERAL PUBLIC LICENSE
+ * 
+ * Check for document LICENCE forfull licence text
+ * 
+ * Luka Rahne
+ */
+
 //our parser was designed for lazy stream that is consumable
 //unfortnatly redis socket streams doest work that way (yet?)
 //this class implements minimum requrement for redisparser
