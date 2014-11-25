@@ -1,42 +1,38 @@
-part of redis_parser;
+part of redis;
 
 
 Utf8Encoder RedisSerialiseEncoder = new Utf8Encoder();
 
 class RedisSerialise {
-  static String Serialise(object){
-     String s="";
+  static List<int> Serialise(object){
+     List s = new List();
      SerialiseConsumable(object,(v){
-       s=s+v;
+       s.addAll(v);
      });
      return s;
   }
   
-  static void SerialiseConsumable(object,Function consumer(String s)){
+  static void SerialiseConsumable(object,Function consumer(List s)){
      if(object is String){
-       int len=object.length;
-       consumer("\$");
-       consumer(len.toString());
-       consumer("\r\n");
-       consumer(object);
-       consumer("\r\n");
-     }
-     else if(object is int){
-       consumer(":");
-       consumer(object.toString());
-       consumer("\r\n");
+       List str = UTF8.encode(object);
+       consumer(ASCII.encode("\$" + str.length.toString() + "\r\n"));
+       consumer(str);
+       consumer(ASCII.encode("\r\n"));
      }
      else if(object is List){
        int len=object.length;
-       consumer("\*");
-       consumer(len.toString());
-       consumer("\r\n");
+       consumer(ASCII.encode("*"+len.toString()+"\r\n"));
        for(int i=0;i<len;++i){
          SerialiseConsumable(object[i],consumer);
        }
      }
+     else if(object is int){
+       consumer(ASCII.encode(":"));
+       consumer(ASCII.encode(object.toString()));
+       consumer(ASCII.encode("\r\n"));
+     }
      else if(object == null){
-       consumer("\$-1"); //null bulk
+       consumer(ASCII.encode("\$-1")); //null bulk
      }
      else{
        throw("cant serialise such type");

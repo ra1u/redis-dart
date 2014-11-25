@@ -1,14 +1,4 @@
-library redis_parser;
-
-import 'dart:io';
-import 'dart:async';
-import 'dart:convert';
-import 'dart:collection';
-
-part './redisserialise.dart';
-part './connection.dart';
-part './lazystream.dart';
-part './transaction.dart';
+part of redis;
 
 class RedisError{
   String e;
@@ -67,14 +57,14 @@ class RedisParser{
        switch(cmd){
          case TYPE_SS:
            return parseSimpleString(s);
-         case TYPE_ERROR:
-           return parseError(s);
          case TYPE_INT:
            return parseInt(s);
          case TYPE_ARRAY:
            return parseArray(s);
          case TYPE_BULK:
            return parseBulk(s);
+         case TYPE_ERROR:
+           return parseError(s);
          default:
            throw("got element that cant not be parsed");
        }

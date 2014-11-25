@@ -4,14 +4,15 @@
 
 //currently parser requrement is take_n and take_while methods
 
-part of redis_parser;
+part of redis;
 
 
 class LazyStream{
   Stream _stream;
   StreamSubscription _sub;
   LazyStream(){}
-  LazyStream.fromstream(this._stream){
+  LazyStream.fromstream(Stream stream){
+    _stream = stream.expand((v)=>(v)); //Stream<List<Int>> -> Stream<Int>
     _sub = _stream.listen((_){})
     ..pause();
   }

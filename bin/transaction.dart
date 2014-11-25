@@ -1,4 +1,4 @@
-part of redis_parser;
+part of redis;
 
 
 class Transation{

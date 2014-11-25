@@ -1,4 +1,4 @@
-part of redis_parser;
+part of redis;
 
 class RedisConnection{
   Socket _socket = null;
@@ -15,8 +15,8 @@ class RedisConnection{
     });
   }
   
-  Future sendstring(String lst){
-    _socket.write(lst);
+  Future sendraw(List lst){
+    _socket.add(lst);
     Completer completer = new Completer.sync();
     _future = _future.then((_) =>
         RedisParser.parseredisresponse(_stream)
@@ -27,7 +27,7 @@ class RedisConnection{
   
   Future send(object){
     var s = RedisSerialise.Serialise(object);
-    return sendstring(s);
+    return sendraw(s);
   }
   
   void pipe_start(){

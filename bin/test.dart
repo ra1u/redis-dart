@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import './redisparser.dart';
+import './redis.dart';
 
 
 testparser(){
@@ -13,7 +13,7 @@ testparser(){
 }
 
 test_performance(){
-  const int N = 1000000;
+  const int N = 200000;
   int count=0;
   int start;
   
@@ -21,16 +21,17 @@ test_performance(){
   conn.connect('localhost',6379).then((_){
     print("test started, please wait ...");
     start =  new DateTime.now().millisecondsSinceEpoch;
+    Command command = new Command(conn.sendraw);
     conn.pipe_start();
     for(int i=0;i<N;i++){
-      conn.send(["SET","test $i","$i"])
+      command.set("العربية $i","$i")
       .then((v){
         assert(v=="OK");
         count++;
         if(count == N){
           double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
           double perf = N/diff;
-          print("done in $diff s\nperformance $perf/s");
+          print("$N operations done in $diff s\nperformance $perf/s");
         }
       });
     }
