@@ -32,7 +32,7 @@ test_performance(){
     start =  new DateTime.now().millisecondsSinceEpoch;
     command.pipe_start();
     for(int i=0;i<N;i++){
-      command.set("العربية $i","$i")
+      command.set("اختبار $i","$i") //test unicode too
       .then((v){
         assert(v=="OK");
         count++;
