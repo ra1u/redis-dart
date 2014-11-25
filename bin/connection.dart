@@ -5,13 +5,12 @@ class RedisConnection{
   LazyStream _stream = null;
   Future _future = new Future.value();
   Future connect(host, port){
-    RedisConnection _this = this;
     return Socket.connect(host, port)
     .then((Socket sock){
       _socket = sock;
-      _socket.setOption(SocketOption.TCP_NODELAY,true);
+      disable_nagle(true);
       _stream =new LazyStreamFast.fromstream(_socket);
-      return _this;
+      return new Command(this);
     });
   }
   
@@ -30,10 +29,8 @@ class RedisConnection{
     return sendraw(s);
   }
   
-  void pipe_start(){
-    _socket.setOption(SocketOption.TCP_NODELAY,false);
+  void disable_nagle(bool v){
+    _socket.setOption(SocketOption.TCP_NODELAY,v);
   }
-  void pipe_end(){
-    _socket.setOption(SocketOption.TCP_NODELAY,true);
-  }
+
 }

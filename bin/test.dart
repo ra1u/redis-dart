@@ -18,11 +18,10 @@ test_performance(){
   int start;
   
   RedisConnection conn = new RedisConnection();
-  conn.connect('localhost',6379).then((_){
+  conn.connect('localhost',6379).then((Command command){
     print("test started, please wait ...");
     start =  new DateTime.now().millisecondsSinceEpoch;
-    Command command = new Command(conn.sendraw);
-    conn.pipe_start();
+    command.pipe_start();
     for(int i=0;i<N;i++){
       command.set("العربية $i","$i")
       .then((v){
@@ -35,25 +34,22 @@ test_performance(){
         }
       });
     }
-    conn.pipe_end();
+    command.pipe_end();
    });
 }
 
 
 test_transations(){
   RedisConnection conn = new RedisConnection();
-  conn.connect('localhost',6379).then((_){
-    Transation trans = new Transation(conn);
-    
-    trans.multi().then((v){
-        print(v);
-        trans.send(["SET","test","0"]);
-        for(int i=1;i<=100000;++i){
-          trans.send(["INCR","test"]).then((v){
+  conn.connect('localhost',6379).then((Command command){    
+    command.multi().then((Transation trans){
+        trans.set("test","0");
+        for(int i=0;i<100000;++i){
+          trans.incr("test").then((v){
             assert(i==v);
           });
         }
-        trans.send(["GET","test"]).then((v){print(v);});
+        trans.get("test").then((v){print(v);});
         trans.exec();
     });
   });
