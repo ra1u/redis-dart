@@ -143,6 +143,7 @@ class LazyStreamFast implements LazyStream {
      return comp.future;
   }
   
+  //return true if done
   bool take_while_now(f){
     if(_queue.isEmpty){
       return false;
@@ -151,7 +152,7 @@ class LazyStreamFast implements LazyStream {
       if(!_iter.moveNext()){
         _queue.removeFirst();
         if(_queue.isEmpty){
-          return false;
+          return false; 
         }
         else {
           _iter = _queue.first.iterator;
@@ -163,13 +164,13 @@ class LazyStreamFast implements LazyStream {
       if(pred)
          _return.add(cur);
       else
-        return false;
+        return true;
     }
   }
   
   void take_while_helper(f,Completer comp){
     bool r =  take_while_now(f);
-    if(!r){
+    if(r){
       comp.complete(_return);
       _return = new List();  
       _ondata = null;
