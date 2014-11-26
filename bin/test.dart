@@ -23,45 +23,66 @@ testparser(){
 
 test_performance(){
   const int N = 200000;
-  int count=0;
   int start;
-  
   RedisConnection conn = new RedisConnection();
   conn.connect('localhost',6379).then((Command command){
     print("test started, please wait ...");
     start =  new DateTime.now().millisecondsSinceEpoch;
     command.pipe_start();
-    for(int i=0;i<N;i++){
-      command.set("اختبار $i","$i") //test unicode too
+    for(int i=1;i<N;i++){ 
+      command.set("test $i","$i")
       .then((v){
         assert(v=="OK");
-        count++;
-        if(count == N){
-          double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
-          double perf = N/diff;
-          print("$N operations done in $diff s\nperformance $perf/s");
-        }
       });
     }
+    //last command will be executed and then processed last
+    command.set("test $N","$N").then((v){
+      assert(v=="OK"); 
+      double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
+      double perf = N/diff;
+      print("$N operations done in $diff s\nperformance $perf/s");
+    });
     command.pipe_end();
    });
 }
 
 
 test_transations(){
-  RedisConnection conn = new RedisConnection();
-  conn.connect('localhost',6379).then((Command command){    
-    command.multi().then((Transation trans){
-        trans.set("test","0");
-        for(int i=0;i<100000;++i){
-          trans.incr("test").then((v){
-            assert(i==v);
+    RedisConnection conn = new RedisConnection();
+    conn.connect('localhost',6379).then((Command command){    
+      command.multi().then((Transation trans){
+          trans.send_object(["SET","val","0"]);
+          for(int i=0;i<100000;++i){
+            trans.send_object(["INCR","val"]).then((v){
+              assert(i==v);
+            });
+          }
+          trans.send_object(["GET","test"]).then((v){
+            print("number is now $v");
           });
-        }
-        trans.get("test").then((v){print(v);});
-        trans.exec();
+          trans.exec();
+      });
     });
-  });
+}
+
+test_commands_one_by_one(){  
+    RedisConnection conn = new RedisConnection();
+    conn.connect('localhost',6379).then((Command command){ 
+    int N = 100000;
+    //chain futures one after another
+    Future future = new Future(()=>"OK");
+      for(int i=0;i<N;i++){
+        future = future.then((v){
+          assert(v=="OK");
+          return command.set("key","val $i");
+        });
+      }
+      //process last invoke
+      future.then((v){
+        assert(v=="OK");
+        print("done");
+      });
+    });
 }
 
 main(){
