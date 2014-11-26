@@ -46,18 +46,47 @@ test_performance(){
    });
 }
 
+test_muliconnections(){
+  const int N = 2000000;
+  const int K = 50;
+  int start;
+  int c=0;
+  
+  print("test started, please wait ...");
+  start =  new DateTime.now().millisecondsSinceEpoch;
+  for(int j=0;j<K;j++){
+    RedisConnection conn = new RedisConnection();
+    conn.connect('localhost',6379).then((Command command){
+      command.pipe_start();
+      for(int i=j;i<N;i+=K){ 
+        command.set("test $i","$i")
+        .then((v){
+          assert(v=="OK");
+          c++;
+          if(c==N){
+            double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
+            double perf = N/diff;
+            print("$N operations done in $diff s\nperformance $perf/s");
+          }
+        });
+      }
+      command.pipe_end();
+     });
+  }
+}
+
 
 test_transations(){
     RedisConnection conn = new RedisConnection();
     conn.connect('localhost',6379).then((Command command){    
       command.multi().then((Transation trans){
           trans.send_object(["SET","val","0"]);
-          for(int i=0;i<100000;++i){
+          for(int i=0;i<200000;++i){
             trans.send_object(["INCR","val"]).then((v){
               assert(i==v);
             });
           }
-          trans.send_object(["GET","test"]).then((v){
+          trans.send_object(["GET","val"]).then((v){
             print("number is now $v");
           });
           trans.exec();
@@ -86,5 +115,5 @@ test_commands_one_by_one(){
 }
 
 main(){
-  test_performance();
+  test_transations();
 }
