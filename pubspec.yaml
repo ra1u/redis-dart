@@ -1,2 +1,5 @@
-name: redisparser
-description: A sample command-line application
+name: redis
+version: 0.3.0
+author: Luka Rahne
+description: fast and simple redis-database client
+homepage: https://github.com/ra1u/redis-dart

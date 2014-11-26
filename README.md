@@ -3,7 +3,6 @@ redis-dart
 
 [Redis](http://redis.io/) protocol  parser and client
 It is designed to be fast and simple to use.
-Currently it supports
 
 ### Curretly supported features:
 * raw commands

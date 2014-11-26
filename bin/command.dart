@@ -34,11 +34,14 @@ class Command {
   //other commands are generated using  
   //noSuchMethod invocation
   
+  //this generates warrning
+  /*
   Future noSuchMethod(Invocation invocation){
     List cmd = [MirrorSystem.getName(invocation.memberName)];
     cmd.addAll(invocation.positionalArguments);
     return _send(cmd);
   }
+  */
   
 }
   
