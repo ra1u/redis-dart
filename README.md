@@ -58,13 +58,13 @@ additional helpers for checking result of each command executed during transatio
     RedisConnection conn = new RedisConnection();
     conn.connect('localhost',6379).then((Command command){    
       command.multi().then((Transation trans){
-          trans.send_object(["SET","val","0"]); 
-          for(int i=0;i<100000;++i){
+          trans.send_object(["SET","val","0"]);
+          for(int i=0;i<200000;++i){
             trans.send_object(["INCR","val"]).then((v){
               assert(i==v);
             });
           }
-          trans.send_object(["GET","test"]).then((v){
+          trans.send_object(["GET","val"]).then((v){
             print("number is now $v");
           });
           trans.exec();
