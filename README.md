@@ -25,7 +25,7 @@ This enables sending any command.
 ## Fast
 
 It can made  110K SET or GET operations per second - 
-tested locally on my laptop with i5 processor and [debian]{https://www.debian.org/} OS,
+tested locally on my laptop with i5 processor and [debian](https://www.debian.org/) OS,
 This is code that yields such result and can give you first impression
 
     import 'package:redis/redis.dart';
