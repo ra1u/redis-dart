@@ -96,16 +96,17 @@ array using UTF8 encoding. This makes ascii string compatible in both direction.
 
 There is little helper that enables dispatching recevied messages. 
 
-[PSUBSCRIBE](http://redis.io/commands/PSUBSCRIBE) on messages `a*` and `b*`
+[PSUBSCRIBE](http://redis.io/commands/PSUBSCRIBE) on messages `a*` and `b*`  
+
       Subscription sub = command.psubscribe(["a*","b*"]);
       
 `Subscription` allows registering trough `.add(String pattern,Function callback)`
 Unlike Redis rich pattern matching, this pattern allows only for optional `*` wildchar
 at the end of string. 
 
-      sub.add("abra*",(String chan,String message){
-         print("on channel: $chan message: $message");
-      });
+    sub.add("abra*",(String chan,String message){
+      print("on channel: $chan message: $message");
+    });
       
  Here is full example from test code.
  
@@ -140,5 +141,5 @@ In near future
   - Better documentation
   - Implement all "generic commands" with named commands
   - Better error handling - that is ability to recover from error
-  - Install spell checker
+  - Sspell check code
   
