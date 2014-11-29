@@ -141,5 +141,5 @@ In near future
   - Better documentation
   - Implement all "generic commands" with named commands
   - Better error handling - that is ability to recover from error
-  - Sspell check code
+  - Spell check code
   
