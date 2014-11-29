@@ -4,19 +4,19 @@ redis-dart
 [Redis](http://redis.io/) protocol  parser and client
 It is designed to be fast and simple to use.
 
-### Curretly supported features:
+### Currently supported features:
 
 * raw commands - this enables sending any command as raw data 
-* unicode - strings are UTF8 encoded swen sending and decoded when received 
+* Unicode - strings are UTF8 encoded swensending and decoded when received 
 * [transactions](http://redis.io/topics/transactions) for executing multiple commands in atomic way
-* [pubsub](http://redis.io/topics/pubsub) helper for dispatcing messgaes trough single connection 
-* performance - this counts as feture too
+* [pubsub](http://redis.io/topics/pubsub) helper for dispatching messages trough single connection 
+* performance - this counts as future too
 
 ## Simple
 
-Redis protocol is coposition of array, strings(and bulk) and integers.
+Redis protocol is composition of array, strings(and bulk) and integers.
 For example executing command `SET key value` is no more that serializing
-array of strings `["SET","key","value"]`. Cammands can be executed by
+array of strings `["SET","key","value"]`. Commands can be executed by
 
     Future f = command.send_object(["SET","key","value"]);
 
@@ -25,7 +25,7 @@ This enables sending any command.
 ## Fast
 
 It can made  110K SET or GET operations per second - 
-tested localy on my laptop with i5 proc and [debian]{https://www.debian.org/} OS,
+tested locally on my laptop with i5 processor and [debian]{https://www.debian.org/} OS,
 This is code that yields such result and can give you first impression
 
     import 'package:redis/redis.dart';
@@ -57,9 +57,9 @@ This is code that yields such result and can give you first impression
 
 ## Transactions
 
-Transactions are started by command MULTI and then complited with command EXEC.
-`.multi()` and `.exec()` and `class Transaction` are implemeted as
-additional helpers for checking result of each command executed during transation.
+Transactions are started by command MULTI and then completed with command EXEC.
+`.multi()` and `.exec()` and `class Transaction` are implemented as
+additional helpers for checking result of each command executed during transaction.
 
     import 'package:redis/redis.dart';
     ...
@@ -81,7 +81,7 @@ additional helpers for checking result of each command executed during transatio
     });
 
 Take note here, that Future returned by `trans.send_object()` is executed after 
-`.exec()` so make sure you dont try to call `.exec()` inside of such Future, becuase
+`.exec()` so make sure you dont try to call `.exec()` inside of such Future, beacause
 command will never complete. 
 
 
@@ -100,7 +100,7 @@ There is little helper that enables dispatching recevied messages.
       Subscription sub = command.psubscribe(["a*","b*"]);
       
 `Subscription` allows registering trough `.add(String pattern,Function callback)`
-Unlike redis rich pattern matching, this pattern allows only for optional `*` wildchar
+Unlike Redis rich pattern matching, this pattern allows only for optional `*` wildchar
 at the end of string. 
 
       sub.add("abra*",(String chan,String message){
@@ -140,5 +140,5 @@ In near future
   - Better documentation
   - Implement all "generic comands" with named commands
   - Better error handling - that is ability to recover from error
-  - Install spellchecker
+  - Install spell checker
   
