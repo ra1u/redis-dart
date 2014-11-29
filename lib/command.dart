@@ -33,7 +33,10 @@ class Command {
   }
   
   //pubsub
-  Subscription subscribe(List<String> psub){
+  subscribe(List<String> sub) => _subscribe_helper(sub,"SUBSCRIBE");
+  psubscribe(List<String> sub) => _subscribe_helper(sub,"PSUBSCRIBE");
+  
+  Subscription _subscribe_helper(List<String> psub,String cmd){
     Subscription sub = new Subscription();
     sub._connection = _connection;
     List cmd = ["PSUBSCRIBE"];

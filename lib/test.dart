@@ -12,6 +12,7 @@ import 'dart:convert';
 import './redis.dart';
 
 
+
 test_parser(){
   List data =  new Utf8Encoder().convert("*3\r\n*1\r\n:3\r\n+Foo\r\n+Barzor\r\n ");
   var stream = new LazyStream.fromstream(new Stream.fromIterable(data));  
@@ -20,31 +21,30 @@ test_parser(){
     print("$v");
   });
 }
-
-test_performance(){
-  const int N = 200000;
-  int start;
-  RedisConnection conn = new RedisConnection();
-  conn.connect('localhost',6379).then((Command command){
-    print("test started, please wait ...");
-    start =  new DateTime.now().millisecondsSinceEpoch;
-    command.pipe_start();
-    for(int i=1;i<N;i++){ 
-      command.set("test $i","$i")
-      .then((v){
-        assert(v=="OK");
+    test_performance(){
+      const int N = 200000;
+      int start;
+      RedisConnection conn = new RedisConnection();
+      conn.connect('localhost',6379).then((Command command){
+        print("test started, please wait ...");
+        start =  new DateTime.now().millisecondsSinceEpoch;
+        command.pipe_start();
+        for(int i=1;i<N;i++){ 
+          command.set("test $i","$i")
+          .then((v){
+            assert(v=="OK");
+          });
+        }
+        //last command will be executed and then processed last
+        command.set("test $N","$N").then((v){
+          assert(v=="OK"); 
+          double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
+          double perf = N/diff;
+          print("$N operations done in $diff s\nperformance $perf/s");
+        });
+        command.pipe_end();
       });
     }
-    //last command will be executed and then processed last
-    command.set("test $N","$N").then((v){
-      assert(v=="OK"); 
-      double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
-      double perf = N/diff;
-      print("$N operations done in $diff s\nperformance $perf/s");
-    });
-    command.pipe_end();
-   });
-}
 
 test_muliconnections(){
   const int N = 2000000;
@@ -77,21 +77,21 @@ test_muliconnections(){
 
 
 test_transactions(){
-    RedisConnection conn = new RedisConnection();
-    conn.connect('localhost',6379).then((Command command){    
-      command.multi().then((Transaction trans){
-          trans.send_object(["SET","val","0"]);
-          for(int i=0;i<200000;++i){
-            trans.send_object(["INCR","val"]).then((v){
-              assert(i==v);
-            });
-          }
-          trans.send_object(["GET","val"]).then((v){
-            print("number is now $v");
+  RedisConnection conn = new RedisConnection();
+  conn.connect('localhost',6379).then((Command command){    
+    command.multi().then((Transaction trans){
+        trans.send_object(["SET","val","0"]);
+        for(int i=0;i<200000;++i){
+          trans.send_object(["INCR","val"]).then((v){
+            assert(i==v);
           });
-          trans.exec();
-      });
+        }
+        trans.send_object(["GET","val"]).then((v){
+          print("number is now $v");
+        });
+        trans.exec();
     });
+  });
 }
 
 test_commands_one_by_one(){  
@@ -135,7 +135,7 @@ test_pubsub(){
   })
   .then((Command cmd){ 
     cmd2=cmd;
-    sub = cmd2.subscribe(["a*","b*"]);
+    sub = cmd2.psubscribe(["a*","b*"]);
     sub.add("*",(k,v){
       print("$k $v");
      });
