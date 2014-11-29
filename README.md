@@ -7,7 +7,7 @@ It is designed to be fast and simple to use.
 ### Currently supported features:
 
 * raw commands - this enables sending any command as raw data 
-* Unicode - strings are UTF8 encoded swensending and decoded when received 
+* Unicode - strings are UTF8 encoded when sending and decoded when received 
 * [transactions](http://redis.io/topics/transactions) for executing multiple commands in atomic way
 * [pubsub](http://redis.io/topics/pubsub) helper for dispatching messages trough single connection 
 * performance - this counts as future too
@@ -138,7 +138,7 @@ at the end of string.
 ## Todo 
 In near future
   - Better documentation
-  - Implement all "generic comands" with named commands
+  - Implement all "generic commands" with named commands
   - Better error handling - that is ability to recover from error
   - Install spell checker
   
