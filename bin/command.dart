@@ -23,25 +23,25 @@ class Command {
   void pipe_start() => _connection.disable_nagle(false); //we want to use sockets buffering
   void pipe_end() =>   _connection.disable_nagle(true);
   
-  //commands
+  //commands in future, we will add more commands
   Future set(String key, String value) => _send(["SET",key,value]);
   Future get(String key) => _send(["GET",key]);
   
+  //transations
   Future multi(){ //multi retun transation as future
-    return _send(["MULTI"]).then((_) => new Transation(_connection));
+    return _send(["MULTI"]).then((_) => new Transaction(_connection));
   }
   
-  //other commands are generated using  
-  //noSuchMethod invocation
-  
-  //this generates warrning
-  /*
-  Future noSuchMethod(Invocation invocation){
-    List cmd = [MirrorSystem.getName(invocation.memberName)];
-    cmd.addAll(invocation.positionalArguments);
-    return _send(cmd);
+  //pubsub
+  Subscription subscribe(List<String> psub){
+    Subscription sub = new Subscription();
+    sub._connection = _connection;
+    List cmd = ["PSUBSCRIBE"];
+    cmd.addAll(psub);
+    _send(cmd).then((v){
+      sub._conn_handler_fist();
+    });
+    return sub;
   }
-  */
-  
 }
   

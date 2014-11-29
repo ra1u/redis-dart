@@ -9,9 +9,9 @@
 
 part of redis;
 
-class Transation extends Command{ 
+class Transaction extends Command{ 
     Queue<Completer> _queue;
-    Transation(RedisConnection conn):super(conn){
+    Transaction(RedisConnection conn):super(conn){
       _queue = new Queue();
     }
 

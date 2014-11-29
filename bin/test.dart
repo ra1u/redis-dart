@@ -12,7 +12,7 @@ import 'dart:convert';
 import './redis.dart';
 
 
-testparser(){
+test_parser(){
   List data =  new Utf8Encoder().convert("*3\r\n*1\r\n:3\r\n+Foo\r\n+Barzor\r\n ");
   var stream = new LazyStream.fromstream(new Stream.fromIterable(data));  
   
@@ -76,10 +76,10 @@ test_muliconnections(){
 }
 
 
-test_transations(){
+test_transactions(){
     RedisConnection conn = new RedisConnection();
     conn.connect('localhost',6379).then((Command command){    
-      command.multi().then((Transation trans){
+      command.multi().then((Transaction trans){
           trans.send_object(["SET","val","0"]);
           for(int i=0;i<200000;++i){
             trans.send_object(["INCR","val"]).then((v){
@@ -114,6 +114,39 @@ test_commands_one_by_one(){
     });
 }
 
+hi_world(){
+  String s = "bućke";
+  for(int i=0;i<s.length;++i){
+    print(UTF8.encode(s[i]));
+  }
+}
+
+test_pubsub(){
+  int N = 100000;
+  RedisConnection conn1 = new RedisConnection();
+  RedisConnection conn2 = new RedisConnection();
+  Command cmd1;
+  Command cmd2;
+  Subscription sub;
+  conn1.connect('localhost',6379)
+  .then((Command cmd){
+    cmd1 = cmd;
+    return conn2.connect('localhost',6379);
+  })
+  .then((Command cmd){ 
+    cmd2=cmd;
+    sub = cmd2.subscribe(["a*","b*"]);
+    sub.add("*",(k,v){
+      print("$k $v");
+     });
+  })
+  .then((_){ 
+    cmd1.send_object(["PUBLISH","aaa","aa"]);
+    cmd1.send_object(["PUBLISH","bbb","bb"]);
+    cmd1.send_object(["PUBLISH","ccc","cc"]); //we are not subscibed on this
+  });
+}
+
 main(){
-  test_transations();
+  test_pubsub();
 }

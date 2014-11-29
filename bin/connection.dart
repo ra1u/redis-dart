@@ -14,6 +14,7 @@ class RedisConnection{
   Socket _socket = null;
   LazyStream _stream = null;
   Future _future = new Future.value();
+  
   Future connect(host, port){
     return Socket.connect(host, port)
     .then((Socket sock){
@@ -23,15 +24,22 @@ class RedisConnection{
       return new Command(this);
     });
   }
-  
-  Future sendraw(List lst){
-    _socket.add(lst);
+
+  //this doesnt send anything
+  //it just wait something to come from socket
+  //it parse it and execute future
+  Future senddummy(){
     Completer completer = new Completer.sync();
     _future = _future.then((_) =>
         RedisParser.parseredisresponse(_stream)
         .then((v) => completer.complete(v))
     );
     return completer.future;
+  }
+  
+  Future sendraw(List data){
+    _socket.add(data);
+    return senddummy();
   }
   
   Future send(object){

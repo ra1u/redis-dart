@@ -1,5 +1,5 @@
 name: redis
-version: 0.3.0
+version: 0.3.1
 author: Luka Rahne
 description: fast and simple redis-database client
 homepage: https://github.com/ra1u/redis-dart
