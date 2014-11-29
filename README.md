@@ -107,7 +107,11 @@ at the end of string.
     sub.add("abra*",(String chan,String message){
       print("on channel: $chan message: $message");
     });
-      
+ Be advised, that there is unexpected behavior if any other command is executed over
+ `connection` after executing subscription, Best practice is to create new connection
+ and execute one `subscribe` or `psubscribe` over one connection. This rule doesnt apply
+ for `Subscription` that dispatches localy and it is possible to `.add` or `.remove` at any time. 
+ 
  Here is full example from test code.
  
     import 'package:redis/redis.dart';
