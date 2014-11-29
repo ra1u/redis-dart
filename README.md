@@ -96,7 +96,7 @@ array using UTF8 encoding. This makes ascii string compatible in both direction.
 
 There is little helper that enables dispatching recevied messages. 
 
-[PSUBSCRIBE]{http://redis.io/commands/PSUBSCRIBE} on messages `a*` and `b*`
+[PSUBSCRIBE](http://redis.io/commands/PSUBSCRIBE) on messages `a*` and `b*`
       Subscription sub = command.psubscribe(["a*","b*"]);
       
 `Subscription` allows registering trough `.add(String pattern,Function callback)`
