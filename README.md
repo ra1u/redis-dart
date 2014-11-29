@@ -7,9 +7,9 @@ It is designed to be fast and simple to use.
 ### Currently supported features:
 
 * raw commands - this enables sending any command as raw data 
-* Unicode - strings are UTF8 encoded when sending and decoded when received 
-* [transactions](http://redis.io/topics/transactions) for executing multiple commands in atomic way
+* [transactions](http://redis.io/topics/transactions) wrapper for executing multiple commands in atomic way
 * [pubsub](http://redis.io/topics/pubsub) helper for dispatching messages trough single connection 
+* unicode - strings are UTF8 encoded when sending and decoded when received 
 * performance - this counts as future too
 
 ## Simple
@@ -57,7 +57,7 @@ This is code that yields such result and can give you first impression
 
 ## Transactions
 
-Transactions are started by command MULTI and then completed with command EXEC.
+[Transactions](http://redis.io/topics/transactions) by redis protocol are started by command MULTI and then completed with command EXEC.
 `.multi()` and `.exec()` and `class Transaction` are implemented as
 additional helpers for checking result of each command executed during transaction.
 
