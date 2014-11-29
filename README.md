@@ -57,7 +57,7 @@ additional helpers for checking result of each command executed during transatio
 
     RedisConnection conn = new RedisConnection();
     conn.connect('localhost',6379).then((Command command){    
-      command.multi().then((Transation trans){
+      command.multi().then((Transaction trans){
           trans.send_object(["SET","val","0"]);
           for(int i=0;i<200000;++i){
             trans.send_object(["INCR","val"]).then((v){
@@ -74,3 +74,12 @@ additional helpers for checking result of each command executed during transatio
 Take note here, that Future returned by `trans.send_object()` is executed after 
 `.exec()` so make sure you dont try to call `.exec()` inside of such Future, becuase
 command will never complete. 
+
+
+
+
+### Unicode
+
+By default UTF8 encoding/decoding for string is used. Each string is coverted in binary 
+array using UTF8 encoding. This makes ascii string compatible in both direction.
+    
