@@ -32,19 +32,5 @@ class Command {
     return _send(["MULTI"]).then((_) => new Transaction(_connection));
   }
   
-  //pubsub
-  subscribe(List<String> sub) => _subscribe_helper(sub,"SUBSCRIBE");
-  psubscribe(List<String> sub) => _subscribe_helper(sub,"PSUBSCRIBE");
-  
-  Subscription _subscribe_helper(List<String> psub,String cmd){
-    Subscription sub = new Subscription();
-    sub._connection = _connection;
-    List cmd = ["PSUBSCRIBE"];
-    cmd.addAll(psub);
-    _send(cmd).then((v){
-      sub._conn_handler_fist();
-    });
-    return sub;
-  }
 }
   

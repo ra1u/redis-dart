@@ -126,7 +126,7 @@ test_pubsub(){
   RedisConnection conn1 = new RedisConnection();
   RedisConnection conn2 = new RedisConnection();
   Command cmd1;
-  Command cmd2;
+  PubSubCommand pubsub;
   Subscription sub;
   conn1.connect('localhost',6379)
   .then((Command cmd){
@@ -134,14 +134,15 @@ test_pubsub(){
     return conn2.connect('localhost',6379);
   })
   .then((Command cmd){ 
-    cmd2=cmd;
-    sub = cmd2.psubscribe(["a*","b*"]);
+    pubsub=new PubSubCommand(cmd);
+    sub = pubsub.psubscribe(["a*","b*","a*"]);
     sub.add("*",(k,v){
       print("$k $v");
      });
   })
   .then((_){ 
     cmd1.send_object(["PUBLISH","aaa","aa"]);
+    pubsub.punsubscribe(["b*"]);
     cmd1.send_object(["PUBLISH","bbb","bb"]);
     cmd1.send_object(["PUBLISH","ccc","cc"]); //we are not subscibed on this
   });
