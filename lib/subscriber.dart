@@ -1,4 +1,3 @@
-
 part of redis;
 
 //it used to delete subscription
@@ -37,31 +36,36 @@ class PubSubCommand{
     });
   }
   
-  Subscription subscribe(List<String> s){
-    return _sub.subscribe(s);
+  Subscription getSubscription(){
+   return _sub._sub; //haha
   }
   
-  Subscription psubscribe(List<String> s){
-    return _sub.psubscribe(s);
+  void subscribe(List<String> s){
+    sendcmd_and_list("PSUBSCRIBE",s);
+  }
+  
+  void  psubscribe(List<String> s){
+    sendcmd_and_list("PSUBSCRIBE",s);
   }
   
   void unsubscribe(List<String> s){
-    List cmd = ["UNSUBSCRIBE"];
-    cmd.add(s);
-    _sub.sendobject(cmd);
+    sendcmd_and_list("UNSUBSCRIBE",s);
   }
 
   void punsubscribe(List<String> s){
-    List cmd = ["PUNSUBSCRIBE"];
-    cmd.addAll(s);
-    _sub.sendobject(cmd);
+    sendcmd_and_list("PUNSUBSCRIBE",s);
+  }
+  
+  void sendcmd_and_list(String cmd,List<String> s){
+    List list = [cmd];
+    list.addAll(s);
+    _sub.sendobject(list);
   }
   
 } 
 
 class _SubscriptionDispatcher{
   Subscription _sub = new Subscription();
-  Subscription _psub = new Subscription();
   RedisConnection _connection;
   
   _SubscriptionDispatcher(this._connection){}
@@ -74,27 +78,13 @@ class _SubscriptionDispatcher{
         _sub._trie.send(data[1],data[2]);
         break;
       case "pmessage":
-        _psub._trie.send(data[2],data[3]);
+        _sub._trie.send(data[2],data[3]);
         break;
     }
   }
   
   void KickListening(){
     _connection.senddummy().then(this._conn_handler);
-  }
-  
-  Subscription subscribe(List s){
-    List cmd = ["SUBSCRIBE"];
-    cmd.addAll(s);
-    _connection._socket.add(RedisSerialise.Serialise(cmd));
-    return _sub;
-  }
-  
-  Subscription psubscribe(List s){
-    List cmd = ["PSUBSCRIBE"];
-    cmd.addAll(s);
-    sendobject(cmd);
-    return _psub;
   }
   
   void sendobject(Object cmd){
