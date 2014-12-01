@@ -1,7 +1,7 @@
 Redis client for dart
 =====================
 
-[Redis](http://redis.io/) protocol  parser and client writtent in [dart language](https://www.dartlang.org)  
+[Redis](http://redis.io/) protocol  parser and client writent in [dart language](https://www.dartlang.org)  
 It is designed to be both fast and simple to use.
 
 ### Currently supported features:
@@ -81,20 +81,20 @@ additional helpers for checking result of each command executed during transacti
     });
 
 Take note here, that Future returned by `trans.send_object()` is executed after 
-`.exec()` so make sure you dont try to call `.exec()` inside of such Future, beacause
+`.exec()` so make sure you dont try to call `.exec()` inside of such Future, because
 command will never complete. 
 
 
 
 ## Unicode
 
-By default UTF8 encoding/decoding for string is used. Each string is coverted in binary 
+By default UTF8 encoding/decoding for string is used. Each string is converted in binary 
 array using UTF8 encoding. This makes ascii string compatible in both direction.
 
 
 ## [PubSub](http://redis.io/topics/pubsub)
 
-PubSub is helper for dispatching recevied messages. 
+PubSub is helper for dispatching received messages. 
 First, create new `PubSubCommand` from existing `Command`
 
     PubSubCommand pubsub=new PubSubCommand(command);
