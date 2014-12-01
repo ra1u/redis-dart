@@ -9,7 +9,7 @@
 
 import 'dart:async';
 import 'dart:convert';
-import './redis.dart';
+import '../lib/redis.dart';
 
 
 
@@ -21,30 +21,30 @@ test_parser(){
     print("$v");
   });
 }
-    test_performance(){
-      const int N = 200000;
-      int start;
-      RedisConnection conn = new RedisConnection();
-      conn.connect('localhost',6379).then((Command command){
-        print("test started, please wait ...");
-        start =  new DateTime.now().millisecondsSinceEpoch;
-        command.pipe_start();
-        for(int i=1;i<N;i++){ 
-          command.set("test $i","$i")
-          .then((v){
-            assert(v=="OK");
-          });
-        }
-        //last command will be executed and then processed last
-        command.set("test $N","$N").then((v){
-          assert(v=="OK"); 
-          double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
-          double perf = N/diff;
-          print("$N operations done in $diff s\nperformance $perf/s");
-        });
-        command.pipe_end();
+test_performance(){
+  const int N = 200000;
+  int start;
+  RedisConnection conn = new RedisConnection();
+  conn.connect('localhost',6379).then((Command command){
+    print("test started, please wait ...");
+    start =  new DateTime.now().millisecondsSinceEpoch;
+    command.pipe_start();
+    for(int i=1;i<N;i++){ 
+      command.set("test $i","$i")
+      .then((v){
+        assert(v=="OK");
       });
     }
+    //last command will be executed and then processed last
+    command.set("test $N","$N").then((v){
+      assert(v=="OK"); 
+      double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
+      double perf = N/diff;
+      print("$N operations done in $diff s\nperformance $perf/s");
+    });
+    command.pipe_end();
+  });
+}
 
 test_muliconnections(){
   const int N = 2000000;
@@ -125,26 +125,26 @@ test_pubsub(){
   int N = 100000;
   RedisConnection conn1 = new RedisConnection();
   RedisConnection conn2 = new RedisConnection();
-  Command cmd1;
-  PubSubCommand pubsub;
-  Subscription sub;
+  Command command; //on conn1
+  PubSubCommand pubsub; //on conn2
+  
   conn1.connect('localhost',6379)
   .then((Command cmd){
-    cmd1 = cmd;
+    command = cmd;
     return conn2.connect('localhost',6379);
   })
   .then((Command cmd){ 
     pubsub=new PubSubCommand(cmd);
-    sub = pubsub.psubscribe(["a*","b*","a*"]);
+    pubsub.psubscribe(["a*","b*","a*"]);
+    Subscription sub = pubsub.getSubscription();
     sub.add("*",(k,v){
       print("$k $v");
      });
   })
   .then((_){ 
-    cmd1.send_object(["PUBLISH","aaa","aa"]);
-    pubsub.punsubscribe(["b*"]);
-    cmd1.send_object(["PUBLISH","bbb","bb"]);
-    cmd1.send_object(["PUBLISH","ccc","cc"]); //we are not subscibed on this
+    command.send_object(["PUBLISH","aaa","aa"]);
+    command.send_object(["PUBLISH","bbb","bb"]);
+    command.send_object(["PUBLISH","ccc","cc"]); 
   });
 }
 
