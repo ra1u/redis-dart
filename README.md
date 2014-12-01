@@ -1,16 +1,17 @@
 [Redis](http://redis.io/) client for [dart](https://www.dartlang.org) 
-============
+=====================================================================
 
 Redis protocol  parser and client  
-It is designed to be fast and simple to use.
+It is designed to be both fast and simple to use.
 
 ### Currently supported features:
 
-* raw commands - this enables sending any command as raw data 
 * [transactions](http://redis.io/topics/transactions) wrapper for executing multiple commands in atomic way
-* [pubsub](http://redis.io/topics/pubsub) helper for dispatching messages trough single connection 
-* unicode - strings are UTF8 encoded when sending and decoded when received 
-* performance - this counts as future too
+* [pubsub](#pubsub) helper with aditional internal dispatching
+* [unicode](#unicode) - strings are UTF8 encoded when sending and decoded when received 
+* [performance](#fast) - this counts as future too
+* raw commands - this enables sending any command as raw data :)
+
 
 ## Simple
 
@@ -24,8 +25,7 @@ This enables sending any command.
 
 ## Fast
 
-It can made  110K SET or GET operations per second - 
-tested locally on my laptop with i5 processor and [debian](https://www.debian.org/) OS,
+It can execute and process more than 100K SET or GET operations per second - tested on my laptop.
 This is code that yields such result and can give you first impression
 
     import 'package:redis/redis.dart';
