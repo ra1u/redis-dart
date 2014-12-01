@@ -92,58 +92,77 @@ By default UTF8 encoding/decoding for string is used. Each string is coverted in
 array using UTF8 encoding. This makes ascii string compatible in both direction.
 
 
-## PubSub
+## [PubSub](http://redis.io/topics/pubsub)
 
-There is little helper that enables dispatching recevied messages. 
+There is helper twolayered helper for dispatching recevied messages. 
 
-[PSUBSCRIBE](http://redis.io/commands/PSUBSCRIBE) on messages `a*` and `b*`  
+To use pusbsub framework, create new `PubSubCommand` from existing `Command`
 
-      Subscription sub = command.psubscribe(["a*","b*"]);
+   PubSubCommand pubsub=new PubSubCommand(command);
+
+Once `PubSubCommand` is created, old `Command` is invalidated in should not be used
+on same connection. `PubSubCommand` allows executing only commands
+
+    void subscribe(List<String> channels) 
+    void psubscribe(List<String> channels)
+    void unsubscribe(List<String> channels)
+    void punsubscribe(List<String> channels)
+
+and getting interal `Subscription` handler
+
+    Subscription getSubscription();
       
-`Subscription` allows registering trough `.add(String pattern,Function callback)`
+`Subscription` allows library local message dispatching.
+It enables registering callbacks trough `.add(String pattern,Function callback)`
 Unlike Redis rich pattern matching, this pattern allows only for optional `*` wildchar
-at the end of string. 
+at the end of string. Message consumers can be added only trough `Subscription`.
 
-    sub.add("abra*",(String chan,String message){
+    subscription.add("abra*",(String chan,String message){
       print("on channel: $chan message: $message");
     });
- Be advised, that there is unexpected behavior if any other command is executed over
- `connection` after executing subscription, Best practice is to create new connection
- and execute one `subscribe` or `psubscribe` over one connection. This rule doesnt apply
- for `Subscription` that dispatches localy and it is possible to `.add` or `.remove` at any time. 
- 
- Here is full example from test code.
+    
+ Here is complete example from test code.
  
     import 'package:redis/redis.dart';
+    
     main(){
       RedisConnection conn1 = new RedisConnection();
       RedisConnection conn2 = new RedisConnection();
-      Command cmd1;
-      Command cmd2;
-      Subscription sub;
+      Command command; //on conn1
+      PubSubCommand pubsub; //on conn2
+      
       conn1.connect('localhost',6379)
       .then((Command cmd){
-        cmd1 = cmd;
+        command = cmd;
         return conn2.connect('localhost',6379);
       })
       .then((Command cmd){ 
-        cmd2=cmd;
-        sub = cmd2.psubscribe(["a*","b*"]);
+        pubsub=new PubSubCommand(cmd);
+        pubsub.psubscribe(["a*","b*","a*"]);
+        Subscription sub = pubsub.getSubscription();
         sub.add("*",(k,v){
           print("$k $v");
          });
       })
       .then((_){ 
-        cmd1.send_object(["PUBLISH","aaa","aa"]);
-        cmd1.send_object(["PUBLISH","bbb","bb"]);
-        cmd1.send_object(["PUBLISH","ccc","cc"]); //we are not subscibed on this
+        command.send_object(["PUBLISH","aaa","aa"]);
+        command.send_object(["PUBLISH","bbb","bb"]);
+        command.send_object(["PUBLISH","ccc","cc"]); 
       });
     }
     
 ## Todo 
-In near future
-  - Better documentation
-  - Implement all "generic commands" with named commands
-  - Better error handling - that is ability to recover from error
-  - Spell check code
+In near future:
+
+- Better documentation
+- Implement all "generic commands" with named commands
+- Better error handling - that is ability to recover from error
+- Spell check code
+
+## Changes
+
+### 0.4.0
+
+- PubSub interface is made simpler but backward incompatible :(
+- README is updated
   
