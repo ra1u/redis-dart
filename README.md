@@ -97,27 +97,27 @@ array using UTF8 encoding. This makes ascii string compatible in both direction.
 PubSub is helper for dispatching recevied messages. 
 First, create new `PubSubCommand` from existing `Command`
 
-   PubSubCommand pubsub=new PubSubCommand(command);
+    PubSubCommand pubsub=new PubSubCommand(command);
 
 Once `PubSubCommand` is created, old `Command` is invalidated and should not be used
-on same connection. `PubSubCommand` allows executing only commands
+on same connection. `PubSubCommand` allows commands
 
     void subscribe(List<String> channels) 
     void psubscribe(List<String> channels)
     void unsubscribe(List<String> channels)
     void punsubscribe(List<String> channels)
 
-and getting interal `Subscription` handler
+and additional `Subscription` getter 
 
     Subscription getSubscription();
       
-`Subscription` enables library local message dispatching.
+`Subscription` enables local message dispatching.
 It enables registering callbacks trough `.add(String pattern,Function callback)`
 Unlike Redis rich pattern matching, this pattern allows only for optional `*` wildchar
 at the end of string. Message consumers can be added only trough `Subscription`.
 
-In this example, fromm all messages that subscription will receive from redis
-only messages that begins with abra and have atleast 5 letters will be displayed.
+In this example, from all messages from redis that `Subscription` will receive,
+only those that begins with abra and have at least 5 letters will be dispatched.
 
     subscription.add("abra*",(String chan,String message){
       print("on channel: $chan message: $message");
