@@ -1,7 +1,7 @@
-redis-dart
+[Redis](http://redis.io/) client for [dart](https://www.dartlang.org) 
 ============
 
-[Redis](http://redis.io/) protocol  parser and client
+Redis protocol  parser and client  
 It is designed to be fast and simple to use.
 
 ### Currently supported features:
