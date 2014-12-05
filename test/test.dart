@@ -9,6 +9,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:collection';
 import '../lib/redis.dart';
 
 
@@ -46,50 +47,93 @@ test_performance(){
   });
 }
 
+test_performance2(){
+    const int N = 200000;
+    int start;
+    RedisConnection conn = new RedisConnection();
+    conn.connect('localhost',6379).then((Command command){
+      print("test started, please wait ...");
+      start =  new DateTime.now().millisecondsSinceEpoch;
+      command.pipe_start();
+      command.set("test","0");
+      for(int i=1;i<=N;i++){ 
+        command.send_object(["INCR","test"])
+        .then((v){
+          if(i != v)
+            throw("wrong received value, we got $v");
+        });
+      }
+      //last command will be executed and then processed last
+      command.get("test").then((v){
+        print(v); 
+        double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
+        double perf = N/diff;
+        print("$N operations done in $diff s\nperformance $perf/s");
+      });
+      command.pipe_end();
+    });
+}
+
 test_muliconnections(){
   const int N = 2000000;
-  const int K = 50;
+  const int K = 10;
   int start;
   int c=0;
   
   print("test started, please wait ...");
   start =  new DateTime.now().millisecondsSinceEpoch;
-  for(int j=0;j<K;j++){
-    RedisConnection conn = new RedisConnection();
-    conn.connect('localhost',6379).then((Command command){
-      command.pipe_start();
-      for(int i=j;i<N;i+=K){ 
-        command.set("test $i","$i")
-        .then((v){
-          assert(v=="OK");
-          c++;
-          if(c==N){
-            double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
-            double perf = N/diff;
-            print("$N operations done in $diff s\nperformance $perf/s");
-          }
-        });
-      }
-      command.pipe_end();
-     });
-  }
+  RedisConnection conn = new RedisConnection();
+  conn.connect('localhost',6379).then((Command command){
+    return command.set("var","0");
+  })
+  .then((_){
+    for(int j=0;j<K;j++){
+      RedisConnection conn = new RedisConnection();
+      conn.connect('localhost',6379).then((Command command){
+        command.pipe_start();
+        for(int i=j;i<N;i+=K){ 
+          command.send_object(["INCR","var"])
+          .then((v){
+            c++;
+            if(c==N){
+              double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
+              double perf = N/diff;
+              print("$N operations done in $diff s\nperformance $perf/s");
+              command.get("var").then((v){print("var is $v");});
+            }
+          });
+        }
+        command.pipe_end();
+      });
+    }
+  });
 }
 
 
 test_transactions(){
   RedisConnection conn = new RedisConnection();
-  conn.connect('localhost',6379).then((Command command){    
-    command.multi().then((Transaction trans){
-        trans.send_object(["SET","val","0"]);
-        for(int i=0;i<200000;++i){
-          trans.send_object(["INCR","val"]).then((v){
-            assert(i==v);
+  RedisConnection conn2 = new RedisConnection();
+  int N=2000000;
+  conn.connect('localhost',6379).then((Command command){   
+    conn2.connect('localhost',6379).then((Command command2){ 
+      command.multi().then((Transaction trans){
+          trans.send_object(["SET","val","0"]);
+          for(int i=1;i<=N;++i){
+            trans.send_object(["INCR","val"]).then((v){
+              assert(v==i);
+            });
+            command2.send_object(["INCR","val"]).then((v){
+              assert(true);
+            });
+          }
+          trans.send_object(["GET","val"]).then((v){
+            print("number is now $v");
           });
-        }
-        trans.send_object(["GET","val"]).then((v){
-          print("number is now $v");
-        });
-        trans.exec();
+          command2.send_object(["GET","val"]).then((v){
+            print("number2 is now $v");
+          });
+          trans.exec();
+      });
     });
   });
 }
@@ -135,11 +179,12 @@ test_pubsub(){
   })
   .then((Command cmd){ 
     pubsub=new PubSubCommand(cmd);
-    pubsub.psubscribe(["a*","b*","a*"]);
+    pubsub.psubscribe(["a*","b*","*"]);
     Subscription sub = pubsub.getSubscription();
     sub.add("*",(k,v){
       print("$k $v");
      });
+    pubsub.unsubscribe(["a*"]);
   })
   .then((_){ 
     command.send_object(["PUBLISH","aaa","aa"]);
@@ -148,6 +193,34 @@ test_pubsub(){
   });
 }
 
+test_pg(){
+    RedisConnection conn = new RedisConnection();
+    conn.connect('localhost',6379).then((Command command){
+      command.send_object(["SET","key","0"])
+      .then((var response){
+        assert(response == 'OK');
+      });
+      command.send_object(["INCR","key"])
+      .then((var response){
+        assert(response == 1);  
+      });
+      command.send_object(["INCR","key"])
+      .then((var response){
+        assert(response == 2);
+      });
+      command.send_object(["INCR","key"])
+      .then((var response){
+        assert(response == 3);
+      });
+      command.send_object(["GET","key"])
+      .then((var response){
+         print(response); // 3
+      });
+    });
+}
+
+
 main(){
-  test_pubsub();
+  //test_muliconnections();
+  test_performance2();
 }
