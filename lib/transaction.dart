@@ -10,11 +10,11 @@
 part of redis;
 
 class Transaction extends Command{ 
-    Queue<Completer> _queue;
-    Transaction(RedisConnection conn):super(conn){
-      _queue = new Queue();
-    }
-
+    Queue<Completer> _queue = new Queue();
+    RedisConnection _swaped_conn = null;
+    
+    Transaction(RedisConnection conn):super(conn);
+    
     Future _send(object){
       Completer c= new Completer();
       _queue.add(c);
