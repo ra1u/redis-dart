@@ -24,6 +24,10 @@ class RedisConnection{
       return new Command(this);
     });
   }
+  
+  Future close(){
+    return _socket.close();
+  }
 
   //this doesnt send anything
   //it just wait something to come from socket
