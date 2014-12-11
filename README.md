@@ -6,7 +6,7 @@ It is designed to be both fast and simple to use.
 
 ### Currently supported features:
 
-* [transactions](http://redis.io/topics/transactions) wrapper for executing multiple commands in atomic way
+* [transactions](#transactions) wrapper for executing multiple commands in atomic way
 * [pubsub](#pubsub) helper with aditional internal dispatching
 * [unicode](#unicode) - strings are UTF8 encoded when sending and decoded when received
 * [performance](#fast) - this counts as future too
@@ -63,6 +63,7 @@ One an most straightforward way is one after another
       });
     });
 
+
 Other possibility is to execute commands one by one without waiting for previous
 command to complete. We can send all commands  without need to wait for
 result and we can be still sure, that response handled by `Future` will be
@@ -97,7 +98,7 @@ and only one on previous example.
 
 ## Fast
 
-Tested on my laptop can execute and process 130K INCR operations per second.
+Tested on laptop can execute and process 130K INCR operations per second.
 
 This is code that yields such result
 
@@ -108,17 +109,17 @@ This is code that yields such result
       print("test started, please wait ...");
       start =  new DateTime.now().millisecondsSinceEpoch;
       command.pipe_start();
-      command.set("test","0");
-      for(int i=1;i<=N;i++){ 
+      command.send_object(["SET","test","0"]);
+      for(int i=1;i<=N;i++){
         command.send_object(["INCR","test"])
         .then((v){
           if(i != v)
             throw("wrong received value, we got $v");
         });
       }
-      //last command will be executed last and processed last
-      command.get("test").then((v){
-        print(v); 
+      //last command will be executed and then processed last
+      command.send_object(["GET","test"]).then((v){
+        print(v);
         double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
         double perf = N/diff;
         print("$N operations done in $diff s\nperformance $perf/s");
@@ -134,11 +135,20 @@ on socket. By default it is disabled to achieve shortest possible latency at exp
 of having more TCP packets and extra overhead. Enabling Nagle's algorithm
 during transactions can achieve greater data throughput and less overhead.
 
-## Transactions
+## [Transactions](http://redis.io/topics/transactions)
 
-[Transactions](http://redis.io/topics/transactions) by redis protocol are started by command MULTI and then completed with command EXEC.
+Transactions by redis protocol
+are started by command MULTI and then completed with command EXEC.
 `.multi()`, `.exec()` and `class Transaction` are implemented as
 additional helpers for checking result of each command executed during transaction.
+
+    Future<Transaction> Command.multi();
+
+Executing `multi()` will return Future with `Transaction`. This class should be used
+to execute commands by calling `.send_object`. It returns Future that
+is called after calling `.exec()`. It is not possible to
+write code that depends on result of previous command during transaction. In such cases
+user should employ technique as described http://redis.io/topics/transactions#cas
 
     import 'package:redis/redis.dart';
     ...
@@ -146,22 +156,22 @@ additional helpers for checking result of each command executed during transacti
     RedisConnection conn = new RedisConnection();
     conn.connect('localhost',6379).then((Command command){
       command.multi().then((Transaction trans){
-          trans.send_object(["SET","val","0"]);
-          for(int i=0;i<200000;++i){
-            trans.send_object(["INCR","val"]).then((v){
-              assert(i==v);
-            });
-          }
-          trans.send_object(["GET","val"]).then((v){
-            print("number is now $v");
+        trans.send_object(["SET","val","0"]);
+        for(int i=0;i<200000;++i){
+          trans.send_object(["INCR","val"]).then((v){
+            assert(i==v);
           });
-          trans.exec();
+        }
+        trans.send_object(["GET","val"]).then((v){
+          print("number is now $v");
+        });
+        trans.exec();
       });
     });
 
-`Future` returned by `trans.send_object()` is executed after
-`.exec()` so make sure you dont try to call `.exec()` inside of such Future, because
-command will never complete.
+It is not possible to write code that depends on result of
+previous command during transaction. In such cases
+user should employ technique as described http://redis.io/topics/transactions#cas
 
 
 
@@ -236,13 +246,16 @@ only those that begins with abra and have at least 5 letters will be dispatched.
 In near future:
 
 - Better documentation
-- Implement all "generic commands" with named commands
+- Implement all "generic commands" with named
+ commands
 - Better error handling - that is ability to recover from error
 - Spell check code
 
 ## Changes
 
-### 0.4.0
+### 0.4.1
+- Command  raise error if used during transaction.
 
+### 0.4.0
 - PubSub interface is made simpler but backward incompatible :(
 - README is updated
