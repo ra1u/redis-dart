@@ -55,7 +55,7 @@ test_performance2(){
       print("test started, please wait ...");
       start =  new DateTime.now().millisecondsSinceEpoch;
       command.pipe_start();
-      command.set("test","0");
+      command.send_object(["SET","test","0"]);
       for(int i=1;i<=N;i++){ 
         command.send_object(["INCR","test"])
         .then((v){
@@ -64,7 +64,7 @@ test_performance2(){
         });
       }
       //last command will be executed and then processed last
-      command.get("test").then((v){
+      command.send_object(["GET","test"]).then((v){
         print(v); 
         double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
         double perf = N/diff;
@@ -129,10 +129,10 @@ test_transactions(){
           trans.send_object(["GET","val"]).then((v){
             print("number is now $v");
           });
-          command2.send_object(["GET","val"]).then((v){
+          trans.exec();
+          command.send_object(["GET","val"]).then((v){
             print("number2 is now $v");
           });
-          trans.exec();
       });
     });
   });
@@ -222,5 +222,5 @@ test_pg(){
 
 main(){
   //test_muliconnections();
-  test_performance2();
+  test_transactions();
 }

@@ -11,7 +11,7 @@
 part of redis;
 
 class Command {
-  RedisConnection _connection;
+  /*RedisConnection*/ var _connection;
 
   Command(this._connection){}
   
@@ -29,7 +29,7 @@ class Command {
   
   //transations
   Future multi(){ //multi retun transation as future
-    return _send(["MULTI"]).then((_) => new Transaction(_connection));
+    return _send(["MULTI"]).then((_) => new Transaction(this));
   }
   
 }
