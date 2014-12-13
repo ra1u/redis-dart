@@ -5,11 +5,9 @@ class _WarrningPubSubInProgress {
       "It is not allowed to issue commands trough this handler";
 }
 
+//deprecated instance
 class Subscription{
   Trie _trie = new Trie();
-  Stream getStream(String pattern){
-    return _trie.get(pattern);
-  }
   //backwardcompatibility - deprecated
   add(String pattern,Function f){
     getStream(pattern).listen((List d){
@@ -21,21 +19,26 @@ class Subscription{
 
 class PubSubCommand{
   Command _command;
-  _SubscriptionDispatcher _sub;
+  _SubscriptionDispatcher _sub_dispatcher;
   
   PubSubCommand(Command command){
     _command=new  Command(command._connection);
-    _sub = new _SubscriptionDispatcher(command._connection);
+    _sub_dispatcher = new _SubscriptionDispatcher(command._connection);
     //processing ping makes sure that there is no 
     //more data on socket to process
     command.send_object(["PING"]).then((_){
-      _sub.KickListening();
+      _sub_dispatcher.KickListening();
       command._connection = new _WarrningPubSubInProgress(); 
     });
   }
   
+  //deprecated
   Subscription getSubscription(){
-   return _sub._sub;
+   return _sub_dispatcher._sub;
+  }
+  
+  Stream getStream([String pattern = "*"]){
+    return _sub_dispatcher._sub._trie.get(pattern);
   }
   
   void subscribe(List<String> s){
@@ -57,7 +60,7 @@ class PubSubCommand{
   void sendcmd_and_list(String cmd,List<String> s){
     List list = [cmd];
     list.addAll(s);
-    _sub.sendobject(list);
+    _sub_dispatcher.sendobject(list);
   }
   
 } 

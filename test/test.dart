@@ -166,7 +166,6 @@ hi_world(){
 }
 
 test_pubsub(){
-  int N = 100000;
   RedisConnection conn1 = new RedisConnection();
   RedisConnection conn2 = new RedisConnection();
   Command command; //on conn1
@@ -180,11 +179,13 @@ test_pubsub(){
   .then((Command cmd){ 
     pubsub=new PubSubCommand(cmd);
     pubsub.psubscribe(["a*","b*","*"]);
-    Subscription sub = pubsub.getSubscription();
-    sub.add("*",(k,v){
-      print("$k $v");
+    pubsub.getStream().listen((msg){
+      print("Message for \"*\"  - msg: $msg");
      });
-    pubsub.unsubscribe(["a*"]);
+    
+    pubsub.getStream("a*").listen((msg){
+      print("Message for \"a*\" - msg: $msg");
+     });
   })
   .then((_){ 
     command.send_object(["PUBLISH","aaa","aa"]);
@@ -222,5 +223,5 @@ test_pg(){
 
 main(){
   //test_muliconnections();
-  test_transactions();
+  test_pubsub();
 }

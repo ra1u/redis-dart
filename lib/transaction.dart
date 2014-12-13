@@ -9,7 +9,7 @@
 
 part of redis;
 
-class WarrningConnection {
+class _WarrningConnection {
   noSuchMethod(_) => throw "Transaction in progress"
       "Please complete Transaction with .exec";
 }
@@ -22,7 +22,7 @@ class Transaction extends Command{
     Transaction(Command command):super(command._connection){
       _overrided_command = command;
       //we override his _connection, during transaction (finding bugis easier) 
-      command._connection = new WarrningConnection();
+      command._connection = new _WarrningConnection();
     }
     
     Future _send(object){
