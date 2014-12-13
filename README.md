@@ -146,9 +146,7 @@ additional helpers for checking result of each command executed during transacti
 
 Executing `multi()` will return Future with `Transaction`. This class should be used
 to execute commands by calling `.send_object`. It returns Future that
-is called after calling `.exec()`. It is not possible to
-write code that depends on result of previous command during transaction. In such cases
-user should employ technique as described http://redis.io/topics/transactions#cas
+is called after calling `.exec()`.
 
     import 'package:redis/redis.dart';
     ...
@@ -169,9 +167,7 @@ user should employ technique as described http://redis.io/topics/transactions#ca
       });
     });
 
-It is not possible to write code that depends on result of
-previous command during transaction. In such cases
-user should employ technique as described http://redis.io/topics/transactions#cas
+It is not possible to write code that depends on result of previous command during transaction. In such cases user should employ technique as described http://redis.io/topics/transactions#cas
 
 
 
@@ -196,20 +192,16 @@ on same connection. `PubSubCommand` allows commands
     void unsubscribe(List<String> channels)
     void punsubscribe(List<String> channels)
 
-and additional `Subscription` getter
+and additional `Stream getStream([String pattern = "*"])`
 
-    Subscription getSubscription();
-
-`Subscription` enables local message dispatching.
-It enables registering callbacks trough `.add(String pattern,Function callback)`
+`getStream` returns `Stream` that sends streams according to optionally provided pattern
 Unlike Redis rich pattern matching, this pattern allows only for optional `*` wildchar
-at the end of string. Message consumers can be added only trough `Subscription`.
+at the end of string.
 
-In this example, from all messages from redis that `Subscription` will receive,
-only those that begins with abra and have at least 5 letters will be dispatched.
+Example for receiving and printing all messages
 
-    subscription.add("abra*",(String chan,String message){
-      print("on channel: $chan message: $message");
+    pubsub.getStream().listen((message){
+      print("message: $message");
     });
 
  Here is complete example from test code.
@@ -229,11 +221,14 @@ only those that begins with abra and have at least 5 letters will be dispatched.
       })
       .then((Command cmd){
         pubsub=new PubSubCommand(cmd);
-        pubsub.psubscribe(["a*","b*","a*"]);
-        Subscription sub = pubsub.getSubscription();
-        sub.add("*",(k,v){
-          print("$k $v");
+        pubsub.psubscribe(["a*","b*","*"]);
+        pubsub.getStream().listen((msg){
+          print("Message for \"*\"  - msg: $msg");
          });
+
+        pubsub.getStream("a*").listen((msg){
+          print("Message for \"a*\" - msg: $msg");
+        });
       })
       .then((_){
         command.send_object(["PUBLISH","aaa","aa"]);
@@ -241,6 +236,16 @@ only those that begins with abra and have at least 5 letters will be dispatched.
         command.send_object(["PUBLISH","ccc","cc"]);
       });
     }
+
+Output is
+
+    Message for "*"  - msg: [pmessage, a*, aaa, aa]
+    Message for "a*" - msg: [pmessage, a*, aaa, aa]
+    Message for "*"  - msg: [pmessage, *, aaa, aa]
+    Message for "a*" - msg: [pmessage, *, aaa, aa]
+    Message for "*"  - msg: [pmessage, b*, bbb, bb]
+    Message for "*"  - msg: [pmessage, *, bbb, bb]
+    Message for "*"  - msg: [pmessage, *, ccc, cc]
 
 ## Todo
 In near future:
