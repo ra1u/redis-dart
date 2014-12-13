@@ -1,23 +1,21 @@
 part of redis;
 
-//it used to delete subscription
-//has no constructor.
-class SubHandle{
-  var _handle;
+class _WarrningPubSubInProgress {
+  noSuchMethod(_) => throw "PubSub on this connaction in progress"
+      "It is not allowed to issue commands trough this handler";
 }
 
 class Subscription{
   Trie _trie = new Trie();
-  
-  SubHandle add(String pattern,Function cb){
-    var r = _trie.add(pattern,cb);
-    SubHandle s = new SubHandle();
-    s._handle = r;
-    return s;
+  Stream getStream(String pattern){
+    return _trie.get(pattern);
   }
-  
-  void remove(SubHandle handle){
-    _trie.remove(handle._handle);
+  //backwardcompatibility - deprecated
+  add(String pattern,Function f){
+    getStream(pattern).listen((List d){
+      int l = d.length;
+      f(d[l-2],d[l-1]);
+    });
   }
 }
 
@@ -32,12 +30,12 @@ class PubSubCommand{
     //more data on socket to process
     command.send_object(["PING"]).then((_){
       _sub.KickListening();
-      command._connection = null; 
+      command._connection = new _WarrningPubSubInProgress(); 
     });
   }
   
   Subscription getSubscription(){
-   return _sub._sub; //haha
+   return _sub._sub;
   }
   
   void subscribe(List<String> s){
@@ -75,10 +73,10 @@ class _SubscriptionDispatcher{
     int len= data.length;
     switch(data[0]){
       case "message":
-        _sub._trie.send(data[1],data[2]);
+        _sub._trie.send(data[1],data);
         break;
       case "pmessage":
-        _sub._trie.send(data[2],data[3]);
+        _sub._trie.send(data[2],data);
         break;
     }
   }
