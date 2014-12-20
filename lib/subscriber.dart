@@ -8,9 +8,9 @@ class _WarrningPubSubInProgress {
 //deprecated instance
 class Subscription{
   Trie _trie = new Trie();
-  //backwardcompatibility - deprecated
-  add(String pattern,Function f){
-    getStream(pattern).listen((List d){
+  //backward compatibility - deprecated
+  StreamSubscription add(String pattern,Function f){
+    return _trie.get(pattern).listen((List d){
       int l = d.length;
       f(d[l-2],d[l-1]);
     });
