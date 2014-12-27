@@ -24,9 +24,9 @@ class PubSubCommand{
   PubSubCommand(Command command){
     _command=new  Command(command._connection);
     _sub_dispatcher = new _SubscriptionDispatcher(command._connection);
-    //processing ping makes sure that there is no 
+    //makes sure that there is no 
     //more data on socket to process
-    command.send_object(["PING"]).then((_){
+    command.send_nothing().then((_){
       _sub_dispatcher.KickListening();
       command._connection = new _WarrningPubSubInProgress(); 
     });
@@ -72,7 +72,7 @@ class _SubscriptionDispatcher{
   _SubscriptionDispatcher(this._connection){}
   
   void _conn_handler(var data){
-    _connection.senddummy().then(_conn_handler);
+    _connection._senddummy().then(_conn_handler);
     int len= data.length;
     switch(data[0]){
       case "message":
@@ -85,7 +85,7 @@ class _SubscriptionDispatcher{
   }
   
   void KickListening(){
-    _connection.senddummy().then(this._conn_handler);
+    _connection._senddummy().then(this._conn_handler);
   }
   
   void sendobject(Object cmd){
