@@ -80,64 +80,7 @@ Future test_muliconnections(int commands,int connections){
   return completer.future;
 }
 
-Future test_transactions_cas(){
-  RedisConnection conn = new RedisConnection();
-  return conn.connect('localhost',6379).then((Command command){   
-    command.send_object(["SET","key","1"]);    
-    Future.doWhile((){
-      command.send_object(["WATCH","key"]);
-      return command.send_object(["GET","key"])
-      .then((String v){
-        int i = int.parse(v);
-        return command.multi().then((Transaction trans){
-          trans.send_object(["SET","key",(i+1).toString()]).then((v){
-            print(v);
-            if(v == "OK"){
-              return false; //stop doWhile;
-            }
-            return true;
-          });
-        });
-      });
-    });
-  });
-}
 
-Future test_transactions_cas_phail(){
-  RedisConnection conn = new RedisConnection();
-  return conn.connect('localhost',6379).then((Command command){   
-    command.send_object(["UNWATCH","key"]);
-    return command.send_object(["SET","key","1"]).then((_){ 
-      Function increment_fun = (){
-        conn = new RedisConnection();
-        return conn.connect('localhost',6379).then((Command command){ 
-          return Future.doWhile((){
-            command.send_object(["WATCH","key"]);
-            return command.send_object(["GET","key"])
-            .then((String v){
-              int i = int.parse(v);
-              return command.multi().then((Transaction trans){
-                trans.send_object(["SET","key",(i+1).toString()]);
-                return trans.exec()
-                .then((v){
-                  if(v == "OK"){
-                    return false; //stop doWhile;
-                  }
-                  return true;
-                });
-              });
-            });
-          });
-        });
-      };
-      Queue q = new Queue();
-      for(int i=0;i<10;++i){
-        q.add(increment_fun());
-      }
-      return Future.wait(q);
-    });
-  });
-}
 
 Future test_transactions(int n){
   RedisConnection conn = new RedisConnection();
@@ -348,6 +291,42 @@ test_pubsub(){
 }
 
 
+Future test_incr_cas(){
+   RedisConnection conn = new RedisConnection();
+   String key = "keycaswewe";
+   return conn.connect("localhost", 6379)
+   .then((Command cmd){
+     cmd.send_object(["SETNX",key,"1"]);
+     return Future.doWhile((){
+       cmd.send_object(["WATCH",key]);
+       return cmd.send_object(["GET",key]).then((String val){
+         int i = int.parse(val);
+         ++i;
+         return cmd.multi()
+         .then((Transaction trans){
+           String val = i.toString();
+           trans.send_object(["SET",key,i.toString()]);
+           return trans.exec().then((var res){
+             if(res == "OK"){
+                return false; //terminate doWhile
+             }
+             return true; //try again
+           });
+         });
+       });
+     });
+   });
+}
+
+
+Future test_incr_cas_multiple(int n){
+  Queue<Future> q =new Queue();
+  for(int i=0;i<n;++i){
+    q.add(test_incr_cas());
+  }
+  return Future.wait(q);
+}
+
 
 
 Future testing_helper(Future f,String name){
@@ -359,7 +338,10 @@ main(){
   q.add(testing_helper(test_transactions(10000), "transation"));
   q.add(testing_helper(test_pubsub(),"pubsub"));
   q.add(testing_helper(test_commands_one_by_one(),"one by one"));
-  q.add(testing_helper(test_transactions_cas_phail(),"transation CAS"));
+  q.add(testing_helper(test_incr_cas(),"transation CAS"));
+  q.add(testing_helper(test_incr_cas_multiple(10),"transation CAS multiple"));
+  
+  
   
   Future.wait(q).then((_){print("done");})
   .then((_){
