@@ -167,8 +167,35 @@ is called after calling `.exec()`.
       });
     });
 
-It is not possible to write code that depends on result of previous command during transaction. In such cases user should employ technique as described http://redis.io/topics/transactions#cas
+It is not possible to write code that depends on result of previous command 
+during transaction. In such cases user should employ technique CAS as described 
+http://redis.io/topics/transactions#cas
+Here is example of INCR command witout using INCR method as explain in prevous link
 
+    RedisConnection conn = new RedisConnection();
+    String key = "keycaswewe";
+    return conn.connect("localhost", 6379)
+    .then((Command cmd){
+      cmd.send_object(["SETNX",key,"1"]);
+      return Future.doWhile((){
+        cmd.send_object(["WATCH",key]);
+        return cmd.send_object(["GET",key]).then((String val){
+          int i = int.parse(val);
+          ++i;
+          return cmd.multi()
+          .then((Transaction trans){
+            String val = i.toString();
+            trans.send_object(["SET",key,i.toString()]);
+            return trans.exec().then((var res){
+              if(res != null){
+                return false; //terminate doWhile
+              }
+              return true; //try again
+            });
+          });
+        });
+      });
+    });
 
 
 ## Unicode
