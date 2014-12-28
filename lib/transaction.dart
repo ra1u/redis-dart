@@ -21,7 +21,8 @@ class Transaction extends Command{
   
   Transaction(Command command):super(command._connection){
     _overrided_command = command;
-    //we override his _connection, during transaction (finding bugis easier) 
+    //we override his _connection, during transaction 
+    //it is best to point out where problem is
     command._connection = new _WarrningConnection();
   }
   
@@ -60,6 +61,7 @@ class Transaction extends Command{
   }
 }
 
+/// Experimental executer for transatcion
 class TransationExecuter {
   List<String> _watchlist = null;
   Function _casf = null;

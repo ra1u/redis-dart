@@ -27,6 +27,7 @@ class RedisConnection{
     });
   }
   
+  /// close connection to Redis server
   Future close(){
     return _socket.close();
   }
@@ -44,7 +45,7 @@ class RedisConnection{
   }
   
   // return future that complets
-  // when all prevous futures finished
+  // when all prevous _future finished
   Future _getdummy(){
     Completer completer = new Completer.sync();
     _future = _future.then((_){
