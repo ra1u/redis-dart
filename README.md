@@ -9,7 +9,7 @@ It is designed to be both fast and simple to use.
 * [transactions](#transactions) wrapper for executing multiple commands in atomic way
 * [pubsub](#pubsub) helper with aditional internal dispatching
 * [unicode](#unicode) - strings are UTF8 encoded when sending and decoded when received
-* [performance](#fast) - this counts as future too
+* [performance](#fast) - this counts as feature too
 * raw commands - this enables sending any command as raw data :)
 
 
