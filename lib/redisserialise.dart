@@ -20,14 +20,14 @@ class RedisSerialise {
      return s;
   }
   
-  static void SerialiseConsumable(object,Function consumer(List s)){
+  static void SerialiseConsumable(object,Function consumer(Iterable s)){
      if(object is String){
        List str = UTF8.encode(object);
        consumer(ASCII.encode("\$" + str.length.toString() + "\r\n"));
        consumer(str);
        consumer(ASCII.encode("\r\n"));
      }
-     else if(object is List){
+     else if(object is Iterable){
        int len=object.length;
        consumer(ASCII.encode("*"+len.toString()+"\r\n"));
        for(int i=0;i<len;++i){
