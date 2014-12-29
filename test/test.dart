@@ -307,7 +307,7 @@ Future test_incr_cas(){
            String val = i.toString();
            trans.send_object(["SET",key,i.toString()]);
            return trans.exec().then((var res){
-             if(res == "OK"){
+             if(res != null){
                 return false; //terminate doWhile
              }
              return true; //try again
