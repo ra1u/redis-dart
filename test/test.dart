@@ -121,6 +121,43 @@ Future test_transactions(int n){
   });
 }
 
+/// test that Command can not be used during transation
+Future test_transactions_failing(){
+  RedisConnection conn = new RedisConnection();
+  const String key = "key_trans" ;
+  return conn.connect('localhost',6379).then((Command command){   
+    return command.multi().then((Transaction trans){
+      trans.send_object(["SET",key,"0"]);
+      try{
+        command.send_object(["GET",key]); //this should throw
+      }
+      catch(e){
+        return "OK";
+      }
+      throw "error : no error"; //I once saw this message in Windows and I liked it
+    });
+  });
+}
+
+/// test that Command can  be used after transation .exec
+Future test_transactions_command_usable(){
+  RedisConnection conn = new RedisConnection();
+  const String key = "key_trans" ;
+  return conn.connect('localhost',6379).then((Command command){   
+    return command.multi().then((Transaction trans){
+      trans.send_object(["SET",key,"0"]);
+      trans.send_object(["GET",key]).then((v){
+        if(v != "0") throw "expecting 0 but got $v";
+      });
+      trans.exec();
+      command.send_object(["GET",key]).then((v){
+        if(v != "0") throw "expecting 0 but got $v";
+      });
+      return conn.close();
+    });
+  });
+}
+
 Future test_commands_one_by_one(){  
   RedisConnection conn = new RedisConnection();
   const String key = "key1b1";
@@ -330,6 +367,7 @@ Future test_incr_cas_multiple(int n){
 
 
 Future testing_helper(Future f,String name){
+  print("start  $name");
   return f.then((_)=>print("PASSED $name"),onError: (e)=>print("ERROR $name => $e"));
 }
 
@@ -340,8 +378,8 @@ main(){
   q.add(testing_helper(test_commands_one_by_one(),"one by one"));
   q.add(testing_helper(test_incr_cas(),"transation CAS"));
   q.add(testing_helper(test_incr_cas_multiple(10),"transation CAS multiple"));
-  
-  
+  q.add(testing_helper(test_transactions_failing(),"transation error handling"));  
+  q.add(testing_helper(test_transactions_command_usable(),"transaction release connection"));
   
   Future.wait(q).then((_){print("done");})
   .then((_){
