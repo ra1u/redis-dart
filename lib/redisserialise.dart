@@ -22,14 +22,18 @@ class RedisSerialise {
   
   static void SerialiseConsumable(object,Function consumer(Iterable s)){
      if(object is String){
-       List str = UTF8.encode(object);
-       consumer(ASCII.encode("\$" + str.length.toString() + "\r\n"));
-       consumer(str);
+       var str = object;
+       consumer(ASCII.encode("\$"));
+       consumer(ASCII.encode(str.length.toString()));
+       consumer(ASCII.encode("\r\n")); 
+       consumer(UTF8.encode(str));
        consumer(ASCII.encode("\r\n"));
      }
      else if(object is Iterable){
        int len=object.length;
-       consumer(ASCII.encode("*"+len.toString()+"\r\n"));
+       consumer(ASCII.encode("*"));
+       consumer(ASCII.encode(len.toString()));
+       consumer(ASCII.encode("\r\n"));
        for(int i=0;i<len;++i){
          SerialiseConsumable(object[i],consumer);
        }
