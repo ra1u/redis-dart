@@ -10,7 +10,7 @@
 part of redis;
 
 class _WarrningConnection {
-  noSuchMethod(_) => throw "Transaction in progress"
+  noSuchMethod(_) => throw "Transaction in progress. "
       "Please complete Transaction with .exec";
 }
 
