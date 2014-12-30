@@ -60,13 +60,7 @@ class RedisConnection{
     return _senddummy();
   }
   
-  Future _send(object){
-    var s = RedisSerialise.Serialise(object);
-    return _sendraw(s);
-  }
-  
   void disable_nagle(bool v){
     _socket.setOption(SocketOption.TCP_NODELAY,v);
   }
-
 }

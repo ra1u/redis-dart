@@ -26,17 +26,18 @@ class Transaction extends Command{
     command._connection = new _WarrningConnection();
   }
   
-  Future _send(object){
+  Future send_object(object){
     Completer c= new Completer();
     _queue.add(c);
-    super._send(object).then((_){}); //todo handle error
+    super.send_object(object).then((_){}); //todo handle error
     return c.future;
   }
   
   Future exec(){
     _overrided_command._connection = this._connection;
-    return super._send(["EXEC"])
+    return super.send_object(["EXEC"])
     .then((list){
+      
       if(list == null){ //we got explicit error from redis
         while(_queue.isNotEmpty){
           Completer c =_queue.removeFirst();
