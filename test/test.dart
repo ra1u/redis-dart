@@ -11,14 +11,13 @@ import 'dart:async';
 import 'dart:collection';
 import '../lib/redis.dart';
 
-test_performance(){
-  const int N = 200000;
+Future test_performance(int n){
+  int N = n;
   int rec=0;
   int start;
   RedisConnection conn = new RedisConnection();
   Duration zero = new Duration(seconds:0);
   return conn.connect('localhost',6379).then((Command command){
-    print("test started, please wait ...");
     start =  new DateTime.now().millisecondsSinceEpoch;
     command.pipe_start();
     command.send_object(["SET","test","0"]);
@@ -37,7 +36,6 @@ test_performance(){
       double perf = N/diff;
       print("$N operations done in $diff s\nperformance $perf/s");
     });
-    command.pipe_end();
     return r;
   });
 }
@@ -387,6 +385,9 @@ main(){
   })
   .then((_){
     //return testing_helper(test_long_running(2000000),"one by one for longer time");
+  })
+  .then((_){
+    return testing_helper(test_performance(200000),"raw performance");
   });
 
 }
