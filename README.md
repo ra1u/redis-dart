@@ -285,6 +285,12 @@ In near future:
 
 ## Changes
 
+### 0.4.2
+- Improved performance by 10%
+- Pubsub interface uses Stream
+- Better test covereage
+- Impoved documentation
+
 ### 0.4.1
 - Command  raise error if used during transaction.
 
