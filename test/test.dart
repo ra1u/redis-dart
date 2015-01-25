@@ -19,7 +19,7 @@ Future test_performance(int n){
   Duration zero = new Duration(seconds:0);
   return conn.connect('localhost',6379).then((Command command){
     start =  new DateTime.now().millisecondsSinceEpoch;
-    command.pipe_start();
+    //command.pipe_start();
     command.send_object(["SET","test","0"]);
     for(int i=1;i<=N;i++){
       command.send_object(["INCR","test"])
@@ -191,11 +191,14 @@ Future test_long_running(int n){
     int N = n;
     int c = 0;
     print("started long running test of $n commands"); 
-    return command.send_object(["SET",key,"0"]).then((_){
       return Future.doWhile((){
         c++;
         if(c>=N){
           print("done");
+          int now = new DateTime.now().millisecondsSinceEpoch;
+          double diff = (now - start)/1000.0;
+          double perf = c/diff;
+          print("ping-pong test performance ${perf.round()} ops/s");
           return new Future(()=>false);
         }
         if(c%40000 == 0){
@@ -207,14 +210,13 @@ Future test_long_running(int n){
             print("ping-pong test running  ${((N-c)/perf).round()}s to complete , performance ${perf.round()} ops/s");
           }
         }
-        return command.send_object(["INCR",key])
+        return command.send_object(["PING"])
         .then((v){
-           if(v != c){
+           if(v != "PONG"){
              throw "expeted $c but got $v";
            }
            return true;
         });
-      });
     });
   });
 }
@@ -354,6 +356,9 @@ Future test_incr_cas(){
 }
 
 
+
+
+
 Future test_incr_cas_multiple(int n){
   Queue<Future> q =new Queue();
   for(int i=0;i<n;++i){
@@ -384,7 +389,7 @@ main(){
     return testing_helper(test_muliconnections(200000,100),"testing performance multiple connections");
   })
   .then((_){
-    //return testing_helper(test_long_running(2000000),"one by one for longer time");
+    //return testing_helper(test_long_running(200000),"one by one for longer time");
   })
   .then((_){
     return testing_helper(test_performance(200000),"raw performance");

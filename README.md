@@ -166,33 +166,49 @@ is called after calling `.exec()`.
         trans.exec();
       });
     });
+    
+### [CAS](http://redis.io/topics/transactions#cas)
 
 It is not possible to write code that depends on result of previous command 
 during transaction. In such cases user should employ technique CAS as described 
 http://redis.io/topics/transactions#cas
-Here is example of INCR command witout using INCR method as explain in prevous link
+Helper called `Cas` is conveniance class for simplifying this pattern.
 
-    RedisConnection conn = new RedisConnection();
-    String key = "keycaswewe";
-    return conn.connect("localhost", 6379)
-    .then((Command cmd){
-      cmd.send_object(["SETNX",key,"1"]);
-      return Future.doWhile((){
-        cmd.send_object(["WATCH",key]);
-        return cmd.send_object(["GET",key]).then((String val){
-          int i = int.parse(val);
-          ++i;
-          return cmd.multi()
-          .then((Transaction trans){
-            String val = i.toString();
-            trans.send_object(["SET",key,i.toString()]);
-            return trans.exec().then((var res){
-              if(res != null){
-                return false; //terminate doWhile
-              }
-              return true; //try again
-            });
-          });
+`Cas` constructor requires `Command` as pattern.  
+
+Then `watch(...)` method should be called.
+`watch` takes two parameters. First parameter is list of keys to watch and
+second parameter is handler to call and to proceed with CAS.
+
+for example:
+
+    cas.watch(["key1,key2,key3"],(){
+      //body of CAS
+    });`
+
+Failure happens if watched key is modified out of transaction and handler is 
+repeted untill command succeed.
+ 'multiAndExec' is used to complete transation. Method takes handler
+ where argument is `Transaction`. 
+ 
+For example:
+ 
+    //last part in body of CAS
+    cas.multiAndExec((Transaction trans){
+      trans.send_object(["SET","key1",v1]);
+      trans.send_object(["SET","key2",v2]);
+      trans.send_object(["SET","key2",v2]);
+    });
+
+Example of INCR without using INCR command.
+
+    Cas cas = new Cas(command);
+    cas.watch(["key"], (){
+      command.send_object(["GET","key"]).then((String val){
+        int i = int.parse(val);
+        i++;
+        cas.multiAndExec((Transaction trans){
+          return trans.send_object(["SET","key",i.toString()]);
         });
       });
     });
