@@ -17,11 +17,11 @@ class Command {
   
   /// Serialise and send data to server  
   /// 
-  /// Data can be any object recognised by Redis
-  /// List, integer, Bulk, null 
-  /// Redis command is List<String>
-  /// example SET
-  /// 
+  /// Data can be any object recognised by Redis    
+  /// List, integer, Bulk, null and composite of those   
+  /// Redis command is List<String>    
+  ///     
+  /// example SET:
   ///     send_object(["SET","key","value"]);
   Future send_object(Object obj) => _connection._sendraw(RedisSerialise.Serialise(obj));
   
