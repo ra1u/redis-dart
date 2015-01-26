@@ -2,29 +2,28 @@ Redis client for dart
 =====================
 
 [Redis](http://redis.io/) protocol  parser and client writent in [dart language](https://www.dartlang.org)  
-It is designed to be both fast and simple to use.
+It is fast and simple by design.
 
-### Currently supported features:
+### Supported features:
 
-* [transactions](#transactions) wrapper for executing multiple commands in atomic way
-* [pubsub](#pubsub) helper with aditional internal dispatching
-* [unicode](#unicode) - strings are UTF8 encoded when sending and decoded when received
-* [performance](#fast) - this counts as feature too
-* raw commands - this enables sending any command as raw data :)
+* [transactions](#transactions) and  [CAS](#cas) (check-and-set) pattern
+* [pubsub](#pubsub) 
+* [unicode](#unicode)
+* [performance](#fast) and [simplicity](#Simple)
 
 
 ## Simple
 
 Redis protocol is composition of array, strings(and bulk) and integers.
-For example executing command `SET key value` is no more that serializing
+For example executing command [SET](http://redis.io/commands/set) is no more that serializing
 array of strings `["SET","key","value"]`. Commands can be executed by
 
     Future f = command.send_object(["SET","key","value"]);
 
 This enables sending any command.
 Before sending commands one need to open connection to redis. I will
-assume that you are running redis server localy on port 6379.
-In this example we will open connecton, execute command 'SET key 0'
+assume that you are running redis server locally on port 6379.
+In this example we will open connection, execute command 'SET key 0'
 and then print result.
 
     import 'package:redis/redis.dart';
@@ -169,16 +168,16 @@ is called after calling `.exec()`.
     
 ### [CAS](http://redis.io/topics/transactions#cas)
 
-It is not possible to write code that depends on result of previous command 
-during transaction. In such cases user should employ technique CAS as described 
-http://redis.io/topics/transactions#cas
-Helper called `Cas` is conveniance class for simplifying this pattern.
+It is impossible to write code that depends on result of previous command 
+during transaction, because all commands are executed at once.
+To overcome this case, user should employ technique
+[CAS](http://redis.io/topics/transactions#cas). `Cas` is convenience class for simplifying this pattern.
 
-`Cas` constructor requires `Command` as pattern.  
+`Cas` constructor requires `Command` as argument.  
 
-Then `watch(...)` method should be called.
-`watch` takes two parameters. First parameter is list of keys to watch and
-second parameter is handler to call and to proceed with CAS.
+Cas implements two methods `watch()` and  `multiAndExec()`.  
+`watch` takes two arguments. First argument is list of keys to watch and
+second argument is handler to call and to proceed with CAS.
 
 for example:
 
@@ -186,9 +185,9 @@ for example:
       //body of CAS
     });`
 
-Failure happens if watched key is modified out of transaction and handler is 
-repeted untill command succeed.
- 'multiAndExec' is used to complete transation. Method takes handler
+Failure happens if watched key is modified out of transaction. When this happens
+ handler is called until final transaction completes.
+ `multiAndExec` is used to complete transation. Method takes handler
  where argument is `Transaction`. 
  
 For example:
@@ -200,7 +199,8 @@ For example:
       trans.send_object(["SET","key2",v2]);
     });
 
-Example of INCR without using INCR command.
+imagine we have the need to atomically increment the value of a key by 1 
+(let's suppose Redis doesn't have [INCR](http://redis.io/commands/incr)).
 
     Cas cas = new Cas(command);
     cas.watch(["key"], (){
@@ -208,11 +208,10 @@ Example of INCR without using INCR command.
         int i = int.parse(val);
         i++;
         cas.multiAndExec((Transaction trans){
-          return trans.send_object(["SET","key",i.toString()]);
+          trans.send_object(["SET","key",i.toString()]);
         });
       });
     });
-
 
 ## Unicode
 
@@ -238,7 +237,7 @@ on same connection. `PubSubCommand` allows commands
 and additional `Stream getStream([String pattern = "*"])`
 
 `getStream` returns `Stream` that sends streams according to optionally provided pattern
-Unlike Redis rich pattern matching, this pattern allows only for optional `*` wildchar
+Unlike Redis rich pattern matching, this pattern allows only for optional `*` wild char
 at the end of string.
 
 Example for receiving and printing all messages
@@ -301,11 +300,15 @@ In near future:
 
 ## Changes
 
+### 0.4.3
+- Cas helper
+- improved unit tests
+
 ### 0.4.2
 - Improved performance by 10%
 - Pubsub interface uses Stream
-- Better test covereage
-- Impoved documentation
+- Better test coverage
+- Improved documentation
 
 ### 0.4.1
 - Command  raise error if used during transaction.
