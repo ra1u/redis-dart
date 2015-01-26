@@ -1,6 +1,5 @@
-import '../lib/redis.dart';
-import 'dart:async';
-import 'dart:collection';
+part of testredis;
+
 
 
 Future testincrcas(){
@@ -19,9 +18,9 @@ Future testincrcas(){
   });
 }
 
-main(){
+Future testincrcasmultiple(){
   RedisConnection conn = new RedisConnection();
-  conn.connect('localhost',6379).then((Command command){ 
+  return conn.connect('localhost',6379).then((Command command){ 
     command.send_object(["UNWATCH","key"]);
     command.send_object(["SET","key","0"]);
     Queue<Future> q =new Queue();
@@ -29,9 +28,9 @@ main(){
     for(int i=0;i<N;i++){
       q.add(testincrcas());
     }
-    Future.wait(q).then((_){
+    return Future.wait(q).then((_){
       return command.send_object(["GET","key"]).then((v){
-        print(v);
+        assert(v == N.toString());
       });
     });
   });
