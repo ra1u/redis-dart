@@ -11,10 +11,12 @@ library testredis;
 import 'dart:async';
 import 'dart:collection';
 import '../lib/redis.dart';
+
 part 'testcas.dart';
 part 'testtransaction.dart';
 part 'testperformance.dart';
 part 'testpubsub.dart';
+part 'testlua.dart';
 
 
 
@@ -24,7 +26,7 @@ Future testing_helper(Future f,String name){
   return f.then((_)=>print("PASSED $name"),onError: (e)=>print("ERROR $name => $e"));
 }
 
-main(){
+main2(){
   Queue<Future> q =new Queue();
   q.add(testing_helper(test_transactions(10000), "transaction"));
   q.add(testing_helper(test_incr_fakecas(),"transaction FAKECAS"));
@@ -47,4 +49,8 @@ main(){
     return testing_helper(test_performance(200000),"raw performance");
   });
 
+}
+
+main(){
+  testluanative();
 }
