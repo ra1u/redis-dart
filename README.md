@@ -2,7 +2,7 @@ Redis client for dart
 =====================
 
 [Redis](http://redis.io/) protocol  parser and client writent in [dart language](https://www.dartlang.org)  
-It is fast and simple by design.
+It is fast and simple by design. It requres no external package to run.
 
 ### Supported features:
 
@@ -13,6 +13,10 @@ It is fast and simple by design.
 
 
 ## Simple
+
+Redis client is simple serialiser and desierialiser of [redis protocol](http://redis.io/topics/protocol).
+There are also some addictional helping functon and classes available to make
+using redis features easier.
 
 Redis protocol is composition of array, strings(and bulk) and integers.
 For example executing command [SET](http://redis.io/commands/set) is no more that serializing
@@ -94,6 +98,34 @@ completed in correct order.
 
 Difference is that there are 5 commands in last examples
 and only one on previous example.
+
+### Generic
+
+Redis responses and request can be arbitrarly nested. 
+Mapping
+
+| Redis         | Dart          |
+| ------------- |:-------------:| 
+| String        | String        | 
+| Integer       | Integer       |  
+| Array         | List          |   
+| Error         | RedisError    |  
+
+\* Both simple string and bulk string from redis are serialied to dart string.
+String from dart to redis is converted to bulk string. UTF8 encoding is used
+in both directions.
+
+Lists can be nested. This is usefull when executing [EVAL](http://redis.io/commands/EVAL) command
+
+    command.send_object(["EVAL","return {KEYS[1],{KEYS[2],{ARGV[1]},ARGV[2]},2}","2","key1","key2","first","second"])
+    .then((response){
+      print(response);
+    });
+    
+result in
+
+    [key1, [key2, [first], second], 2]
+
 
 ## Fast
 
