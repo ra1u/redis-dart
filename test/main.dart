@@ -26,7 +26,7 @@ Future testing_helper(Future f,String name){
   return f.then((_)=>print("PASSED $name"),onError: (e)=>print("ERROR $name => $e"));
 }
 
-main2(){
+main(){
   Queue<Future> q =new Queue();
   q.add(testing_helper(test_transactions(10000), "transaction"));
   q.add(testing_helper(test_incr_fakecas(),"transaction FAKECAS"));
@@ -36,6 +36,7 @@ main2(){
   q.add(testing_helper(test_pubsub(),"pubsub"));
   q.add(testing_helper(test_commands_one_by_one(),"one by one")); 
   q.add(testing_helper(testincrcasmultiple(),"CAS"));
+  q.add(testing_helper(testluanative(),"eval"));
 
   Future.wait(q)
   .then((_){
@@ -43,7 +44,7 @@ main2(){
   })
   .then((_){
     //just increase this number if you have more time (I did, but I lost paitence)
-    return testing_helper(test_long_running(200000),"one by one for longer time");
+    return testing_helper(test_long_running(2000000),"one by one for longer time");
   })
   .then((_){
     return testing_helper(test_performance(200000),"raw performance");
@@ -51,6 +52,3 @@ main2(){
 
 }
 
-main(){
-  testluanative();
-}
