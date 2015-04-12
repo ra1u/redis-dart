@@ -136,3 +136,20 @@ class RedisParser{
   }
 }
 
+class RedisParserBulkAsIterable extends RedisParser{
+  //RedisParser parses bulk as 
+  static Future parseBulk(LazyStream s){
+    return RedisParser.parseInt(s).then((i){ //get len
+      if(i==-1) //null
+        return null; 
+      if(i>=0){ //i of bulk data
+       return s.take_n(i) 
+       .then((lst) => RedisParser.takeCRLF(s,UTF8.decode(lst))); //consume CRLF and return decoded list
+      }
+      else{
+        throw("cant process buld data less than -1");
+      }
+    });
+  }
+}
+

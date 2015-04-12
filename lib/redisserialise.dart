@@ -11,6 +11,16 @@ part of redis;
 
 Utf8Encoder RedisSerialiseEncoder = new Utf8Encoder();
 
+class RedisBulk{
+  Iterable<int> iterable;
+  /// This clase enables sending Iterable<int> 
+  /// as bulk data on redis
+  /// it can be used when sending files for example
+  RedisBulk(this.iterable){
+  }
+}
+
+
 class RedisSerialise {
   static List<int> Serialise(object){
      List s = new List();
@@ -42,6 +52,12 @@ class RedisSerialise {
        consumer(ASCII.encode(":"));
        consumer(ASCII.encode(object.toString()));
        consumer(ASCII.encode("\r\n"));
+     }
+     else if(object is RedisBulk){
+       consumer(ASCII.encode("\$"));
+       consumer(ASCII.encode(object.iterable.length.toString()));
+       consumer(ASCII.encode("\r\n"));
+       consumer(object.iterable);
      }
      else if(object == null){
        consumer(ASCII.encode("\$-1")); //null bulk
