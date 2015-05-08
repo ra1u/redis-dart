@@ -123,24 +123,25 @@ class LazyStreamFast implements LazyStream {
     return n;
   }
   
-  void take_n_helper(int n,Completer comp){
+  Future<List> take_n_helper(int n){
     int remains =  take_n_now(n);
     if(remains==0){
-      comp.complete(_return);
+      var ret = new Future.value(_return);
       _return = new List();  
       _ondata = null;
+      return ret;
     }
     else{
+      Completer comp = new Completer.sync();
       _ondata = (_){
-        take_n_helper(remains,comp);
+        take_n_helper(remains).then((v)=>comp.complete(v));
       };
+      return comp.future;
     }
   }
   
   Future<List> take_n(int n){
-     Completer comp = new Completer();
-     take_n_helper(n,comp);
-     return comp.future;
+     return take_n_helper(n);
   }
   
   //return true if done
@@ -168,23 +169,24 @@ class LazyStreamFast implements LazyStream {
     }
   }
   
-  void take_while_helper(f,Completer comp){
+  Future<List> take_while_helper(Function f){
     bool r =  take_while_now(f);
     if(r){
-      comp.complete(_return);
+      var ret = new Future.value(_return);
       _return = new List();  
       _ondata = null;
+      return ret;
     }
     else{
+      Completer comp = new Completer.sync();
       _ondata = (_){
-        take_while_helper(f,comp);
+        take_while_helper(f).then((v)=>comp.complete(v));
       };
+      return comp.future;
     }
   }
   
-  Future<List> take_while(f){
-     Completer comp = new Completer();
-     take_while_helper(f,comp);
-     return comp.future;
+  Future<List> take_while(Function f){
+     return take_while_helper(f);
   }
 }
