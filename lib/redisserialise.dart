@@ -22,7 +22,15 @@ class RedisBulk{
 
 
 class RedisSerialise {
-  static List<int> Serialise(object){
+  static final  _dollar = ASCII.encode("\$");
+  static final  _star = ASCII.encode("\*");
+  static final  _semicol  = ASCII.encode(":");
+  static final _linesep = ASCII.encode("\r\n");
+  static final _dollarminus1 = ASCII.encode("\$-1");
+  static final List _ints = new List.generate(20,(i)=>ASCII.encode(i.toString()),growable:false);
+
+      
+  static List<List<int>> Serialise(object){
      List s = new List();
      SerialiseConsumable(object,(v){
        s.addAll(v);
@@ -33,37 +41,41 @@ class RedisSerialise {
   static void SerialiseConsumable(object,Function consumer(Iterable s)){
      if(object is String){
        var str = object;
-       consumer(ASCII.encode("\$"));
-       consumer(ASCII.encode(str.length.toString()));
-       consumer(ASCII.encode("\r\n")); 
+       consumer(_dollar);
+       consumer(_IntToRaw(str.length));
+       consumer(_linesep); 
        consumer(UTF8.encode(str));
-       consumer(ASCII.encode("\r\n"));
+       consumer(_linesep);
      }
      else if(object is Iterable){
        int len=object.length;
-       consumer(ASCII.encode("*"));
-       consumer(ASCII.encode(len.toString()));
-       consumer(ASCII.encode("\r\n"));
-       for(int i=0;i<len;++i){
-         SerialiseConsumable(object[i],consumer);
-       }
+       consumer(_star);
+       consumer(_IntToRaw(len));
+       consumer(_linesep);
+       object.forEach((v)=>SerialiseConsumable(v,consumer));
      }
      else if(object is int){
-       consumer(ASCII.encode(":"));
-       consumer(ASCII.encode(object.toString()));
-       consumer(ASCII.encode("\r\n"));
+       consumer(_semicol);
+       consumer(_IntToRaw(object));
+       consumer(_linesep);
      }
      else if(object is RedisBulk){
-       consumer(ASCII.encode("\$"));
-       consumer(ASCII.encode(object.iterable.length.toString()));
-       consumer(ASCII.encode("\r\n"));
+       consumer(_dollar);
+       consumer(_IntToRaw(object.iterable.length));
+       consumer(_linesep);
        consumer(object.iterable);
      }
      else if(object == null){
-       consumer(ASCII.encode("\$-1")); //null bulk
+       consumer(_dollarminus1); //null bulk
      }
      else{
        throw("cant serialise such type");
      }
+  }
+  
+  static Iterable<int> _IntToRaw(int n){
+    //if(i>=0 && i < _ints.length)
+    //   return _ints[i];
+    return ASCII.encode(n.toString());
   }
 }
