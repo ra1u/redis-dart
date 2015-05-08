@@ -90,7 +90,7 @@ class RedisParser{
   }
   
   static Future<int> parseInt(LazyStream s){
-    return parseSimpleString(s).then((str) => int.parse(str));
+    return read_simple(s).then((v)=> _ParseIntRaw(v));
   }
   
   static Future parseBulk(LazyStream s){
@@ -134,6 +134,28 @@ class RedisParser{
       }
     });
   }
+  
+  
+  //maualy parse int from raw data (faster)
+  static int _ParseIntRaw(Iterable<int> arr){
+      int sign = 1;
+      var v = arr.fold(0,(a,b){
+        if(b == 45){
+          if(a != 0)
+            throw("cannot parse int");
+          sign = -1;
+          return 0;
+        }
+        else if ((b >=48) && (b<58)){
+          return a*10+b-48;
+        }
+        else{
+          throw("cannot parse int");
+        }
+      });
+      return v*sign;
+  }
+  
 }
 
 class RedisParserBulkAsIterable extends RedisParser{
