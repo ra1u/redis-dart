@@ -1,6 +1,8 @@
 Redis client for dart
 =====================
 
+[![Join the chat at https://gitter.im/ra1u/redis-dart](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ra1u/redis-dart?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [Redis](http://redis.io/) protocol  parser and client writent in [dart language](https://www.dartlang.org)  
 It is fast and simple by design. It requres no external package to run.
 
