@@ -178,7 +178,7 @@ class LazyStreamFast implements LazyStream {
       return ret;
     }
     else{
-      Completer comp = new Completer.sync();
+      Completer comp = new Completer();
       _ondata = (_){
         take_while_helper(f).then((v)=>comp.complete(v));
       };
