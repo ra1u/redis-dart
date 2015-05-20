@@ -43,7 +43,7 @@ main(){
   .then((_){
     return testing_helper(test_muliconnections(200000,100),"testing performance multiple connections");
   })
-  .then((_)=>testing_helper(test_pubsub_performance(200000),"pubsub performance"))
+  .then((_)=>testing_helper(test_pubsub_performance(50000),"pubsub performance"))
   .then((_){
     //just increase this number if you have more time (I did, but I lost paitence)
     return testing_helper(test_long_running(20000),"one by one for longer time");
