@@ -1,6 +1,6 @@
 part of testredis;
 
-Future test_performance(int n){
+Future test_performance(int n,[bool piping = true]){
   int N = n;
   int rec=0;
   int start;
@@ -8,7 +8,9 @@ Future test_performance(int n){
   Duration zero = new Duration(seconds:0);
   return conn.connect('localhost',6379).then((Command command){
     start =  new DateTime.now().millisecondsSinceEpoch;
-    //command.pipe_start();
+    if(piping){
+      command.pipe_start();
+    }
     command.send_object(["SET","test","0"]);
     for(int i=1;i<=N;i++){
       command.send_object(["INCR","test"])
@@ -24,6 +26,9 @@ Future test_performance(int n){
       double perf = N/diff;
       print("  $N operations done in $diff s\n  performance $perf/s");
     });
+    if(piping){
+      command.pipe_end();
+    }
     return r;
   });
 }
