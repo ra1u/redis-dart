@@ -34,6 +34,7 @@ main(){
   q.add(testing_helper(test_transactions_failing(),"transation error handling")); 
   q.add(testing_helper(test_transactions_command_usable(),"transaction release connection"));
   q.add(testing_helper(test_pubsub(),"pubsub"));
+  q.add(testing_helper(test_pubsub2(),"pubsub2"));
   q.add(testing_helper(test_commands_one_by_one(),"one by one")); 
   q.add(testing_helper(testincrcasmultiple(),"CAS"));
   q.add(testing_helper(testluanative(),"eval"));
@@ -42,13 +43,13 @@ main(){
   .then((_){
     return testing_helper(test_muliconnections(200000,100),"testing performance multiple connections");
   })
+  .then((_)=>testing_helper(test_pubsub_performance(200000),"pubsub performance"))
   .then((_){
     //just increase this number if you have more time (I did, but I lost paitence)
-    return testing_helper(test_long_running(2000000),"one by one for longer time");
+    return testing_helper(test_long_running(20000),"one by one for longer time");
   })
   .then((_){
     return testing_helper(test_performance(200000),"raw performance");
   });
-
 }
 
