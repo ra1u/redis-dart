@@ -23,4 +23,5 @@ part './redisparser.dart';
 part './command.dart';
 part './trie.dart';
 part './subscriber.dart';
+part './subscriber_new.dart';
 part './cas.dart';

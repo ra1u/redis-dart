@@ -113,7 +113,7 @@ Future test_pubsub_performance(int N) {
     RedisConnection conn = new RedisConnection();
     return conn.connect('localhost', 6379);
   }).then((Command cmd) {
-    PubSubCommand pubsub = new PubSubCommand(cmd);
+    PubSub pubsub = new PubSub(cmd);
     pubsub.subscribe(["monkey"]);
     pubsubstream = pubsub.getStream();
     return pubsubstream;
