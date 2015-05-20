@@ -42,7 +42,7 @@ class PubSubCommand{
   }
   
   void subscribe(List<String> s){
-    sendcmd_and_list("PSUBSCRIBE",s);
+    sendcmd_and_list("SUBSCRIBE",s);
   }
   
   void  psubscribe(List<String> s){
