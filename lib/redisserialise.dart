@@ -30,8 +30,8 @@ class RedisSerialise {
   static final List _ints = new List.generate(20,(i)=>ASCII.encode(i.toString()),growable:false);
 
       
-  static List<List<int>> Serialise(object){
-     List s = new List();
+  static List<int> Serialise(object){
+     List<int> s = new List();
      SerialiseConsumable(object,(v){
        s.addAll(v);
      });
