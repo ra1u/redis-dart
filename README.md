@@ -334,6 +334,12 @@ In near future:
 
 ## Changes
 
+### 0.4.4
+- bugfix for subscribe -> https://github.com/ra1u/redis-dart/issues/3
+- performance improvement
+- add PubSub class (simpler/shorter/faster?  PubSubCommand)
+- doc update and example of EVAL
+
 ### 0.4.3
 - Cas helper
 - improved unit tests
