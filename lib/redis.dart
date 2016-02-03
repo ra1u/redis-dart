@@ -21,7 +21,8 @@ part './lazystream.dart';
 part './transaction.dart';
 part './redisparser.dart';
 part './command.dart';
-part './trie.dart';
-part './subscriber.dart';
-part './subscriber_new.dart';
+part './pubsub.dart';
 part './cas.dart';
+
+part './deprecated/trie.dart';
+part './deprecated/pubsubcommand.dart';
