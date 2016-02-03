@@ -11,18 +11,15 @@ Future test_transactions(int n){
     return conn2.connect('localhost',6379).then((Command command2){ 
       return command.multi().then((Transaction trans){
           trans.send_object(["SET",key,"0"]);
-          command2.send_object(["SET",key,"0"]);
+          command2.send_object(["SET",key,"10"]); //out of transaction set
           for(int i=1;i<=N;++i){
             trans.send_object(["INCR",key]).then((v){
               if(v!=i){
                 throw("transation value is $v instead of $i");
               }
             });
-            command2.send_object(["INCR",key]).then((v){
-              if(v!=i){
-                throw("connection value is $v instead of $i");
-              }
-            });
+            //here we INCR value out of transaction
+            command2.send_object(["INCR",key]);
           }
           trans.send_object(["GET",key]).then((v){
             if(v!=N.toString()){

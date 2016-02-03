@@ -1,6 +1,6 @@
 part of testredis;
 
-Future test_pubsub() {
+Future test_pubsubDeprecated() {
   RedisConnection conn1 = new RedisConnection();
   RedisConnection conn2 = new RedisConnection();
   Command command; //on conn1
@@ -63,11 +63,14 @@ Future test_pubsub() {
 Future _test_rec_msg(Stream s, List l) {
   var it = l.iterator;
   return s
+      .where((v) => (v[0] == "message"))
       .take(l.length)
-      .every((v) => it.moveNext() && (it.current.toString() == v.toString()));
+      .every((v){
+          return it.moveNext() && (it.current.toString() == v.toString());
+        });
 }
 
-Future test_pubsub2() {
+Future test_pubsub() {
   Command command; //on conn1 tosend commands
   Stream pubsubstream; //on conn2 to rec c
 
@@ -77,7 +80,7 @@ Future test_pubsub2() {
     RedisConnection conn = new RedisConnection();
     return conn.connect('localhost', 6379);
   }).then((Command cmd) {
-    PubSubCommand pubsub = new PubSubCommand(cmd);
+    PubSub pubsub = new PubSub(cmd);
     pubsub.subscribe(["monkey"]);
     pubsubstream = pubsub.getStream();
     return pubsubstream; //TODO fix logic correct, no just working
@@ -112,7 +115,7 @@ Future test_pubsub_performance(int N) {
     RedisConnection conn = new RedisConnection();
     return conn.connect('localhost', 6379);
   }).then((Command cmd) {
-    PubSubCommand pubsub = new PubSubCommand(cmd);
+    PubSub pubsub = new PubSub(cmd);
     pubsub.subscribe(["monkey"]);
     pubsubstream = pubsub.getStream();
     return pubsubstream;

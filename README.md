@@ -256,7 +256,7 @@ array using UTF8 encoding. This makes ascii string compatible in both direction.
 ## [PubSub](http://redis.io/topics/pubsub)
 
 PubSub is helper for dispatching received messages.
-First, create new `PubSubCommand` from existing `Command`
+First, create new `PubSub` from existing `Command`
 
     PubSubCommand pubsub=new PubSubCommand(command);
 
@@ -268,60 +268,21 @@ on same connection. `PubSubCommand` allows commands
     void unsubscribe(List<String> channels)
     void punsubscribe(List<String> channels)
 
-and additional `Stream getStream([String pattern = "*"])`
+and additional `Stream getStream()`
 
-`getStream` returns `Stream` that sends streams according to optionally provided pattern
-Unlike Redis rich pattern matching, this pattern allows only for optional `*` wild char
-at the end of string.
+`getStream` returns `Stream` that sends [dart streams](https://api.dartlang.org/1.14.0/dart-async/Stream-class.html)
 
-Example for receiving and printing all messages
+Example for receiving and printing messages
 
     pubsub.getStream().listen((message){
       print("message: $message");
     });
 
- Here is complete example from test code.
+Sending messages can be done from different connection for example
 
-    import 'package:redis/redis.dart';
+    command.send_object(["PUBLISH","monkey","banana"]);
 
-    main(){
-      RedisConnection conn1 = new RedisConnection();
-      RedisConnection conn2 = new RedisConnection();
-      Command command; //on conn1
-      PubSubCommand pubsub; //on conn2
 
-      conn1.connect('localhost',6379)
-      .then((Command cmd){
-        command = cmd;
-        return conn2.connect('localhost',6379);
-      })
-      .then((Command cmd){
-        pubsub=new PubSubCommand(cmd);
-        pubsub.psubscribe(["a*","b*","*"]);
-        pubsub.getStream().listen((msg){
-          print("Message for \"*\"  - msg: $msg");
-         });
-
-        pubsub.getStream("a*").listen((msg){
-          print("Message for \"a*\" - msg: $msg");
-        });
-      })
-      .then((_){
-        command.send_object(["PUBLISH","aaa","aa"]);
-        command.send_object(["PUBLISH","bbb","bb"]);
-        command.send_object(["PUBLISH","ccc","cc"]);
-      });
-    }
-
-Output is
-
-    Message for "*"  - msg: [pmessage, a*, aaa, aa]
-    Message for "a*" - msg: [pmessage, a*, aaa, aa]
-    Message for "*"  - msg: [pmessage, *, aaa, aa]
-    Message for "a*" - msg: [pmessage, *, aaa, aa]
-    Message for "*"  - msg: [pmessage, b*, bbb, bb]
-    Message for "*"  - msg: [pmessage, *, bbb, bb]
-    Message for "*"  - msg: [pmessage, *, ccc, cc]
 
 ## Todo
 In near future:
