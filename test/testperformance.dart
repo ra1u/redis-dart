@@ -5,7 +5,6 @@ Future test_performance(int n,[bool piping = true]){
   int rec=0;
   int start;
   RedisConnection conn = new RedisConnection();
-  Duration zero = new Duration(seconds:0);
   return conn.connect('localhost',6379).then((Command command){
     start =  new DateTime.now().millisecondsSinceEpoch;
     if(piping){
@@ -22,9 +21,10 @@ Future test_performance(int n,[bool piping = true]){
     }
     //last command will be executed and then processed last
     Future r = command.send_object(["GET","test"]).then((v){
-      double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
-      double perf = N/diff;
-      print("  $N operations done in $diff s\n  performance $perf/s");
+      if(N.toString() != v.toString()){
+        throw("wrong received value, we got $v  instead of $N");
+      }
+      return true;
     });
     if(piping){
       command.pipe_end();
@@ -33,17 +33,18 @@ Future test_performance(int n,[bool piping = true]){
   });
 }
 
+Function test_muliconnections_con(int conn){
+  return (int cmd) => test_muliconnections(cmd,conn);
+}
+
 Future test_muliconnections(int commands,int connections){
   int N = commands;
   int K = connections;
-  int start;
   int c=0;
   
-  start =  new DateTime.now().millisecondsSinceEpoch;
   Completer completer = new Completer();
   RedisConnection conn = new RedisConnection();
   conn.connect('localhost',6379).then((Command command){
-    print("  multiple connections test started - $K connections, $N commands");
     return command.set("var","0");
   })
   .then((_){
@@ -56,9 +57,6 @@ Future test_muliconnections(int commands,int connections){
           .then((v){
             c++;
             if(c==N){
-              double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
-              double perf = N/diff;
-              print("  $N operations done in $diff s\n  performance $perf/s");
               command.get("var").then((v){
                 assert(v == N.toString());
                 completer.complete("ok");

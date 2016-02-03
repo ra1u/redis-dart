@@ -15,6 +15,7 @@ class RedisConnection{
   Socket _socket = null;
   LazyStream _stream = null;
   Future _future = new Future.value();
+  RedisParser parser = new RedisParser();
   
   /// connect on Redis server as client
   Future<Command> connect(host, port){

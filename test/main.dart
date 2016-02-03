@@ -19,7 +19,19 @@ part 'testpubsub.dart';
 part 'testlua.dart';
 
 
-
+Future testing_performance(Function fun,String name, int rep){
+   Future r = new Future((){
+       print("  starting performance test $name with $rep");
+       int start = new DateTime.now().millisecondsSinceEpoch;
+       return fun(rep).then((_){
+         int now = new DateTime.now().millisecondsSinceEpoch;
+         double diff = (now - start)/1000.0;
+         double perf = rep/diff;
+         print("  $name performance test complete , performance ${perf.round()} ops/s");
+       });
+   });
+   return testing_helper(r,name);
+}
 
 Future testing_helper(Future f,String name){
   print("start  $name");
@@ -41,15 +53,15 @@ main(){
 
   Future.wait(q)
   .then((_){
-    return testing_helper(test_muliconnections(200000,100),"testing performance multiple connections");
+    return testing_performance(test_muliconnections_con(100),"100 connections",200000);
   })
-  .then((_)=>testing_helper(test_pubsub_performance(50000),"pubsub performance"))
+  .then((_)=>testing_performance(test_pubsub_performance,"pubsub performance",20000))
   .then((_){
     //just increase this number if you have more time (I did, but I lost paitence)
-    return testing_helper(test_long_running(20000),"one by one for longer time");
+    return testing_helper(test_long_running(1000),"one by one for longer time");
   })
   .then((_){
-    return testing_helper(test_performance(200000),"raw performance");
+    return testing_performance(test_performance,"raw performance",200000);
   });
 }
 

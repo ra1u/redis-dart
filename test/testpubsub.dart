@@ -106,14 +106,13 @@ Future test_pubsub2() {
 Future test_pubsub_performance(int N) {
   Command command; //on conn1 tosend commands
   Stream pubsubstream; //on conn2 to rec c
-  int start;
   RedisConnection conn = new RedisConnection();
   return conn.connect('localhost', 6379).then((Command cmd) {
     command = cmd;
     RedisConnection conn = new RedisConnection();
     return conn.connect('localhost', 6379);
   }).then((Command cmd) {
-    PubSub pubsub = new PubSub(cmd);
+    PubSubCommand pubsub = new PubSubCommand(cmd);
     pubsub.subscribe(["monkey"]);
     pubsubstream = pubsub.getStream();
     return pubsubstream;
@@ -124,7 +123,6 @@ Future test_pubsub_performance(int N) {
           .then((v) => v[1] == 0);
     }).then((_) {
       //at thuis point one is subscribed
-      start = new DateTime.now().millisecondsSinceEpoch;
       for(int i=0;i<N;++i){
         command.send_object(["PUBLISH", "monkey", "banana"]);
       }
@@ -135,20 +133,8 @@ Future test_pubsub_performance(int N) {
     var subscription;
     Completer comp = new Completer();
     subscription = pubsubstream.listen((var data){
-      /*
-      if(data.length != expected.length)
-          throw "wrong length";
-      for(int i = 0;i<expected.length;++i){
-        if(data[i] != expected[i]){
-          throw "wrong length";
-        }
-      }*/
       counter++;
       if(counter == N){
-        int now = new DateTime.now().millisecondsSinceEpoch;
-        double diff = (now - start)/1000.0;
-        double perf = N/diff;
-        print("  pubsub perf complete complete , performance ${perf.round()} ops/s");
         subscription.cancel();
         comp.complete("OK"); 
       }
