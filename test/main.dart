@@ -11,6 +11,7 @@ library testredis;
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 import '../lib/redis.dart';
 
 part 'testcas.dart';
@@ -37,7 +38,7 @@ Future testing_performance(Function fun,String name, int rep){
 
 Future testing_helper(Future f,String name){
   print("start  $name");
-  return f.then((_)=>print("PASSED $name"),onError: (e)=>print("ERROR $name => $e"));
+  return f.then((_)=>print("PASSED $name"),onError: (e){print("ERROR $name => $e"); throw(e);});
 }
 
 main(){
@@ -61,10 +62,18 @@ main(){
   .then((_)=>testing_performance(test_pubsub_performance,"pubsub performance",20000))
   .then((_){
     //just increase this number if you have more time (I did, but I lost paitence)
-    return testing_helper(test_long_running(1000),"one by one for longer time");
+    return testing_helper(test_long_running(20000),"one by one for longer time");
   })
   .then((_){
     return testing_performance(test_performance,"raw performance",200000);
+  })
+  .then((_){
+    print("all tests PASSED!");
+    exit(0);
+  })
+  .catchError((e){
+    print("some of tests FAILED! $e");
+    exit(-1);
   });
 }
 
