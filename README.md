@@ -296,7 +296,7 @@ In near future:
 ## Changes
 
 ### 0.4.5
-- unicode bugfix -> https://github.com/ra1u/redis-dart/issues/3
+- unicode bugfix -> https://github.com/ra1u/redis-dart/issues/4
 - update PubSub doc
 - improve tests
 
