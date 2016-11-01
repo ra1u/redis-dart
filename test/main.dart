@@ -10,6 +10,7 @@
 library testredis;
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 import '../lib/redis.dart';
 
 part 'testcas.dart';
@@ -17,6 +18,7 @@ part 'testtransaction.dart';
 part 'testperformance.dart';
 part 'testpubsub.dart';
 part 'testlua.dart';
+part 'testunicode.dart';
 
 
 Future testing_performance(Function fun,String name, int rep){
@@ -43,6 +45,7 @@ main(){
   q.add(testing_helper(test_transactions(10000), "transaction"));
   q.add(testing_helper(test_incr_fakecas(),"transaction FAKECAS"));
   q.add(testing_helper(test_incr_fakecas_multiple(10),"transation FAKECAS multiple"));
+  q.add(testing_helper(test_unicode(), "unicode"));
   q.add(testing_helper(test_transactions_failing(),"transation error handling")); 
   q.add(testing_helper(test_transactions_command_usable(),"transaction release connection"));
   q.add(testing_helper(test_pubsub(),"pubsub"));

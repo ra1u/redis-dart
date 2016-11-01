@@ -40,11 +40,11 @@ class RedisSerialise {
   
   static void SerialiseConsumable(object,Function consumer(Iterable s)){
      if(object is String){
-       var str = object;
+       var data = UTF8.encode(object);
        consumer(_dollar);
-       consumer(_IntToRaw(str.length));
+       consumer(_IntToRaw(data.length));
        consumer(_linesep); 
-       consumer(UTF8.encode(str));
+       consumer(data);
        consumer(_linesep);
      }
      else if(object is Iterable){
