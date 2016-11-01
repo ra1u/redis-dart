@@ -258,10 +258,10 @@ array using UTF8 encoding. This makes ascii string compatible in both direction.
 PubSub is helper for dispatching received messages.
 First, create new `PubSub` from existing `Command`
 
-    PubSubCommand pubsub=new PubSubCommand(command);
+    PubSub pubsub=new PubSub(command);
 
-Once `PubSubCommand` is created, old `Command` is invalidated and should not be used
-on same connection. `PubSubCommand` allows commands
+Once `PubSub` is created, `Command` is invalidated and should not be used
+on same connection. `PubSub` allows commands
 
     void subscribe(List<String> channels)
     void psubscribe(List<String> channels)
@@ -270,7 +270,7 @@ on same connection. `PubSubCommand` allows commands
 
 and additional `Stream getStream()`
 
-`getStream` returns `Stream` that sends [dart streams](https://api.dartlang.org/1.14.0/dart-async/Stream-class.html)
+`getStream` returns [`Stream`](https://api.dartlang.org/stable/dart-async/Stream-class.html)
 
 Example for receiving and printing messages
 
@@ -294,6 +294,11 @@ In near future:
 - Spell check code
 
 ## Changes
+
+### 0.4.5
+- unicode bugfix -> https://github.com/ra1u/redis-dart/issues/3
+- update PubSub doc
+- improve tests
 
 ### 0.4.4
 - bugfix for subscribe -> https://github.com/ra1u/redis-dart/issues/3
