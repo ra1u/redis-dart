@@ -3,8 +3,8 @@ Redis client for dart
 
 [![Join the chat at https://gitter.im/ra1u/redis-dart](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ra1u/redis-dart?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[Redis](http://redis.io/) protocol  parser and client writent in [dart language](https://www.dartlang.org)  
-It is fast and simple by design. It requres no external package to run.
+[Redis](http://redis.io/) protocol  parser and client written in [dart language](https://www.dartlang.org)  
+It is fast and simple by design. It requires no external package to run.
 
 ### Supported features:
 
@@ -16,20 +16,20 @@ It is fast and simple by design. It requres no external package to run.
 
 ## Simple
 
-Redis client is simple serialiser and desierialiser of [redis protocol](http://redis.io/topics/protocol).
-There are also some addictional helping functon and classes available to make
+Redis client is simple serialiser and deserialiser of [redis protocol](http://redis.io/topics/protocol).
+There are also some additional helper functions and classes available to make
 using redis features easier.
 
-Redis protocol is composition of array, strings(and bulk) and integers.
-For example executing command [SET](http://redis.io/commands/set) is no more that serializing
+Redis protocol is a composition of array, strings (and bulk) and integers.
+For example executing command [SET](http://redis.io/commands/set) is no more than serializing
 array of strings `["SET","key","value"]`. Commands can be executed by
 
     Future f = command.send_object(["SET","key","value"]);
 
 This enables sending any command.
-Before sending commands one need to open connection to redis. I will
-assume that you are running redis server locally on port 6379.
-In this example we will open connection, execute command 'SET key 0'
+Before sending commands one needs to open a connection to redis. I will
+assume that you are running a redis server locally on port 6379.
+In this example we will open a connection, execute the command 'SET key 0'
 and then print result.
 
     import 'package:redis/redis.dart';
@@ -41,7 +41,7 @@ and then print result.
         )
     }
 
-Due to simple implementation it is possible to execute command on different ways.
+Due to the simple implementation, it is possible to execute commands in different ways.
 One an most straightforward way is one after another
 
     RedisConnection conn = new RedisConnection();
@@ -69,10 +69,10 @@ One an most straightforward way is one after another
     });
 
 
-Other possibility is to execute commands one by one without waiting for previous
-command to complete. We can send all commands  without need to wait for
-result and we can be still sure, that response handled by `Future` will be
-completed in correct order.
+Other possibility is to execute commands one by one without waiting for the previous
+command to complete. We can send all commands without needing to wait for
+a result, and we can still be sure that the response handled by `Future` will be
+completed in the correct order.
 
     RedisConnection conn = new RedisConnection();
     conn.connect('localhost',6379).then((Command command){
@@ -99,11 +99,11 @@ completed in correct order.
     });
 
 Difference is that there are 5 commands in last examples
-and only one on previous example.
+and only one in the previous example.
 
 ### Generic
 
-Redis responses and request can be arbitrarly nested. 
+Redis responses and requests can be arbitrarily nested. 
 Mapping
 
 | Redis         | Dart          |
@@ -124,16 +124,16 @@ Lists can be nested. This is usefull when executing [EVAL](http://redis.io/comma
       print(response);
     });
     
-result in
+results in
 
     [key1, [key2, [first], second], 2]
 
 
 ## Fast
 
-Tested on laptop can execute and process 130K INCR operations per second.
+Tested on a laptop, we can execute and process 130K INCR operations per second.
 
-This is code that yields such result
+This is the code that yields such a result
 
     const int N = 200000;
     int start;
@@ -163,7 +163,7 @@ This is code that yields such result
 We are not just sending 200K commands here, but also checking result of every send command.
 
 Using `command.pipe_start();` and  `command.pipe_end();` is nothing more
-that enabling and disabling [Nagle's algorhitm](https://en.wikipedia.org/wiki/Nagle%27s_algorithm)
+than enabling and disabling [Nagle's algorhitm](https://en.wikipedia.org/wiki/Nagle%27s_algorithm)
 on socket. By default it is disabled to achieve shortest possible latency at expense
 of having more TCP packets and extra overhead. Enabling Nagle's algorithm
 during transactions can achieve greater data throughput and less overhead.
@@ -171,14 +171,14 @@ during transactions can achieve greater data throughput and less overhead.
 ## [Transactions](http://redis.io/topics/transactions)
 
 Transactions by redis protocol
-are started by command MULTI and then completed with command EXEC.
+are started by the command MULTI and then completed with the command EXEC.
 `.multi()`, `.exec()` and `class Transaction` are implemented as
-additional helpers for checking result of each command executed during transaction.
+additional helpers for checking the result of each command executed during transaction.
 
     Future<Transaction> Command.multi();
 
-Executing `multi()` will return Future with `Transaction`. This class should be used
-to execute commands by calling `.send_object`. It returns Future that
+Executing `multi()` will return a `Future` with `Transaction`. This class should be used
+to execute commands by calling `.send_object`. It returns a `Future` that
 is called after calling `.exec()`.
 
     import 'package:redis/redis.dart';
@@ -202,15 +202,15 @@ is called after calling `.exec()`.
     
 ### [CAS](http://redis.io/topics/transactions#cas)
 
-It is impossible to write code that depends on result of previous command 
-during transaction, because all commands are executed at once.
+It is impossible to write code that depends on the result of the previous command 
+during a transaction, because all commands are executed at once.
 To overcome this case, user should employ technique
-[CAS](http://redis.io/topics/transactions#cas). `Cas` is convenience class for simplifying this pattern.
+[CAS](http://redis.io/topics/transactions#cas). `Cas` is a convenience class for simplifying this pattern.
 
 `Cas` constructor requires `Command` as argument.  
 
 Cas implements two methods `watch()` and  `multiAndExec()`.  
-`watch` takes two arguments. First argument is list of keys to watch and
+`watch` takes two arguments. First argument is list of keys to watch, and
 second argument is handler to call and to proceed with CAS.
 
 for example:
@@ -219,8 +219,8 @@ for example:
       //body of CAS
     });`
 
-Failure happens if watched key is modified out of transaction. When this happens
- handler is called until final transaction completes.
+Failure happens if the watched key is modified out of the transaction. When this happens 
+the handler is called until final transaction completes.
  `multiAndExec` is used to complete transation. Method takes handler
  where argument is `Transaction`. 
  
@@ -255,13 +255,13 @@ array using UTF8 encoding. This makes ascii string compatible in both direction.
 
 ## [PubSub](http://redis.io/topics/pubsub)
 
-PubSub is helper for dispatching received messages.
-First, create new `PubSub` from existing `Command`
+PubSub is a helper for dispatching received messages.
+First, create a new `PubSub` from an existing `Command`
 
     PubSub pubsub=new PubSub(command);
 
 Once `PubSub` is created, `Command` is invalidated and should not be used
-on same connection. `PubSub` allows commands
+on the same connection. `PubSub` allows commands
 
     void subscribe(List<String> channels)
     void psubscribe(List<String> channels)
@@ -283,9 +283,8 @@ Sending messages can be done from different connection for example
     command.send_object(["PUBLISH","monkey","banana"]);
 
 
-
 ## Todo
-In near future:
+In the near future:
 
 - Better documentation
 - Implement all "generic commands" with named
