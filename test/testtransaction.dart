@@ -83,7 +83,7 @@ Future test_incr_fakecas(){
      cmd.send_object(["SETNX",key,"1"]);
      return Future.doWhile((){
        cmd.send_object(["WATCH",key]);
-       return cmd.send_object(["GET",key]).then((String val){
+       return cmd.send_object(["GET",key]).then((val){
          int i = int.parse(val);
          ++i;
          return cmd.multi()

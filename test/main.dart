@@ -50,7 +50,6 @@ main(){
   q.add(testing_helper(test_transactions_failing(),"transation error handling")); 
   q.add(testing_helper(test_transactions_command_usable(),"transaction release connection"));
   q.add(testing_helper(test_pubsub(),"pubsub"));
-  q.add(testing_helper(test_pubsubDeprecated(),"pubsubDeprected"));
   q.add(testing_helper(test_commands_one_by_one(),"one by one")); 
   q.add(testing_helper(testincrcasmultiple(),"CAS"));
   q.add(testing_helper(testluanative(),"eval"));

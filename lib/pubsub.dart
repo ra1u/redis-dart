@@ -1,8 +1,13 @@
 part of redis;
 
+class _WarrningPubSubInProgress {
+  noSuchMethod(_) => throw "PubSub on this connaction in progress"
+      "It is not allowed to issue commands trough this handler";
+}
+
 class PubSub{
   Command _command;
-  StreamController _stream_controler = new StreamController();
+  StreamController<List> _stream_controler = new StreamController<List>();
   Future _forever;
   
   PubSub(Command command){
@@ -13,7 +18,7 @@ class PubSub{
       // listen and process forever
       return Future.doWhile((){
           return _command._connection._senddummy()
-          .then((var data){
+          .then<bool>((var data){
               _stream_controler.add(data);
                return true;
           });

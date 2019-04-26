@@ -23,6 +23,3 @@ part './redisparser.dart';
 part './command.dart';
 part './pubsub.dart';
 part './cas.dart';
-
-part './deprecated/trie.dart';
-part './deprecated/pubsubcommand.dart';

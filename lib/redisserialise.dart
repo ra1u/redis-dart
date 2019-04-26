@@ -22,6 +22,8 @@ class RedisBulk{
 
 
 class RedisSerialise {
+  static final ASCII = const AsciiCodec();
+  static final UTF8 = const Utf8Codec();
   static final  _dollar = ASCII.encode("\$");
   static final  _star = ASCII.encode("\*");
   static final  _semicol  = ASCII.encode(":");

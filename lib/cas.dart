@@ -12,7 +12,7 @@ part of redis;
 
 class Cas{
   Command _cmd;
-  Completer _completer_bool;
+  Completer<bool> _completer_bool;
   
   /// Class for  CAS  check-and-set pattern  
   /// Construct with Command and call  
@@ -23,7 +23,7 @@ class Cas{
   /// function that is executed  
   /// during CAS opertion  
   /// 
-  Future watch(List<String> watching_keys, var func){
+  Future watch(List<String> watching_keys,  func()){
      //return _cmd.send_object(["TRANS"]);
     List<String> watchcmd = ["WATCH"];
     watchcmd.addAll(watching_keys);
@@ -43,7 +43,8 @@ class Cas{
   /// complete transaction
   /// 
   /// !!! DO NOT call exec() on Transation
-  Future multiAndExec(func(Transation)){
+  
+  Future multiAndExec(Future func(Transation)){
     return _cmd.multi().then((Transaction _trans){
       func(_trans);
       return _trans.exec().then((var resp){

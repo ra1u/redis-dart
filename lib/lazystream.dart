@@ -16,6 +16,8 @@
 part of redis;
 
 
+// Thi class probably does not work with Dart 2.0 but is also not used
+// just as a reference
 class LazyStream{
   Stream _stream;
   StreamSubscription _sub;
@@ -42,7 +44,7 @@ class LazyStream{
     return comp.future;
   }
   
-  Future<List> take_while(pred){
+  Future<List> take_while(bool Function(dynamic) pred){
     List r=[];
     Completer comp = new Completer();
     _sub.onData((e){
@@ -68,18 +70,19 @@ class LazyStream{
 //iterator is used for storing current position
 
 class LazyStreamFast implements LazyStream {
-  Stream _stream;
-  Queue<List> _queue;
+  Stream<List<int>> _stream;
+  Queue<List<int>> _queue;
   var _ondata;
   Iterator _iter;
-  List _return;
+  List<int> _return;
   StreamSubscription _sub;
   
   LazyStreamFast(){}
   LazyStreamFast.fromstream(this._stream){
-    _return = new List();
-    _queue = new Queue();
-    _sub = _stream.listen((List data){
+    _return = new List<int>();
+    _queue = new Queue<List<int>>();
+    _sub = _stream.listen((data){
+      assert(data is List<int>);
       if(data.length == 0)
         return;
       if(_queue.isEmpty){
@@ -123,16 +126,16 @@ class LazyStreamFast implements LazyStream {
     return n;
   }
   
-  Future<List> take_n_helper(int n){
+  Future<List<int>> take_n_helper(int n){
     int remains =  take_n_now(n);
     if(remains==0){
-      var ret = new Future.value(_return);
-      _return = new List();  
+      var ret = new Future<List<int>>.value(_return);
+      _return = new List<int>();  
       _ondata = null;
       return ret;
     }
     else{
-      Completer comp = new Completer.sync();
+      Completer<List<int>> comp = new Completer<List<int>>.sync();
       _ondata = (_){
         take_n_helper(remains).then((v)=>comp.complete(v));
       };
@@ -140,12 +143,12 @@ class LazyStreamFast implements LazyStream {
     }
   }
   
-  Future<List> take_n(int n){
+  Future<List<int>> take_n(int n){
      return take_n_helper(n);
   }
   
   //return true if done
-  bool take_while_now(f){
+  bool take_while_now(bool f(int)){
     if(_queue.isEmpty){
       return false;
     }
@@ -169,7 +172,7 @@ class LazyStreamFast implements LazyStream {
     }
   }
   
-  Future<List> take_while_helper(Function f){
+  Future<List<int>> take_while_helper(Function f){
     bool r =  take_while_now(f);
     if(r){
       var ret = new Future.value(_return);
@@ -186,7 +189,7 @@ class LazyStreamFast implements LazyStream {
     }
   }
   
-  Future<List> take_while(Function f){
+  Future<List> take_while( bool Function(dynamic) f){
      return take_while_helper(f);
   }
 }

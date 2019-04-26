@@ -7,10 +7,10 @@ Future testincrcas(){
   return conn.connect('localhost',6379).then((Command command){ 
     Cas cas = new Cas(command);
     return cas.watch(["key"], (){
-      command.send_object(["GET","key"]).then((String val){
+      command.send_object(["GET","key"]).then((val){
         int i = int.parse(val);
         i++;
-        cas.multiAndExec((Transaction trans){
+        cas.multiAndExec(( trans){
           return trans.send_object(["SET","key",i.toString()]);
         });
       });

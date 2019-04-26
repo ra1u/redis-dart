@@ -17,6 +17,7 @@ class RedisError{
 
 
 class RedisParser{
+  static final UTF8 = const Utf8Codec();
   static const int CR = 13;
   static const int LF = 10;
   
@@ -82,7 +83,9 @@ class RedisParser{
   }
   
   static Future<String> parseSimpleString(LazyStream s){
-    return read_simple(s).then((v) => UTF8.decode(v));
+    return read_simple(s).then((v){
+         return  UTF8.decode(v) as String;
+    });
   }
   
   static Future<RedisError> parseError(LazyStream s){
@@ -90,7 +93,7 @@ class RedisParser{
   }
   
   static Future<int> parseInt(LazyStream s){
-    return read_simple(s).then((v)=> _ParseIntRaw(v));
+    return read_simple(s).then((v)=> _ParseIntRaw(v) as int);
   }
   
   static Future parseBulk(LazyStream s){
@@ -158,20 +161,5 @@ class RedisParser{
   
 }
 
-class RedisParserBulkAsIterable extends RedisParser{
-  //RedisParser parses bulk as 
-  static Future parseBulk(LazyStream s){
-    return RedisParser.parseInt(s).then((i){ //get len
-      if(i==-1) //null
-        return null; 
-      if(i>=0){ //i of bulk data
-       return s.take_n(i) 
-       .then((lst) => RedisParser.takeCRLF(s,UTF8.decode(lst))); //consume CRLF and return decoded list
-      }
-      else{
-        throw("cant process buld data less than -1");
-      }
-    });
-  }
-}
+
 
