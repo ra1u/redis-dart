@@ -294,6 +294,9 @@ In the near future:
 
 ## Changes
 
+### 1.0.0
+- dart 2.0 support
+
 ### 0.4.5
 - unicode bugfix -> https://github.com/ra1u/redis-dart/issues/4
 - update PubSub doc
