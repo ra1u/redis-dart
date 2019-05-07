@@ -13,7 +13,6 @@ It is fast and simple by design. It requires no external package to run.
 * [unicode](#unicode)
 * [performance](#fast) and [simplicity](#Simple)
 
-
 ## Simple
 
 Redis client is simple serialiser and deserialiser of [redis protocol](http://redis.io/topics/protocol).
@@ -131,7 +130,7 @@ results in
 
 ## Fast
 
-Tested on a laptop, we can execute and process 130K INCR operations per second.
+Tested on a laptop, we can execute and process 180K INCR operations per second.
 
 This is the code that yields such a result
 
@@ -293,6 +292,9 @@ In the near future:
 - Spell check code
 
 ## Changes
+
+### 1.1.0
+- performance tweaks and simplified code
 
 ### 1.0.0
 - dart 2.0 support
