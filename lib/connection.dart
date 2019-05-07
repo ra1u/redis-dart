@@ -30,6 +30,7 @@ class RedisConnection{
   
   /// close connection to Redis server
   Future close(){
+    _stream.close();
     return _socket.close();
   }
 

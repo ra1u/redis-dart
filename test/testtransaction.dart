@@ -68,8 +68,7 @@ Future test_transactions_command_usable(){
       trans.exec();
       command.send_object(["GET",key]).then((v){
         if(v != "0") throw "expecting 0 but got $v";
-      });
-      return conn.close();
+      }).then((_) => conn.close());
     });
   });
 }
