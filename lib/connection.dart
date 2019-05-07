@@ -23,7 +23,7 @@ class RedisConnection{
     .then((Socket sock){
       _socket = sock;
       disable_nagle(true);
-      _stream =new LazyStreamFast.fromstream(_socket);
+      _stream =new LazyStream.fromstream(_socket);
       return new Command(this);
     });
   }
