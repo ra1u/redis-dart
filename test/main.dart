@@ -10,8 +10,8 @@
 library testredis;
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 import 'dart:io';
+
 import '../lib/redis.dart';
 
 part 'testcas.dart';
@@ -20,6 +20,7 @@ part 'testperformance.dart';
 part 'testpubsub.dart';
 part 'testlua.dart';
 part 'testunicode.dart';
+part 'testerror.dart';
 
 
 Future testing_performance(Function fun,String name, int rep){
@@ -53,6 +54,7 @@ main(){
   q.add(testing_helper(test_commands_one_by_one(),"one by one")); 
   q.add(testing_helper(testincrcasmultiple(),"CAS"));
   q.add(testing_helper(testluanative(),"eval"));
+  q.add(testing_helper(testError(),"throw RedisError instead of return"));
 
   Future.wait(q)
   .then((_){

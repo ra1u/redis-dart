@@ -60,9 +60,9 @@ class RedisParser{
     });
   }
   
-  static Future parseredisresponse(LazyStream s){
+  static Future parseredisresponse(LazyStream s) {
     return s.take_n(1)
-    .then((list){
+    .then((list) async {
        int cmd = list[0];
        switch(cmd){
          case TYPE_SS:
@@ -74,7 +74,7 @@ class RedisParser{
          case TYPE_BULK:
            return parseBulk(s);
          case TYPE_ERROR:
-           return parseError(s);
+           throw await parseError(s);
          default:
            throw("got element that cant not be parsed");
        }
@@ -89,7 +89,7 @@ class RedisParser{
   }
   
   static Future<RedisError> parseError(LazyStream s){
-    return parseSimpleString(s).then((str) => new RedisError(str));
+    return parseSimpleString(s).then((str) => RedisError(str));
   }
   
   static Future<int> parseInt(LazyStream s){

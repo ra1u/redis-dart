@@ -42,6 +42,9 @@ class RedisConnection{
     _future = _future.then((_) =>
         RedisParser.parseredisresponse(_stream)
         .then((v) => completer.complete(v))
+        .catchError((error) {
+          completer.completeError(error);
+        })
     );
     return completer.future;
   }
