@@ -74,7 +74,7 @@ class RedisParser{
          case TYPE_BULK:
            return parseBulk(s);
          case TYPE_ERROR:
-           return parseError(s);
+           throw parseError(s);
          default:
            throw("got element that cant not be parsed");
        }
