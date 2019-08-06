@@ -74,7 +74,8 @@ class RedisParser{
          case TYPE_BULK:
            return parseBulk(s);
          case TYPE_ERROR:
-           throw parseError(s);
+           return parseError(s)
+               ..then((error) { throw error; });
          default:
            throw("got element that cant not be parsed");
        }
@@ -89,7 +90,7 @@ class RedisParser{
   }
   
   static Future<RedisError> parseError(LazyStream s){
-    return parseSimpleString(s).then((str) => new RedisError(str));
+    return parseSimpleString(s).then((str) => RedisError(str));
   }
   
   static Future<int> parseInt(LazyStream s){
