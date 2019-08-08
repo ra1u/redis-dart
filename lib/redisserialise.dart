@@ -54,7 +54,7 @@ class RedisSerialise {
        consumer(_star);
        consumer(_IntToRaw(len));
        consumer(_linesep);
-       object.forEach((v)=>SerialiseConsumable(v,consumer));
+       object.forEach((v)=> SerialiseConsumable(v is int ? v.toString() : v,consumer));
      }
      else if(object is int){
        consumer(_semicol);

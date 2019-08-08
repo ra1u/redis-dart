@@ -20,6 +20,7 @@ part 'testperformance.dart';
 part 'testpubsub.dart';
 part 'testlua.dart';
 part 'testunicode.dart';
+part 'testconversion.dart';
 
 
 Future testing_performance(Function fun,String name, int rep){
@@ -53,6 +54,7 @@ main(){
   q.add(testing_helper(test_commands_one_by_one(),"one by one")); 
   q.add(testing_helper(testincrcasmultiple(),"CAS"));
   q.add(testing_helper(testluanative(),"eval"));
+  q.add(testing_helper(testConversion(),"Convert ints to strings when in Array"));
 
   Future.wait(q)
   .then((_){
