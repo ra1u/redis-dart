@@ -294,18 +294,21 @@ In the near future:
 ## Changes
 
 ### 1.2.0
-- received redis errors throws exception. Thanks to @eknoes for pull request.
+- Received redis errors throws exception. Thanks to [@eknoes](https://github.com/eknoes) for pull request.
+- Integers in array get auto converted to strings. Author [@eknoes](https://github.com/eknoes).
+- Improve transaction handling errors. Patch from [@eknoes](https://github.com/eknoes)
+- Testing migrated on dart.test. Patch from [@eknoes](https://github.com/eknoes)
 
 ### 1.1.0
-- performance tweaks and simplified code
+- Performance tweaks and simplified code
 
 ### 1.0.0
-- dart 2.0 support
+- Dart 2.0 support
 
 ### 0.4.5
-- unicode bugfix -> https://github.com/ra1u/redis-dart/issues/4
-- update PubSub doc
-- improve tests
+- Unicode bugfix -> https://github.com/ra1u/redis-dart/issues/4
+- Update PubSub doc
+- Improve tests
 
 ### 0.4.4
 - bugfix for subscribe -> https://github.com/ra1u/redis-dart/issues/3
@@ -315,7 +318,7 @@ In the near future:
 
 ### 0.4.3
 - Cas helper
-- improved unit tests
+- Improved unit tests
 
 ### 0.4.2
 - Improved performance by 10%
