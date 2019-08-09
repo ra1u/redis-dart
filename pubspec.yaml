@@ -5,5 +5,9 @@ description: Redis database (https://redis.io/) client, with both simplicity and
 homepage: https://github.com/ra1u/redis-dart
 repository: https://github.com/ra1u/redis-dart
 issue_tracker: https://github.com/ra1u/redis-dart/issues
+
 environment:
   sdk: '>=2.0.0 <3.0.0'
+
+dev_dependencies:
+  test: ^1.6.5
