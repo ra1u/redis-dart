@@ -21,7 +21,6 @@ Future testincrcas(){
 Future testincrcasmultiple(){
   RedisConnection conn = new RedisConnection();
   return conn.connect('localhost',6379).then((Command command){ 
-    command.send_object(["UNWATCH","key"]);
     command.send_object(["SET","key","0"]);
     Queue<Future> q =new Queue();
     int N=300;
