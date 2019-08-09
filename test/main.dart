@@ -10,8 +10,8 @@
 library testredis;
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:io';
-
 import '../lib/redis.dart';
 
 part 'testcas.dart';
@@ -21,6 +21,7 @@ part 'testpubsub.dart';
 part 'testlua.dart';
 part 'testunicode.dart';
 part 'testerror.dart';
+part 'testconversion.dart';
 
 
 Future testing_performance(Function fun,String name, int rep){
@@ -55,6 +56,7 @@ main(){
   q.add(testing_helper(testincrcasmultiple(),"CAS"));
   q.add(testing_helper(testluanative(),"eval"));
   q.add(testing_helper(testError(),"throw RedisError instead of return"));
+  q.add(testing_helper(testConversion(),"Convert ints to strings when in Array"));
 
   Future.wait(q)
   .then((_){
