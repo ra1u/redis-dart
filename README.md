@@ -293,6 +293,9 @@ In the near future:
 
 ## Changes
 
+### 1.2.0
+- received redis errors throws exception. Thanks to @eknoes for pull request.
+
 ### 1.1.0
 - performance tweaks and simplified code
 
