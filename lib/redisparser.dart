@@ -37,7 +37,6 @@ class RedisParser{
     .then((list) {
       //takeWile consumed CR from stream, 
       //now check for LF
-      int size = list.length;
       return s.take_n(1).then((lf){
         if(lf[0] != LF){
           throw("received element is not LF");
@@ -61,8 +60,7 @@ class RedisParser{
   }
   
   static Future parseredisresponse(LazyStream s) {
-    return s.take_n(1)
-    .then((list) async {
+    return s.take_n(1).then((list) {
        int cmd = list[0];
        switch(cmd){
          case TYPE_SS:
@@ -74,7 +72,7 @@ class RedisParser{
          case TYPE_BULK:
            return parseBulk(s);
          case TYPE_ERROR:
-           throw await parseError(s);
+           throw waitFor(parseError(s));
          default:
            throw("got element that cant not be parsed");
        }
