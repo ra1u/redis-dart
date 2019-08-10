@@ -36,8 +36,7 @@ void main() {
         reason: "Transaction value should be final value $n");
 
     // Test using command fail during transaction
-    expect(() => cmd1.send_object(['SET', key, 0]), throwsA(equals(
-        "Transaction in progress. Please complete Transaction with .exec")),
+    expect(() => cmd1.send_object(['SET', key, 0]), throwsA(TypeMatcher<RedisError>()),
         reason: "Command should not be usable during transaction");
 
     expect(trans.exec(), completion(equals("OK")),
