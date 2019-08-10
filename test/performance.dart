@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:redis/redis.dart';
 
@@ -11,8 +12,9 @@ void main() {
           (_) => testing_performance(test_pubsub_performance, "PubSub", 200000))
       .then((_) =>
           testing_performance(test_performance, "Raw Performance", 200000))
-      .then((_) => test_long_running(20000))
-      .then((_) => print("Finished Performance Tests"));
+      .then((_) => test_long_running(200000))
+      .then((_) => print("Finished Performance Tests"))
+      .then((_) => exit(0));
 }
 
 Future<int> testing_performance(
@@ -144,9 +146,10 @@ Future test_muliconnections(int commands, int connections) {
 //performance of this test depends on packet roundtrip time
 Future test_long_running(int n) {
   int start = new DateTime.now().millisecondsSinceEpoch;
-  int timeout = start + 5000;
+  int update_period = 2000;
+  int timeout = start + update_period;
   const String key = "keylr";
-  generate_connect().then((Command command) {
+  return generate_connect().then((Command command) {
     int N = n;
     int c = 0;
     print("  started long running test of $n commands");
@@ -158,12 +161,12 @@ Future test_long_running(int n) {
         double diff = (now - start) / 1000.0;
         double perf = c / diff;
         print("  ping-pong test performance ${perf.round()} ops/s");
-        return new Future(() => false);
+        return false;
       }
       if (c % 40000 == 0) {
         int now = new DateTime.now().millisecondsSinceEpoch;
         if (now > timeout) {
-          timeout += 5000;
+          timeout += update_period;
           double diff = (now - start) / 1000.0;
           double perf = c / diff;
           print(
