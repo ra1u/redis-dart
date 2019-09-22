@@ -52,9 +52,14 @@ class Cas{
           _completer_bool.complete(false); //terminate Future.doWhile
         }
         else{
-          _completer_bool.complete(true);
+          // exec completes only with valid response
+          _completer_bool.completeError(RedisError("exec response is not expceted, but is $resp"));
         }
-      });
+      })
+      .catchError((e){
+          // dont do anything
+         _completer_bool.complete(true); // retry
+       }, test: (e) => e is TransactionError);
     });
   }
 }

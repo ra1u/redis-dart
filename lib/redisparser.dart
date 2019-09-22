@@ -9,12 +9,6 @@
 
 part of redis;
 
-class RedisError{
-  String e;
-  RedisError(this.e);
-  String toString() { return "RedisError($e)";}
-}
-
 
 class RedisParser{
   static final UTF8 = const Utf8Codec();

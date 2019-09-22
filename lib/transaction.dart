@@ -49,14 +49,12 @@ class Transaction extends Command{
     transaction_completed = true;
     return super.send_object(["EXEC"])
     .then((list){
-      
       if(list == null){ //we got explicit error from redis
         while(_queue.isNotEmpty){
           Completer c =_queue.removeFirst();
-          c.complete(new RedisError("Transaction terminated"));
-          return null;
         }
-        return null;
+        throw TransactionError("transaction error ");
+        //return null;
       }
       else{
         if(list.length != _queue.length){
