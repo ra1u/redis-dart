@@ -33,7 +33,7 @@ class RedisParser{
       //now check for LF
       return s.take_n(1).then((lf){
         if(lf[0] != LF){
-          throw("received element is not LF");
+          return new Future.error(RedisRuntimeError("received element is not LF"));
         }
         return list;
       });
@@ -48,7 +48,7 @@ class RedisParser{
         return r;
       }
       else{
-        throw("expeting CRLF");
+        return new Future.error(RedisRuntimeError("expeting CRLF"));
       }
     });
   }
@@ -66,11 +66,10 @@ class RedisParser{
          case TYPE_BULK:
            return parseBulk(s);
          case TYPE_ERROR:
-           throw waitFor(parseError(s));
+           return parseError(s).then((e) => new Future.error(e));
          default:
-           throw("got element that cant not be parsed");
+           return new Future.error(RedisRuntimeError("got element that cant not be parsed"));
        }
-       
     });
   }
   
@@ -97,7 +96,7 @@ class RedisParser{
        .then((lst) => takeCRLF(s,UTF8.decode(lst))); //consume CRLF and return decoded list
       }
       else{
-        throw("cant process buld data less than -1");
+        return new Future.error(RedisRuntimeError("cant process buld data less than -1"));
       }
     });
   }
@@ -125,7 +124,7 @@ class RedisParser{
           return consumeList(s,i,a);
       }
       else{
-        throw("cant process array data less than -1");
+        return new Future.error(RedisRuntimeError("cant process array data less than -1"));
       }
     });
   }
@@ -137,7 +136,7 @@ class RedisParser{
       var v = arr.fold(0,(a,b){
         if(b == 45){
           if(a != 0)
-            throw("cannot parse int");
+            throw RedisRuntimeError("cannot parse int");
           sign = -1;
           return 0;
         }
@@ -145,7 +144,7 @@ class RedisParser{
           return a*10+b-48;
         }
         else{
-          throw("cannot parse int");
+          throw RedisRuntimeError("cannot parse int");
         }
       });
       return v*sign;

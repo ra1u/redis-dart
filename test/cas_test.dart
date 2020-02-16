@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 import 'main.dart';
 
 void main() {
-  group(("CAS"), () {
+  //group(("CAS"), () {
     test("Test Incr CAS Multiple", () async {
       Command cmd = await generate_connect();
 
@@ -20,9 +20,9 @@ void main() {
 
       await Future.wait(q);
       var val = await cmd.send_object(["GET", "key"]);
-      expect(val, equals(N.toString()));
+      return expect(val, equals(N.toString()));
     });
-  });
+  //});
 }
 
 Future testincrcas() {
@@ -32,7 +32,7 @@ Future testincrcas() {
       command.send_object(["GET", "key"]).then((val) {
         int i = int.parse(val);
         i++;
-        cas.multiAndExec((trans) {
+        return cas.multiAndExec((trans) {
           return trans.send_object(["SET", "key", i.toString()]);
         });
       });

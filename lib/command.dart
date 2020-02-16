@@ -23,7 +23,14 @@ class Command {
   ///     
   /// example SET:
   ///     send_object(["SET","key","value"]);
-  Future send_object(Object obj) => _connection._sendraw(RedisSerialise.Serialise(obj));
+  Future send_object(Object obj){
+    try{
+      // RedisSerialise.Serialise
+      return _connection._sendraw(RedisSerialise.Serialise(obj));
+    } catch(e){
+	    new Future.error(e);
+    }
+  }
   
   /// return future that completes when
   /// all prevous packets are processed
@@ -44,6 +51,9 @@ class Command {
   Future<Transaction> multi(){ //multi retun transation as future
     return send_object(["MULTI"]).then((_) => new Transaction(this));
   }
-  
+
+  RedisConnection get_connection() {
+    return _connection;
+  }
 }
   

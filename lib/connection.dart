@@ -38,14 +38,15 @@ class RedisConnection{
   //it just wait something to come from socket
   //it parse it and execute future
   Future _senddummy(){
-    Completer completer = new Completer.sync();
+    Completer completer = new Completer();
     _future = _future.then((_) =>
         RedisParser.parseredisresponse(_stream)
         .then((v) => completer.complete(v))
-        .catchError((error) {
-          completer.completeError(error);
+        .catchError((e) {
+            print("got _senddummy error ${e}");
+            completer.completeError(e);
         })
-    );
+      );
     return completer.future;
   }
   
