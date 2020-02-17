@@ -43,7 +43,6 @@ class RedisConnection{
         RedisParser.parseredisresponse(_stream)
         .then((v) => completer.complete(v))
         .catchError((e) {
-            print("got _senddummy error ${e}");
             completer.completeError(e);
         })
       );

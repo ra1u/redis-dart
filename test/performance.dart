@@ -7,11 +7,11 @@ import 'main.dart';
 
 void main() {
   testing_performance(
-          test_muliconnections_con(100), "Multiple connections", 200000)
+          test_muliconnections_con(100), "Multiple connections", 2000000)
       .then(
           (_) => testing_performance(test_pubsub_performance, "PubSub", 200000))
       .then((_) =>
-          testing_performance(test_performance, "Raw Performance", 200000))
+          testing_performance(test_performance, "Raw Performance", 2000000))
       .then((_) => test_long_running(200000))
       .then((_) => print("Finished Performance Tests"))
       .then((_) => exit(0));

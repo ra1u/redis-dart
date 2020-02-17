@@ -53,9 +53,8 @@ class Transaction extends Command{
         while(_queue.isNotEmpty){
           Completer c =_queue.removeFirst();
         }
-        print("we got error ${list}");
-        return new Future.error(TransactionError("transaction error "));
-        // throw TransactionError("transaction error ");
+        // return new Future.error(TransactionError("transaction error "));
+        throw TransactionError("transaction error ");
         //return null;
       }
       else{

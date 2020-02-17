@@ -28,7 +28,7 @@ class Command {
       // RedisSerialise.Serialise
       return _connection._sendraw(RedisSerialise.Serialise(obj));
     } catch(e){
-	    new Future.error(e);
+	    return new Future.error(e);
     }
   }
   

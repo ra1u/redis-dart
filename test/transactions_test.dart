@@ -40,9 +40,10 @@ void main() {
     expect(trans.send_object(["GET", key]), completion(equals(n.toString())),
         reason: "Transaction value should be final value $n");
 
-    // Test using command fail during transaction
-    //  expect(() => cmd1.send_object(['SET', key, 0]), throwsA(TypeMatcher<RedisRuntimeError>()),
-    //    reason: "Command should not be usable during transaction");
+    //Test using command fail during transaction
+    expect(() => cmd1.send_object(['SET', key, 0])
+      , throwsA(TypeMatcher<RedisRuntimeError>()),
+        reason: "Command should not be usable during transaction");
 
     expect(trans.exec(), completion(equals("OK")),
         reason: "Transaction should be executed.");
@@ -57,17 +58,19 @@ void main() {
         "Transaction object should not be usable after finishing transaction");
   });
 
-  /*
+  
   group("Fake CAS", () {
     test("Transaction Fake CAS", () {
       expect(() => test_incr_fakecas(), returnsNormally);
     });
-
+    
     test("Transaction Fake CAS Multiple", () {
       expect(() => test_incr_fakecas_multiple(10), returnsNormally);
     });
+    
   });
-  */
+ 
+  
 }
 
 //this doesnt use Cas class, but does same functionality
@@ -84,10 +87,9 @@ Future test_incr_fakecas() {
         return cmd.multi().then((Transaction trans) {
           trans.send_object(["SET", key, i.toString()]);
           return trans.exec().then((var res) {
-            if (res != null) {
-              return false; //terminate doWhile
-            }
-            return true; //try again
+            return false; //terminate doWhile
+        	}).catchError((e){
+            return true; // try again
           });
         });
       });
