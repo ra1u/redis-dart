@@ -38,26 +38,19 @@ class RedisConnection{
   //it just wait something to come from socket
   //it parse it and execute future
   Future _senddummy(){
-    Completer completer = new Completer();
-    _future = _future.then((_) =>
-        RedisParser.parseredisresponse(_stream)
-        .then((v) => completer.complete(v))
-        .catchError((e) {
-            completer.completeError(e);
-        })
-      );
-    return completer.future;
+    _future = _future.then((_) {
+        return RedisParser.parseredisresponse(_stream);
+    });
+    return _future;
   }
   
   // return future that complets
   // when all prevous _future finished
   Future _getdummy(){
-    Completer completer = new Completer.sync();
     _future = _future.then((_){
-        completer.complete("dummy data");
-      }
-    );
-    return completer.future;
+	    return "dummy data";
+    });
+    return _future;
   }
   
   Future _sendraw(List data){

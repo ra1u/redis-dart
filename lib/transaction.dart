@@ -43,6 +43,12 @@ class Transaction extends Command{
     }).catchError((error) => c.completeError(error));
     return c.future;
   }
+
+  Future discard(){
+    _overrided_command._connection = this._connection;
+    transaction_completed = true;
+    return super.send_object(["DISCARD"]);
+  }
   
   Future exec(){
     _overrided_command._connection = this._connection;
