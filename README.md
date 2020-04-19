@@ -1,8 +1,6 @@
 Redis client for dart
 =====================
 
-[![Join the chat at https://gitter.im/ra1u/redis-dart](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ra1u/redis-dart?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [Redis](http://redis.io/) protocol  parser and client written in [dart language](https://www.dartlang.org)  
 It is fast and simple by design. It requires no external package to run.
 
@@ -105,14 +103,14 @@ and only one in the previous example.
 Redis responses and requests can be arbitrarily nested. 
 Mapping
 
-| Redis         | Dart          |
-| ------------- |:-------------:| 
-| String        | String        | 
-| Integer       | Integer       |  
-| Array         | List          |   
-| Error         | RedisError    |  
+	| Redis      | Dart        |
+	| -----------|-------------| 
+	| String     | String      | 
+	| Integer    | Integer     |
+	| Array      | List        |
+	| Error      | RedisError  |
 
-\* Both simple string and bulk string from redis are serialied to dart string.
+* Both simple string and bulk string from redis are serialied to dart string.
 String from dart to redis is converted to bulk string. UTF8 encoding is used
 in both directions.
 
@@ -292,6 +290,11 @@ In the near future:
 - Spell check code
 
 ## Changes
+
+### 1.3.0
+- Improved error handling [Issue #15](https://github.com/ra1u/redis-dart/issues/15)
+- Experimental transaction discard [Issue #11](https://github.com/ra1u/redis-dart/issues/11)
+- Minor fixes
 
 ### 1.2.0
 - Received redis errors throws exception. Thanks to [@eknoes](https://github.com/eknoes) for pull request.
