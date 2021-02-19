@@ -36,6 +36,14 @@ class RedisConnection {
     });
   }
 
+  // connect with custom socket
+  Future<Command> connectWithSocket(Socket s) async {
+    _socket = s;
+    disable_nagle(true);
+    _stream = LazyStream.fromstream(_socket);
+    return Command(this);
+  }
+
   /// close connection to Redis server
   Future close() {
     _stream.close();
