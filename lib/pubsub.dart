@@ -7,14 +7,14 @@ class _WarrningPubSubInProgress {
 
 class PubSub {
   late Command _command;
-  StreamController<List> _stream_controler = new StreamController<List>();
+  StreamController<List> _stream_controler = StreamController<List>();
   late Future _forever;
 
   PubSub(Command command) {
-    _command = new Command(command._connection);
+    _command = Command(command._connection);
     _forever = command.send_nothing().then((_) {
       //override socket with warrning
-      command._connection = new _WarrningPubSubInProgress();
+      command._connection = _WarrningPubSubInProgress();
       // listen and process forever
       return Future.doWhile(() {
         return _command._connection._senddummy().then<bool>((var data) {
