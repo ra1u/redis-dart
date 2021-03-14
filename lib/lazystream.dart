@@ -31,11 +31,11 @@ class StreamNext<T> {
 
   void onData(T event) {
     if (_nfut >= 1) {
-      Completer c = _queue.removeFirst();
+      final c = _queue.removeFirst();
       c.complete(event);
       _nfut -= 1;
     } else {
-      Completer<T> c = Completer<T>();
+      final c = Completer<T>();
       c.complete(event);
       _queue.addLast(c);
       _npack += 1;
@@ -65,7 +65,7 @@ class StreamNext<T> {
       _queue.addLast(Completer<T>());
       return _queue.last.future;
     } else {
-      Completer<T> c = _queue.removeFirst();
+      final c = _queue.removeFirst();
       _npack -= 1;
       return c.future;
     }
@@ -96,7 +96,7 @@ class LazyStream {
   }
 
   Future<List<int>> __take_n(int n) {
-    int rest = _take_n_helper(n);
+    final rest = _take_n_helper(n);
     if (rest == 0) {
       return Future<List<int>>.value(_return);
     } else {

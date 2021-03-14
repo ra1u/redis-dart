@@ -51,7 +51,7 @@ class RedisParser {
 
   static Future parseredisresponse(LazyStream s) {
     return s.take_n(1).then((list) {
-      int cmd = list[0];
+      final cmd = list[0];
       switch (cmd) {
         case TYPE_SS:
           return parseSimpleString(s);
@@ -122,8 +122,7 @@ class RedisParser {
         return null;
       if (i >= 0) {
         //i of array data
-        final a = [];
-        return consumeList(s, i, a);
+        return consumeList(s, i, []);
       } else {
         return Future.error(
             RedisRuntimeError("cant process array data less than -1"));
@@ -133,7 +132,7 @@ class RedisParser {
 
   //maualy parse int from raw data (faster)
   static int _ParseIntRaw(Iterable<int> arr) {
-    int sign = 1;
+    var sign = 1;
     var v = arr.fold<int>(0, (a, b) {
       if (b == 45) {
         if (a != 0) throw RedisRuntimeError("cannot parse int");

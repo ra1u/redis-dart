@@ -33,7 +33,7 @@ and then print result.
 
     import 'package:redis/redis.dart';
     ...
-    RedisConnection conn = RedisConnection();
+    final conn = RedisConnection();
     conn.connect('localhost',6379).then((Command command){
         command.send_object(["SET","key","0"]).then((var response)
             print(response);
@@ -43,7 +43,7 @@ and then print result.
 Due to the simple implementation, it is possible to execute commands in different ways.
 One an most straightforward way is one after another
 
-    RedisConnection conn = RedisConnection();
+    final conn = RedisConnection();
     conn.connect('localhost',6379).then((Command command){
       command.send_object(["SET","key","0"])
       .then((var response){
@@ -73,7 +73,7 @@ command to complete. We can send all commands without needing to wait for
 a result, and we can still be sure that the response handled by `Future` will be
 completed in the correct order.
 
-    RedisConnection conn = RedisConnection();
+    final conn = RedisConnection();
     conn.connect('localhost',6379).then((Command command){
       command.send_object(["SET","key","0"])
       .then((var response){
@@ -134,9 +134,9 @@ Tested on a laptop, we can execute and process 180K INCR operations per second.
 
 This is the code that yields such a result
 
-    const int N = 200000;
+    const N = 200000;
     int start;
-    RedisConnection conn = RedisConnection();
+    final conn = RedisConnection();
     conn.connect('localhost',6379).then((Command command){
       print("test started, please wait ...");
       start = DateTime.now().millisecondsSinceEpoch;
@@ -183,7 +183,7 @@ is called after calling `.exec()`.
     import 'package:redis/redis.dart';
     ...
 
-    RedisConnection conn = RedisConnection();
+    final conn = RedisConnection();
     conn.connect('localhost',6379).then((Command command){
       command.multi().then((Transaction trans){
         trans.send_object(["SET","val","0"]);
@@ -235,7 +235,7 @@ For example:
 imagine we have the need to atomically increment the value of a key by 1 
 (let's suppose Redis doesn't have [INCR](http://redis.io/commands/incr)).
 
-    Cas cas = Cas(command);
+    final cas = Cas(command);
     cas.watch(["key"], (){
       command.send_object(["GET","key"]).then((String val){
         int i = int.parse(val);
@@ -257,7 +257,7 @@ array using UTF8 encoding. This makes ascii string compatible in both direction.
 PubSub is a helper for dispatching received messages.
 First, create a new `PubSub` from an existing `Command`
 
-    PubSub pubsub = PubSub(command);
+    final pubsub = PubSub(command);
 
 Once `PubSub` is created, `Command` is invalidated and should not be used
 on the same connection. `PubSub` allows commands
