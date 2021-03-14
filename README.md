@@ -33,7 +33,7 @@ and then print result.
 
     import 'package:redis/redis.dart';
     ...
-    RedisConnection conn = new RedisConnection();
+    RedisConnection conn = RedisConnection();
     conn.connect('localhost',6379).then((Command command){
         command.send_object(["SET","key","0"]).then((var response)
             print(response);
@@ -43,7 +43,7 @@ and then print result.
 Due to the simple implementation, it is possible to execute commands in different ways.
 One an most straightforward way is one after another
 
-    RedisConnection conn = new RedisConnection();
+    RedisConnection conn = RedisConnection();
     conn.connect('localhost',6379).then((Command command){
       command.send_object(["SET","key","0"])
       .then((var response){
@@ -73,7 +73,7 @@ command to complete. We can send all commands without needing to wait for
 a result, and we can still be sure that the response handled by `Future` will be
 completed in the correct order.
 
-    RedisConnection conn = new RedisConnection();
+    RedisConnection conn = RedisConnection();
     conn.connect('localhost',6379).then((Command command){
       command.send_object(["SET","key","0"])
       .then((var response){
@@ -136,10 +136,10 @@ This is the code that yields such a result
 
     const int N = 200000;
     int start;
-    RedisConnection conn = new RedisConnection();
+    RedisConnection conn = RedisConnection();
     conn.connect('localhost',6379).then((Command command){
       print("test started, please wait ...");
-      start =  new DateTime.now().millisecondsSinceEpoch;
+      start = DateTime.now().millisecondsSinceEpoch;
       command.pipe_start();
       command.send_object(["SET","test","0"]);
       for(int i=1;i<=N;i++){
@@ -152,7 +152,7 @@ This is the code that yields such a result
       //last command will be executed and then processed last
       command.send_object(["GET","test"]).then((v){
         print(v);
-        double diff = (new DateTime.now().millisecondsSinceEpoch - start)/1000.0;
+        double diff = (DateTime.now().millisecondsSinceEpoch - start)/1000.0;
         double perf = N/diff;
         print("$N operations done in $diff s\nperformance $perf/s");
       });
@@ -183,7 +183,7 @@ is called after calling `.exec()`.
     import 'package:redis/redis.dart';
     ...
 
-    RedisConnection conn = new RedisConnection();
+    RedisConnection conn = RedisConnection();
     conn.connect('localhost',6379).then((Command command){
       command.multi().then((Transaction trans){
         trans.send_object(["SET","val","0"]);
@@ -235,7 +235,7 @@ For example:
 imagine we have the need to atomically increment the value of a key by 1 
 (let's suppose Redis doesn't have [INCR](http://redis.io/commands/incr)).
 
-    Cas cas = new Cas(command);
+    Cas cas = Cas(command);
     cas.watch(["key"], (){
       command.send_object(["GET","key"]).then((String val){
         int i = int.parse(val);
@@ -257,7 +257,7 @@ array using UTF8 encoding. This makes ascii string compatible in both direction.
 PubSub is a helper for dispatching received messages.
 First, create a new `PubSub` from an existing `Command`
 
-    PubSub pubsub=new PubSub(command);
+    PubSub pubsub = PubSub(command);
 
 Once `PubSub` is created, `Command` is invalidated and should not be used
 on the same connection. `PubSub` allows commands
