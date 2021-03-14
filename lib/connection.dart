@@ -75,6 +75,6 @@ class RedisConnection {
   // }
 
   void disable_nagle(bool v) {
-    _socket?.setOption(SocketOption.TCP_NODELAY, v);
+    _socket?.setOption(SocketOption.tcpNoDelay, v);
   }
 }
