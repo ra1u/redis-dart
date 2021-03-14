@@ -7,7 +7,6 @@
  * Luka Rahne
  */
 
-
 library redis;
 
 import 'dart:cli';
