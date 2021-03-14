@@ -11,8 +11,8 @@ part of redis;
 
 /// Class for server connection on server
 class RedisConnection {
-  Socket _socket = null;
-  LazyStream _stream = null;
+  Socket? _socket;
+  LazyStream? _stream;
   Future _future = new Future.value();
   RedisParser parser = new RedisParser();
 
@@ -21,7 +21,7 @@ class RedisConnection {
     return Socket.connect(host, port).then((Socket sock) {
       _socket = sock;
       disable_nagle(true);
-      _stream = new LazyStream.fromstream(_socket);
+      _stream = new LazyStream.fromstream(_socket!);
       return new Command(this);
     });
   }
@@ -31,7 +31,7 @@ class RedisConnection {
     return SecureSocket.connect(host, port).then((SecureSocket sock) {
       _socket = sock;
       disable_nagle(true);
-      _stream = new LazyStream.fromstream(_socket);
+      _stream = new LazyStream.fromstream(_socket!);
       return new Command(this);
     });
   }
@@ -40,14 +40,14 @@ class RedisConnection {
   Future<Command> connectWithSocket(Socket s) async {
     _socket = s;
     disable_nagle(true);
-    _stream = LazyStream.fromstream(_socket);
+    _stream = LazyStream.fromstream(_socket!);
     return Command(this);
   }
 
   /// close connection to Redis server
   Future close() {
-    _stream.close();
-    return _socket.close();
+    _stream?.close();
+    return _socket!.close();
   }
 
   //this doesnt send anything
@@ -55,7 +55,7 @@ class RedisConnection {
   //it parse it and execute future
   Future _senddummy() {
     _future = _future.then((_) {
-      return RedisParser.parseredisresponse(_stream);
+      return RedisParser.parseredisresponse(_stream!);
     });
     return _future;
   }
@@ -69,12 +69,12 @@ class RedisConnection {
     return _future;
   }
 
-  Future _sendraw(List data) {
-    _socket.add(data);
-    return _senddummy();
-  }
+  // Future _sendraw(List data) {
+  //   _socket?.add(data);
+  //   return _senddummy();
+  // }
 
   void disable_nagle(bool v) {
-    _socket.setOption(SocketOption.TCP_NODELAY, v);
+    _socket?.setOption(SocketOption.TCP_NODELAY, v);
   }
 }

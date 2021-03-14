@@ -1,7 +1,7 @@
 part of redis;
 
 class Prophecy<T> {
-  Future<T> Function() _f;
+  late Future<T> Function() _f;
 
   Prophecy._func(Future<T> Function() v) {
     _f = v;

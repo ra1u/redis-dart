@@ -38,8 +38,8 @@ Future<int> testing_performance(
 }
 
 Future test_pubsub_performance(int N) {
-  Command command; //on conn1 tosend commands
-  Stream pubsubstream; //on conn2 to rec c
+  late Command command; //on conn1 tosend commands
+  late Stream pubsubstream; //on conn2 to rec c
   return generate_connect().then((Command cmd) {
     command = cmd;
     return generate_connect();
@@ -106,7 +106,7 @@ Future test_performance(int n, [bool piping = true]) {
   });
 }
 
-Function test_muliconnections_con(int conn) {
+Future<dynamic> Function(int) test_muliconnections_con(int conn) {
   return (int cmd) => test_muliconnections(cmd, conn);
 }
 
