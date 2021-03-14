@@ -12,7 +12,7 @@ part of redis;
 class Command {
   /*RedisConnection*/ var _connection;
 
-  Command(this._connection) {}
+  Command(this._connection);
 
   /// Serialise and send data to server
   ///

@@ -15,7 +15,7 @@ class _WarningConnection {
 }
 
 class Transaction extends Command {
-  Queue<Completer> _queue = Queue();
+  final _queue = Queue<Completer>();
   late Command _overrided_command;
   bool transaction_completed = false;
 
@@ -62,14 +62,14 @@ class Transaction extends Command {
         //return null;
       } else {
         if (list.length != _queue.length) {
-          int diff = list.length - _queue.length;
+          var diff = list.length - _queue.length;
           //return
           throw RedisRuntimeError(
               "There was $diff command(s) executed during transcation,"
               "not going trough Transation handler");
         }
-        int len = list.length;
-        for (int i = 0; i < len; ++i) {
+        var len = list.length;
+        for (var i = 0; i < len; ++i) {
           Completer c = _queue.removeFirst();
           c.complete(list[i]);
         }

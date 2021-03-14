@@ -29,7 +29,7 @@ class RedisSerialise {
   static final _dollarminus1 = ASCII.encode("\$-1");
 
   static List<int> Serialise(object) {
-    List<int> s = <int>[];
+    final s = <int>[];
     SerialiseConsumable(object, (v) {
       s.addAll(v as List<int>);
       return () {};
@@ -46,7 +46,7 @@ class RedisSerialise {
       consumer(data);
       consumer(_linesep);
     } else if (object is Iterable) {
-      int len = object.length;
+      var len = object.length;
       consumer(_star);
       consumer(_IntToRaw(len));
       consumer(_linesep);

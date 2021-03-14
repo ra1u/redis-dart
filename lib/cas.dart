@@ -24,7 +24,7 @@ class Cas {
   ///
   Future watch(List<String> watching_keys, func()) {
     //return _cmd.send_object(["TRANS"]);
-    List<String> watchcmd = ["WATCH"];
+    final watchcmd = <String>["WATCH"];
     watchcmd.addAll(watching_keys);
     return Future.doWhile(() {
       _completer_bool = Completer();
