@@ -6,13 +6,14 @@ import 'package:redis/redis.dart';
 import 'main.dart';
 
 void main() {
+  print("Performance TEST and REPORT")
   testing_performance(
           test_muliconnections_con(100), "Multiple connections", 200000)
       .then(
           (_) => testing_performance(test_pubsub_performance, "PubSub", 200000))
       .then((_) =>
           testing_performance(test_performance, "Raw Performance", 200000))
-      .then((_) => test_long_running(200000))
+      .then((_) => test_long_running(20000))
       .then((_) => print("Finished Performance Tests"))
       .then((_) => exit(0));
 }
@@ -120,7 +121,7 @@ Future test_muliconnections(int commands, int connections) {
   }).then((_) {
     for (int j = 0; j < K; j++) {
       RedisConnection conn = new RedisConnection();
-      conn.connect('localhost', 6379).then((Command command) {
+      generate_connect().then((Command command) {
         command.pipe_start();
         for (int i = j; i < N; i += K) {
           command.send_object(["INCR", "var"]).then((v) {

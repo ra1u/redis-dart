@@ -77,7 +77,7 @@ void main() {
 Future test_incr_fakecas() {
   RedisConnection conn = new RedisConnection();
   String key = "keycaswewe";
-  return conn.connect("localhost", 6379).then((Command cmd) {
+  return generate_connect().then((Command cmd) {
     cmd.send_object(["SETNX", key, "1"]);
     return Future.doWhile(() {
       cmd.send_object(["WATCH", key]);
