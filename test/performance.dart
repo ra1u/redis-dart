@@ -6,7 +6,7 @@ import 'package:redis/redis.dart';
 import 'main.dart';
 
 void main() {
-  print("Performance TEST and REPORT")
+  print("Performance TEST and REPORT");
   testing_performance(
           test_muliconnections_con(100), "Multiple connections", 200000)
       .then(
