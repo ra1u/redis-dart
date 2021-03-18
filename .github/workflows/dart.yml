@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      REDIS_URL: redis
+      REDIS_URL: localhost
       REDIS_PORT: 6379
       
     services:
