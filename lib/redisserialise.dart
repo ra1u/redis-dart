@@ -29,8 +29,6 @@ class RedisSerialise {
   static final  _semicol  = ASCII.encode(":");
   static final _linesep = ASCII.encode("\r\n");
   static final _dollarminus1 = ASCII.encode("\$-1");
-  static final List _ints = new List.generate(20,(i)=>ASCII.encode(i.toString()),growable:false);
-
       
   static List<int> Serialise(object){
      List<int> s = new List();

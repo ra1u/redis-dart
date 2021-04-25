@@ -7,6 +7,7 @@
  * Luka Rahne
  */
 
+
 part of redis;
 
 /// Class for server connection on server

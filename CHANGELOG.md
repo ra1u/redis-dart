@@ -1,8 +1,13 @@
 
 [README.md](README.md)
 
-### 1.3.0
+### 1.4.0
 - Tls and custom Socket support. Thanks to [@Derrick56007](https://github.com/Derrick56007)
+
+### 1.3.0
+- Improved error handling [Issue #15](https://github.com/ra1u/redis-dart/issues/15)
+- Experimental transaction discard [Issue #11](https://github.com/ra1u/redis-dart/issues/11)
+- Minor fixes
 
 ### 1.2.0
 - Received redis errors throws exception. Thanks to [@eknoes](https://github.com/eknoes) for pull request.
