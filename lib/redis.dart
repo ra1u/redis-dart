@@ -24,4 +24,4 @@ part './command.dart';
 part './pubsub.dart';
 part './cas.dart';
 part './exceptions.dart';
-part './prophecy.dart';
+
