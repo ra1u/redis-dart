@@ -12,6 +12,7 @@ It is fast and simple by design. It requres no external package to run.
 * [pubsub](#pubsub) 
 * [unicode](#unicode)
 * [performance](#fast) and [simplicity](#Simple)
+* [tls](#Tls) 
 
 ## Simple
 
@@ -137,6 +138,22 @@ results in
 ```dart
 [key1, [key2, [first], second], 2]
 ```
+
+## Tls 
+
+Secure ssl/tls with `RedisConnection.connectSecure(host,port)`
+
+```dart
+RedisConnection conn = new RedisConnection();
+conn.connectSecure('localhost',6379).then((Command command){
+    command.send_object(["SET","key","0"]).then((var response)
+        print(response);
+    )
+}
+```
+
+or by passing any other [`Socket`](https://api.dart.dev/stable/dart-io/Socket-class.html) to
+`RedisConnection.connectWithSocket(Socket s)` in similar matter.
 
 ## Fast
 
@@ -321,6 +338,9 @@ In the near future:
 - Spell check code
 
 ## Changes
+
+### 1.3.0
+- Tls and custom Socket support. Thanks to [@Derrick56007](https://github.com/Derrick56007)
 
 ### 1.2.0
 - Received redis errors throws exception. Thanks to [@eknoes](https://github.com/eknoes) for pull request.
