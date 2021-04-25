@@ -1,6 +1,8 @@
 Redis client for dart
 =====================
 
+[![test master](https://github.com/ra1u/redis-dart/actions/workflows/dart.yml/badge.svg)](https://github.com/ra1u/redis-dart/actions/workflows/dart.yml?query=event%3Apush+branch%3Amaster)
+
 [Redis](http://redis.io/) protocol  parser and client writent in [dart language](https://www.dartlang.org)  
 It is fast and simple by design. It requres no external package to run.
 
