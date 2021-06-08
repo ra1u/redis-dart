@@ -1,5 +1,3 @@
-
-
 version: "2.3"
 
 services:
@@ -10,18 +8,19 @@ services:
     image: google/dart
     depends_on:
       - redis
-    entrypoint: ["/bin/sh","-c"]
+    entrypoint: ["/bin/sh", "-c"]
     volumes:
       - "../../:/workdir"
     environment:
       - REDIS_URL=redis
       - REDIS_PORT=6379
     command:
-    - |
-       set -e #exit on falure
-       sleep 1 #todo use better approach
-       cd /workdir
-       dart pub get
-       dart analyze || true
-       dart test
-       dart test/performance.dart
+      - |
+        set -e #exit on falure
+        sleep 1 #todo use better approach
+        cd /workdir
+        dart --version
+        dart pub get
+        dart analyze || true
+        dart test
+        dart test/performance.dart

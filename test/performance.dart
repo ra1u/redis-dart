@@ -8,7 +8,9 @@ import 'main.dart';
 void main() {
   print("Performance TEST and REPORT");
   testing_performance(
-          test_muliconnections_con(100), "Multiple connections", 200000)
+          test_muliconnections_con(100) as Future<dynamic> Function(int),
+          "Multiple connections",
+          200000)
       .then(
           (_) => testing_performance(test_pubsub_performance, "PubSub", 200000))
       .then((_) =>
@@ -38,8 +40,8 @@ Future<int> testing_performance(
 }
 
 Future test_pubsub_performance(int N) {
-  Command command; //on conn1 tosend commands
-  Stream pubsubstream; //on conn2 to rec c
+  late Command command; //on conn1 tosend commands
+  late Stream pubsubstream; //on conn2 to rec c
   return generate_connect().then((Command cmd) {
     command = cmd;
     return generate_connect();
@@ -61,8 +63,8 @@ Future test_pubsub_performance(int N) {
     });
   }).then((_) {
     int counter = 0;
-    var expected = ["message", "monkey", "banana"];
-    var subscription;
+    //var expected = ["message", "monkey", "banana"];
+    late var subscription;
     Completer comp = new Completer();
     subscription = pubsubstream.listen((var data) {
       counter++;
@@ -77,10 +79,10 @@ Future test_pubsub_performance(int N) {
 
 Future test_performance(int n, [bool piping = true]) {
   int N = n;
-  int rec = 0;
-  int start;
+  //int rec = 0;
+  //int start;
   return generate_connect().then((Command command) {
-    start = new DateTime.now().millisecondsSinceEpoch;
+    //start = new DateTime.now().millisecondsSinceEpoch;
     if (piping) {
       command.pipe_start();
     }
@@ -120,14 +122,14 @@ Future test_muliconnections(int commands, int connections) {
     return command.set("var", "0");
   }).then((_) {
     for (int j = 0; j < K; j++) {
-      RedisConnection conn = new RedisConnection();
+      RedisConnection();
       generate_connect().then((Command command) {
         command.pipe_start();
         for (int i = j; i < N; i += K) {
           command.send_object(["INCR", "var"]).then((v) {
             c++;
             if (c == N) {
-              command.get("var").then((v) {
+              command.get("var")!.then((v) {
                 assert(v == N.toString());
                 completer.complete("ok");
               });
@@ -149,7 +151,7 @@ Future test_long_running(int n) {
   int start = new DateTime.now().millisecondsSinceEpoch;
   int update_period = 2000;
   int timeout = start + update_period;
-  const String key = "keylr";
+  //const String key = "keylr";
   return generate_connect().then((Command command) {
     int N = n;
     int c = 0;
