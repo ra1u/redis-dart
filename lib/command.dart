@@ -50,7 +50,7 @@ class Command {
   /// Transations are started with multi and completed with exec()
   Future<Transaction> multi() {
     //multi retun transation as future
-    return send_object(["MULTI"]).then((_) => new Transaction(this));
+    return send_object(["MULTI"]).then((_) => Transaction(this));
   }
 
   RedisConnection get_connection() {

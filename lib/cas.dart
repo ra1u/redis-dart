@@ -27,7 +27,7 @@ class Cas {
     List<String> watchcmd = ["WATCH"];
     watchcmd.addAll(watching_keys);
     return Future.doWhile(() {
-      _completer_bool = new Completer();
+      _completer_bool = Completer();
       _cmd.send_object(watchcmd).then((_) {
         func();
       });
@@ -52,7 +52,7 @@ class Cas {
         } else {
           // exec completes only with valid response
           _completer_bool.completeError(
-              RedisError("exec response is not expceted, but is $resp"));
+              RedisError("exec response is not expected, but is $resp"));
         }
       }).catchError((e) {
         // dont do anything

@@ -15,7 +15,7 @@ class _WarningConnection {
 }
 
 class Transaction extends Command {
-  Queue<Completer> _queue = new Queue();
+  Queue<Completer> _queue = Queue();
   late Command _overrided_command;
   bool transaction_completed = false;
 
@@ -23,16 +23,15 @@ class Transaction extends Command {
     _overrided_command = command;
     //we override his _connection, during transaction
     //it is best to point out where problem is
-    command._connection = new _WarningConnection();
+    command._connection = _WarningConnection();
   }
 
   Future send_object(object) {
     if (transaction_completed) {
-      return new Future.error(
-          RedisRuntimeError("Transaction already completed."));
+      return Future.error(RedisRuntimeError("Transaction already completed."));
     }
 
-    Completer c = new Completer();
+    Completer c = Completer();
     _queue.add(c);
     super.send_object(object).then((msg) {
       if (msg.toString().toLowerCase() != "queued") {
@@ -58,7 +57,7 @@ class Transaction extends Command {
         while (_queue.isNotEmpty) {
           _queue.removeFirst();
         }
-        // return new Future.error(TransactionError("transaction error "));
+        // return Future.error(TransactionError("transaction error "));
         throw TransactionError("transaction error ");
         //return null;
       } else {

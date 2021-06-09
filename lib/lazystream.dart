@@ -22,7 +22,7 @@ class StreamNext<T> {
   late int _npack;
   late bool done;
   StreamNext.fromstream(Stream<T> stream) {
-    _queue = new Queue<Completer<T>>();
+    _queue = Queue<Completer<T>>();
     _nfut = 0;
     _npack = 0;
     done = false;
@@ -35,7 +35,7 @@ class StreamNext<T> {
       c.complete(event);
       _nfut -= 1;
     } else {
-      Completer<T> c = new Completer<T>();
+      Completer<T> c = Completer<T>();
       c.complete(event);
       _queue.addLast(c);
       _npack += 1;
@@ -62,7 +62,7 @@ class StreamNext<T> {
         return Future<T>.error("stream closed");
       }
       _nfut += 1;
-      _queue.addLast(new Completer<T>());
+      _queue.addLast(Completer<T>());
       return _queue.last.future;
     } else {
       Completer<T> c = _queue.removeFirst();
@@ -79,7 +79,7 @@ class LazyStream {
   late List<int> _return;
   late Iterator<int> _iter;
   LazyStream.fromstream(Stream<List<int>> stream) {
-    _stream = new StreamNext<List<int>>.fromstream(stream);
+    _stream = StreamNext<List<int>>.fromstream(stream);
     _return = <int>[];
     _remainder = <int>[];
     _iter = _remainder.iterator;
@@ -97,7 +97,7 @@ class LazyStream {
   Future<List<int>> __take_n(int n) {
     int rest = _take_n_helper(n);
     if (rest == 0) {
-      return new Future<List<int>>.value(_return);
+      return Future<List<int>>.value(_return);
     } else {
       return _stream.next().then<List<int>>((List<int> pack) {
         _remainder = pack;

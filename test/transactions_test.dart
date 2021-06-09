@@ -91,7 +91,7 @@ Future test_incr_fakecas() {
 }
 
 Future test_incr_fakecas_multiple(int n) {
-  Queue<Future> q = new Queue();
+  Queue<Future> q = Queue();
   for (int i = 0; i < n; ++i) {
     q.add(test_incr_fakecas());
   }

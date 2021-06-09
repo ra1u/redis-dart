@@ -22,9 +22,9 @@ void main() {
 
 Future<int> testing_performance(
     Future Function(int) fun, String title, int iterations) {
-  int start = new DateTime.now().millisecondsSinceEpoch;
+  int start = DateTime.now().millisecondsSinceEpoch;
   return fun(iterations).then((_) {
-    int end = new DateTime.now().millisecondsSinceEpoch;
+    int end = DateTime.now().millisecondsSinceEpoch;
 
     double diff = (end - start) / 1000.0;
     int perf = (iterations / diff).round();
@@ -46,7 +46,7 @@ Future test_pubsub_performance(int N) {
     command = cmd;
     return generate_connect();
   }).then((Command cmd) {
-    PubSub pubsub = new PubSub(cmd);
+    PubSub pubsub = PubSub(cmd);
     pubsub.subscribe(["monkey"]);
     pubsubstream = pubsub.getStream();
     return pubsubstream;
@@ -65,7 +65,7 @@ Future test_pubsub_performance(int N) {
     int counter = 0;
     //var expected = ["message", "monkey", "banana"];
     late var subscription;
-    Completer comp = new Completer();
+    Completer comp = Completer();
     subscription = pubsubstream.listen((var data) {
       counter++;
       if (counter == N) {
@@ -82,7 +82,7 @@ Future test_performance(int n, [bool piping = true]) {
   //int rec = 0;
   //int start;
   return generate_connect().then((Command command) {
-    //start = new DateTime.now().millisecondsSinceEpoch;
+    //start = DateTime.now().millisecondsSinceEpoch;
     if (piping) {
       command.pipe_start();
     }
@@ -117,7 +117,7 @@ Future test_muliconnections(int commands, int connections) {
   int K = connections;
   int c = 0;
 
-  Completer completer = new Completer();
+  Completer completer = Completer();
   generate_connect().then((Command command) {
     return command.set("var", "0");
   }).then((_) {
@@ -148,7 +148,7 @@ Future test_muliconnections(int commands, int connections) {
 //next command is executed after prevous commands completes
 //performance of this test depends on packet roundtrip time
 Future test_long_running(int n) {
-  int start = new DateTime.now().millisecondsSinceEpoch;
+  int start = DateTime.now().millisecondsSinceEpoch;
   int update_period = 2000;
   int timeout = start + update_period;
   //const String key = "keylr";
@@ -160,14 +160,14 @@ Future test_long_running(int n) {
       c++;
       if (c >= N) {
         print("  done");
-        int now = new DateTime.now().millisecondsSinceEpoch;
+        int now = DateTime.now().millisecondsSinceEpoch;
         double diff = (now - start) / 1000.0;
         double perf = c / diff;
         print("  ping-pong test performance ${perf.round()} ops/s");
         return false;
       }
       if (c % 40000 == 0) {
-        int now = new DateTime.now().millisecondsSinceEpoch;
+        int now = DateTime.now().millisecondsSinceEpoch;
         if (now > timeout) {
           timeout += update_period;
           double diff = (now - start) / 1000.0;
@@ -190,10 +190,10 @@ Future test_long_running(int n) {
 //commands wihout "memory leaking"
 //it uses multiple connections
 Future test_long_running2(int n, int k) {
-  int start = new DateTime.now().millisecondsSinceEpoch;
+  int start = DateTime.now().millisecondsSinceEpoch;
   int timeout = start + 5000;
   const String key = "keylr";
-  Completer completer = new Completer();
+  Completer completer = Completer();
   generate_connect().then((Command command) {
     int N = n;
     int c = 0;
@@ -208,10 +208,10 @@ Future test_long_running2(int n, int k) {
                 print(" done");
                 completer.complete("OK");
               }
-              return new Future(() => false);
+              return Future(() => false);
             }
 
-            int now = new DateTime.now().millisecondsSinceEpoch;
+            int now = DateTime.now().millisecondsSinceEpoch;
             if (now > timeout) {
               timeout += 5000;
               double diff = (now - start) / 1000.0;

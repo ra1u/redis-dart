@@ -30,8 +30,7 @@ class RedisParser {
       //now check for LF
       return s.take_n(1).then((lf) {
         if (lf[0] != LF) {
-          return new Future.error(
-              RedisRuntimeError("received element is not LF"));
+          return Future.error(RedisRuntimeError("received element is not LF"));
         }
         return list;
       });
@@ -45,7 +44,7 @@ class RedisParser {
       if (data[0] == CR && data[1] == LF) {
         return r;
       } else {
-        return new Future.error(RedisRuntimeError("expeting CRLF"));
+        return Future.error(RedisRuntimeError("expeting CRLF"));
       }
     });
   }
@@ -63,9 +62,9 @@ class RedisParser {
         case TYPE_BULK:
           return parseBulk(s);
         case TYPE_ERROR:
-          return parseError(s).then((e) => new Future.error(e));
+          return parseError(s).then((e) => Future.error(e));
         default:
-          return new Future.error(
+          return Future.error(
               RedisRuntimeError("got element that cant not be parsed"));
       }
     });
@@ -95,7 +94,7 @@ class RedisParser {
         return s.take_n(i).then((lst) => takeCRLF(
             s, UTF8.decode(lst))); //consume CRLF and return decoded list
       } else {
-        return new Future.error(
+        return Future.error(
             RedisRuntimeError("cant process buld data less than -1"));
       }
     });
@@ -108,7 +107,7 @@ class RedisParser {
     Future<List> consumeList(LazyStream s, int len, List lst) {
       assert(len >= 0);
       if (len == 0) {
-        return new Future.value(lst);
+        return Future.value(lst);
       }
       return parseredisresponse(s).then((resp) {
         lst.add(resp);
@@ -126,7 +125,7 @@ class RedisParser {
         List a = [];
         return consumeList(s, i, a);
       } else {
-        return new Future.error(
+        return Future.error(
             RedisRuntimeError("cant process array data less than -1"));
       }
     });

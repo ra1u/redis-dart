@@ -8,7 +8,7 @@ part of redis;
  * Luka Rahne
  */
 
-Utf8Encoder RedisSerialiseEncoder = new Utf8Encoder();
+Utf8Encoder RedisSerialiseEncoder = Utf8Encoder();
 
 class RedisBulk {
   Iterable<int> iterable;
