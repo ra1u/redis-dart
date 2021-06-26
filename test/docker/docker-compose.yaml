@@ -5,7 +5,7 @@ services:
     image: redis
 
   dart:
-    image: google/dart
+    image: google/dart:2.12 # least supported version
     depends_on:
       - redis
     entrypoint: ["/bin/sh", "-c"]

@@ -1,6 +1,9 @@
 
 [README.md](README.md)
 
+### 2.0.0
+- Mugration on nullsafety and dart >= 2.12. Thanks to [@ArnaudHeywear](https://github.com/ArnaudHeywear)
+
 ### 1.4.0
 - Tls and custom Socket support. Thanks to [@Derrick56007](https://github.com/Derrick56007)
 
