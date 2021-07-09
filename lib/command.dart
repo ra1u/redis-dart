@@ -43,9 +43,11 @@ class Command {
   /// Requred to be called after last piping command
   void pipe_end() => _connection.disable_nagle(true);
 
-  //commands in future, we will add more commands
-  Future? set(String key, String value) => send_object(["SET", key, value]);
-  Future? get(String key) => send_object(["GET", key]);
+  /// Set String value given a key
+  Future set(String key, String value) => send_object(["SET", key, value]);
+
+  /// Get value given a key
+  Future get(String key) => send_object(["GET", key]);
 
   /// Transations are started with multi and completed with exec()
   Future<Transaction> multi() {

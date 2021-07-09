@@ -129,7 +129,7 @@ Future test_muliconnections(int commands, int connections) {
           command.send_object(["INCR", "var"]).then((v) {
             c++;
             if (c == N) {
-              command.get("var")!.then((v) {
+              command.get("var").then((v) {
                 assert(v == N.toString());
                 completer.complete("ok");
               });
