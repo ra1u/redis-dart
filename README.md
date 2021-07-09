@@ -1,14 +1,15 @@
-Redis client for dart
+Redis client for Dart
 =====================
 
 [![test master](https://github.com/ra1u/redis-dart/actions/workflows/dart.yml/badge.svg)](https://github.com/ra1u/redis-dart/actions/workflows/dart.yml?query=event%3Apush+branch%3Amaster)
 
-[Redis](http://redis.io/) protocol  parser and client writent in [dart language](https://www.dartlang.org)  
-It is fast and simple by design. It requres no external package to run.
+[Redis](http://redis.io/) protocol parser and client for [Dart](https://www.dartlang.org)  
+
+Fast and simple by design. It requires no external package to run.
 
 ### Supported features:
 
-* [transactions](#transactions) and  [CAS](#cas) (check-and-set) pattern
+* [transactions](#transactions) and [CAS](#cas) (check-and-set) pattern
 * [pubsub](#pubsub) 
 * [unicode](#unicode)
 * [performance](#fast) and [simplicity](#Simple)
@@ -16,41 +17,39 @@ It is fast and simple by design. It requres no external package to run.
 
 ## Simple
 
-Redis client is simple serialiser and deserialiser of [redis protocol](http://redis.io/topics/protocol).
-There are also some additional helper functions and classes available to make
-using redis features easier.
+**redis** is simple serializer and deserializer of the [redis protocol](http://redis.io/topics/protocol) with additional helper functions and classes.
 
 Redis protocol is a composition of array, strings (and bulk) and integers.
-For example executing command [SET](http://redis.io/commands/set) is no more than serializing
-array of strings `["SET","key","value"]`. Commands can be executed by
+
+For example a [SET](http://redis.io/commands/set) command might look like this:
 
 ```dart
 Future f = command.send_object(["SET","key","value"]);
 ```
 
-This enables sending any command.
-Before sending commands one needs to open a connection to redis. I will
-assume that you are running a redis server locally on port 6379.
-In this example we will open a connection, execute the command 'SET key 0'
-and then print result.
+This enables sending any command. Before sending commands one needs to open a
+connection to Redis.
+
+In the following example we will open a connection to a Redis server running on
+port 6379, execute the command 'SET key 0' and print the result.
 
 ```dart
 import 'package:redis/redis.dart';
 ...
-RedisConnection conn = new RedisConnection();
-conn.connect('localhost',6379).then((Command command){
+final conn = RedisConnection();
+conn.connect('localhost', 6379).then((Command command){
     command.send_object(["SET","key","0"]).then((var response)
         print(response);
     )
 }
 ```
 
-Due to the simple implementation, it is possible to execute commands in different ways.
-One an most straightforward way is one after another
+Due to the simple implementation, it is possible to execute commands in various
+ways. In the following example we execute one after the other.
 
 ```dart
-RedisConnection conn = new RedisConnection();
-conn.connect('localhost',6379).then((Command command){
+final conn = RedisConnection();
+conn.connect('localhost', 6379).then((Command command){
   command.send_object(["SET","key","0"])
   .then((var response){
     assert(response == 'OK');
@@ -74,13 +73,12 @@ conn.connect('localhost',6379).then((Command command){
 });
 ```
 
-Other possibility is to execute commands one by one without waiting for the previous
-command to complete. We can send all commands without needing to wait for
-a result, and we can still be sure that the response handled by `Future` will be
+Another way is to execute commands without waiting for the previous command to
+complete, and we can still be sure that the response handled by `Future` will be
 completed in the correct order.
 
 ```dart
-RedisConnection conn = new RedisConnection();
+final conn = RedisConnection();
 conn.connect('localhost',6379).then((Command command){
   command.send_object(["SET","key","0"])
   .then((var response){
@@ -105,12 +103,13 @@ conn.connect('localhost',6379).then((Command command){
 });
 ```
 
-Difference is that there are 5 commands in last examples
+Difference is that there are five commands in last examples
 and only one in the previous example.
 
 ### Generic
 
 Redis responses and requests can be arbitrarily nested. 
+
 Mapping
 
 | Redis         | Dart          |
@@ -120,11 +119,11 @@ Mapping
 | Array         | List          |   
 | Error         | RedisError    |  
 
-\* Both simple string and bulk string from redis are serialied to dart string.
-String from dart to redis is converted to bulk string. UTF8 encoding is used
+\* Both simple string and bulk string from Redis are serialized to Dart string.
+Strings from Dart to Redis are converted to bulk string. UTF8 encoding is used
 in both directions.
 
-Lists can be nested. This is usefull when executing [EVAL](http://redis.io/commands/EVAL) command
+Lists can be nested. This is useful when executing the [EVAL](http://redis.io/commands/EVAL) command.
 
 ```dart
 command.send_object(["EVAL","return {KEYS[1],{KEYS[2],{ARGV[1]},ARGV[2]},2}","2","key1","key2","first","second"])
@@ -144,7 +143,7 @@ results in
 Secure ssl/tls with `RedisConnection.connectSecure(host,port)`
 
 ```dart
-RedisConnection conn = new RedisConnection();
+final conn = RedisConnection();
 conn.connectSecure('localhost',6379).then((Command command){
     command.send_object(["SET","key","0"]).then((var response)
         print(response);
@@ -153,21 +152,21 @@ conn.connectSecure('localhost',6379).then((Command command){
 ```
 
 or by passing any other [`Socket`](https://api.dart.dev/stable/dart-io/Socket-class.html) to
-`RedisConnection.connectWithSocket(Socket s)` in similar matter.
+`RedisConnection.connectWithSocket(Socket s)` in similar fashion.
 
 ## Fast
 
 Tested on a laptop, we can execute and process 180K INCR operations per second.
 
-This is the code that yields such a result
+Example
 
 ```dart
 const int N = 200000;
 int start;
-RedisConnection conn = new RedisConnection();
+final conn = RedisConnection();
 conn.connect('localhost',6379).then((Command command){
   print("test started, please wait ...");
-  start =  new DateTime.now().millisecondsSinceEpoch;
+  start = DateTime.now().millisecondsSinceEpoch;
   command.pipe_start();
   command.send_object(["SET","test","0"]);
   for(int i=1;i<=N;i++){
@@ -190,32 +189,31 @@ conn.connect('localhost',6379).then((Command command){
 
 We are not just sending 200K commands here, but also checking result of every send command.
 
-Using `command.pipe_start();` and  `command.pipe_end();` is nothing more
-than enabling and disabling [Nagle's algorhitm](https://en.wikipedia.org/wiki/Nagle%27s_algorithm)
-on socket. By default it is disabled to achieve shortest possible latency at expense
-of having more TCP packets and extra overhead. Enabling Nagle's algorithm
-during transactions can achieve greater data throughput and less overhead.
+Using `command.pipe_start();` and  `command.pipe_end();` does nothing more
+than enabling and disabling the [Nagle's algorhitm](https://en.wikipedia.org/wiki/Nagle%27s_algorithm) on socket. By default it is disabled to achieve shortest
+possible latency at the expense of more TCP packets and extra overhead. Enabling
+Nagle's algorithm during transactions can achieve greater data throughput and
+less overhead.
 
 ## [Transactions](http://redis.io/topics/transactions)
 
-Transactions by redis protocol
-are started by the command MULTI and then completed with the command EXEC.
-`.multi()`, `.exec()` and `class Transaction` are implemented as
-additional helpers for checking the result of each command executed during transaction.
+Transactions by redis protocol are started by MULTI command and completed with
+EXEC command. `.multi()`, `.exec()` and `class Transaction` are implemented as
+helpers for checking the result of each command executed during transaction.
 
 ```dart
 Future<Transaction> Command.multi();
 ```
 
-Executing `multi()` will return a `Future` with `Transaction`. This class should be used
-to execute commands by calling `.send_object`. It returns a `Future` that
-is called after calling `.exec()`.
+Executing `multi()` returns a `Future<Transaction>`. This class should be used
+to execute commands by calling `.send_object`. It returns a `Future` that is
+called after calling `.exec()`.
 
 ```dart
 import 'package:redis/redis.dart';
 ...
 
-RedisConnection conn = new RedisConnection();
+final conn = RedisConnection();
 conn.connect('localhost',6379).then((Command command){
   command.multi().then((Transaction trans){
     trans.send_object(["SET","val","0"]);
@@ -234,18 +232,17 @@ conn.connect('localhost',6379).then((Command command){
     
 ### [CAS](http://redis.io/topics/transactions#cas)
 
-It is impossible to write code that depends on the result of the previous command 
-during a transaction, because all commands are executed at once.
-To overcome this case, user should employ technique
-[CAS](http://redis.io/topics/transactions#cas). `Cas` is a convenience class for simplifying this pattern.
+It's impossible to write code that depends on the result of the previous command 
+during a transaction, because all commands are executed at once. To overcome
+this, user should use the [CAS](http://redis.io/topics/transactions#cas).
 
-`Cas` constructor requires `Command` as argument.  
+`Cas` requires a `Command` as a constructor argument. It implements two methods:
+`watch` and `multiAndExec`.  
 
-Cas implements two methods `watch()` and  `multiAndExec()`.  
-`watch` takes two arguments. First argument is list of keys to watch, and
-second argument is handler to call and to proceed with CAS.
+`watch` takes two arguments: a list of keys to watch and a handler to call and
+to proceed with CAS.
 
-for example:
+Example:
 
 ```dart
 cas.watch(["key1,key2,key3"],(){
@@ -253,12 +250,13 @@ cas.watch(["key1,key2,key3"],(){
 });
 ```
 
-Failure happens if the watched key is modified out of the transaction. When this happens 
-the handler is called until final transaction completes.
- `multiAndExec` is used to complete transation. Method takes handler
- where argument is `Transaction`. 
+Failure happens if the watched key is modified outside of the transaction. When
+this happens the handler is called until final transaction completes.
+
+`multiAndExec` is used to complete a transaction with a handler where
+the argument is `Transaction`. 
  
-For example:
+Example:
 
 ```dart
 //last part in body of CAS
@@ -269,8 +267,8 @@ cas.multiAndExec((Transaction trans){
 });
 ```
 
-imagine we have the need to atomically increment the value of a key by 1 
-(let's suppose Redis doesn't have [INCR](http://redis.io/commands/incr)).
+Lets imagine we need to atomically increment the value of a key by 1 (and that
+Redis does not have the [INCR](http://redis.io/commands/incr) command).
 
 ```dart
 Cas cas = new Cas(command);
@@ -287,21 +285,21 @@ cas.watch(["key"], (){
 
 ## Unicode
 
-By default UTF8 encoding/decoding for string is used. Each string is converted in binary
-array using UTF8 encoding. This makes ascii string compatible in both direction.
-
+By default UTF8 encoding/decoding for string is used. Each string is converted 
+in binary array using UTF8 encoding. This makes ascii string compatible in both
+direction.
 
 ## [PubSub](http://redis.io/topics/pubsub)
 
-PubSub is a helper for dispatching received messages.
-First, create a new `PubSub` from an existing `Command`
+PubSub is a helper for dispatching received messages. First, create a new
+`PubSub` from an existing `Command`
 
 ```dart
-PubSub pubsub=new PubSub(command);
+final pubsub = PubSub(command);
 ```
 
 Once `PubSub` is created, `Command` is invalidated and should not be used
-on the same connection. `PubSub` allows commands
+on the same connection. `PubSub` have the following commands
 
 ```dart
 void subscribe(List<String> channels)
@@ -332,8 +330,7 @@ command.send_object(["PUBLISH","monkey","banana"]);
 In the near future:
 
 - Better documentation
-- Implement all "generic commands" with named
- commands
+- Implement all "generic commands" with named commands
 - Better error handling - that is ability to recover from error
 - Spell check code
 
