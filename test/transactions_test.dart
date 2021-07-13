@@ -68,7 +68,6 @@ void main() {
 
 //this doesnt use Cas class, but does same functionality
 Future test_incr_fakecas() {
-  RedisConnection();
   String key = "keycaswewe";
   return generate_connect().then((Command cmd) {
     cmd.send_object(["SETNX", key, "1"]);

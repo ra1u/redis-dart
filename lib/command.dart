@@ -14,6 +14,9 @@ class Command {
 
   Command(this._connection) {}
 
+  /// get connection
+  RedisConnection get connection => _connection;
+
   /// Serialise and send data to server
   ///
   /// Data can be any object recognised by Redis
@@ -53,9 +56,5 @@ class Command {
   Future<Transaction> multi() {
     //multi retun transation as future
     return send_object(["MULTI"]).then((_) => Transaction(this));
-  }
-
-  RedisConnection get_connection() {
-    return _connection;
   }
 }
