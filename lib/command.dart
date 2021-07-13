@@ -53,6 +53,9 @@ class Command {
   // Increase the given key
   Future incr(String key) => send_object(["INCR", key]);
 
+  // DBSIZE command
+  Future dbsize() => send_object(["DBSIZE"]);
+
   /// Transations are started with multi and completed with exec()
   Future<Transaction> multi() {
     //multi retun transation as future
