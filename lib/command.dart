@@ -40,6 +40,7 @@ class Command {
   ///  This is optimisation and not requrement.
   void pipe_start() =>
       _connection.disable_nagle(false); //we want to use sockets buffering
+
   /// Requred to be called after last piping command
   void pipe_end() => _connection.disable_nagle(true);
 
@@ -48,6 +49,9 @@ class Command {
 
   /// Get value given a key
   Future get(String key) => send_object(["GET", key]);
+
+  // Increase the given key
+  Future incr(String key) => send_object(["INCR", key]);
 
   /// Transations are started with multi and completed with exec()
   Future<Transaction> multi() {
