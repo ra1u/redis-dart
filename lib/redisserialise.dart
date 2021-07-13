@@ -19,6 +19,8 @@ class RedisBulk {
   RedisBulk(this.iterable) {}
 }
 
+typedef Consumer = void Function(Iterable<int> s);
+
 class RedisSerialise {
   static final ASCII = const AsciiCodec();
   static final UTF8 = const Utf8Codec();
@@ -28,15 +30,13 @@ class RedisSerialise {
   static final _linesep = ASCII.encode("\r\n");
   static final _dollarminus1 = ASCII.encode("\$-1");
 
-  static List<int> Serialise(object) {
-    var s = <int>[];
-    SerialiseConsumable(object, (v) {
-      s.addAll(v as Iterable<int>);
-    });
+  static List<int> Serialise(Object? object) {
+    final s = <int>[];
+    SerialiseConsumable(object, (v) => s.addAll(v));
     return s;
   }
 
-  static void SerialiseConsumable(object, void consumer(Iterable s)) {
+  static void SerialiseConsumable(Object? object, Consumer consumer) {
     if (object is String) {
       var data = UTF8.encode(object);
       consumer(_dollar);
