@@ -17,7 +17,7 @@ main() {
           // stream closed
         });
       }
-      await cmd.get_connection().close();
+      await cmd.connection.close();
       //expect(cmd.send_object("GARBAGE"), throwsA(isRedisError));
     });
   });

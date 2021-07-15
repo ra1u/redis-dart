@@ -122,7 +122,6 @@ Future test_muliconnections(int commands, int connections) {
     return command.set("var", "0");
   }).then((_) {
     for (int j = 0; j < K; j++) {
-      RedisConnection();
       generate_connect().then((Command command) {
         command.pipe_start();
         for (int i = j; i < N; i += K) {

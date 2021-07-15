@@ -10,7 +10,7 @@ class PubSub {
   StreamController<List> _stream_controler = StreamController<List>();
 
   PubSub(Command command) {
-    _command = Command(command._connection);
+    _command = Command._(command._connection);
     command.send_nothing()!.then((_) {
       //override socket with warrning
       command._connection = _WarrningPubSubInProgress();

@@ -12,7 +12,10 @@ part of redis;
 class Command {
   /*RedisConnection*/ var _connection;
 
-  Command(this._connection) {}
+  Command._(this._connection) {}
+
+  /// get connection
+  RedisConnection get connection => _connection;
 
   /// Serialise and send data to server
   ///
@@ -53,9 +56,5 @@ class Command {
   Future<Transaction> multi() {
     //multi retun transation as future
     return send_object(["MULTI"]).then((_) => Transaction(this));
-  }
-
-  RedisConnection get_connection() {
-    return _connection;
   }
 }
