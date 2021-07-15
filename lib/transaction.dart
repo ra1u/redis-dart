@@ -19,7 +19,7 @@ class Transaction extends Command {
   late Command _overrided_command;
   bool transaction_completed = false;
 
-  Transaction(Command command) : super(command._connection) {
+  Transaction(Command command) : super._(command._connection) {
     _overrided_command = command;
     //we override his _connection, during transaction
     //it is best to point out where problem is

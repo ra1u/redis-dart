@@ -12,7 +12,7 @@ part of redis;
 class Command {
   /*RedisConnection*/ var _connection;
 
-  Command(this._connection) {}
+  Command._(this._connection) {}
 
   /// get connection
   RedisConnection get connection => _connection;

@@ -17,12 +17,12 @@ class RedisConnection {
 
   /// create a RedisConnection and return a Command
   static Future<Command> connect(host, int port) async {
-    return Command(RedisConnection._(await Socket.connect(host, port)));
+    return Command._(RedisConnection._(await Socket.connect(host, port)));
   }
 
   /// create a secure RedisConnection and return a Command
   static Future<Command> connectSecure(host, int port) async {
-    return Command(RedisConnection._(await SecureSocket.connect(host, port)));
+    return Command._(RedisConnection._(await SecureSocket.connect(host, port)));
   }
 
   /// private constructor
