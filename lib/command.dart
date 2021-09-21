@@ -24,8 +24,14 @@ class Command {
   ///     send_object(["SET","key","value"]);
   Future send_object(Object obj) {
     try {
-      // RedisSerialise.Serialise
-      return _connection._sendraw(RedisSerialise.Serialise(obj));
+      return _connection._sendraw(RedisSerialise.Serialise(obj)).then((v) {
+        // turn RedisError into exception
+        if (v is RedisError) {
+          return Future.error(v);
+        } else {
+          return v;
+        }
+      });
     } catch (e) {
       return Future.error(e);
     }

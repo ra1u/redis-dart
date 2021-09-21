@@ -62,7 +62,7 @@ class RedisParser {
         case TYPE_BULK:
           return parseBulk(s);
         case TYPE_ERROR:
-          return parseError(s).then((e) => Future.error(e));
+          return parseError(s);
         default:
           return Future.error(
               RedisRuntimeError("got element that cant not be parsed"));
