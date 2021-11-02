@@ -7,6 +7,11 @@ set -e
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
+#use cache
+LOCAL_CACHE_DIR="${HOME}/.pub-cache"
+mkdir -p ${LOCAL_CACHE_DIR}
+
+#make pod
 POD=$(podman pod create)
 
 echo "POD ${POD}"
@@ -31,6 +36,7 @@ podman run \
 	   --env REDIS_URL=127.0.0.1 \
 	   --env REDIS_PORT=6379 \
 	   --volume "${SCRIPT_DIR}/../../:/workdir" \
+	   --volume "${LOCAL_CACHE_DIR}:/root/.pub-cache" \
 	   ${DART_IMAGE} \
 	   -c "set -e 
            sleep 1
