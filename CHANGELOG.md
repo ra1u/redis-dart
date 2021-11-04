@@ -1,8 +1,12 @@
 
 [README.md](README.md)
 
+
+### 2.2.0
+- Bugfix: Handle socket exception on close [Issue #49](https://github.com/ra1u/redis-dart/issues/49)
+
 ### 2.1.0
-- Try to recover after received RedisError [Issue #48](https://github.com/ra1u/redis-dart/issues/48)
+- Bugfix: Try to recover after received RedisError [Issue #48](https://github.com/ra1u/redis-dart/issues/48)
 
 ### 2.0.0
 - Migration on nullsafety and dart >= 2.12. Thanks to [@ArnaudHeywear](https://github.com/ArnaudHeywear)
