@@ -10,13 +10,13 @@ class PubSub {
   StreamController<List> _stream_controler = StreamController<List>();
 
   PubSub(Command command) {
-    _command = Command(command._connection);
+    _command = Command.from(command);
     command.send_nothing()!.then((_) {
       //override socket with warrning
       command._connection = _WarrningPubSubInProgress();
       // listen and process forever
       return Future.doWhile(() {
-        return _command._connection._senddummy().then<bool>((var data) {
+        return _command._connection._senddummy(_command.parser).then<bool>((var data) {
           _stream_controler.add(data);
           return true;
         });

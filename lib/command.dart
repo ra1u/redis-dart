@@ -11,8 +11,17 @@ part of redis;
 
 class Command {
   /*RedisConnection*/ var _connection;
+  // parser is somthing that transfer data from redis database to object
+  Parser parser = Parser();
+  // serialiser is somehing that transform object to redis
+  Serialiser serialise = Serialiser();
 
   Command(this._connection) {}
+  Command.from(Command other) {
+    this._connection = other._connection;
+    this.parser = other.parser;
+    this.serialise = other.serialise;
+  }
 
   /// Serialise and send data to server
   ///
@@ -24,7 +33,7 @@ class Command {
   ///     send_object(["SET","key","value"]);
   Future send_object(Object obj) {
     try {
-      return _connection._sendraw(RedisSerialise.Serialise(obj)).then((v) {
+      return _connection._sendraw(parser,serialise.serialise(obj)).then((v) {
         // turn RedisError into exception
         if (v is RedisError) {
           return Future.error(v);

@@ -9,6 +9,12 @@
 
 part of redis;
 
+class Parser {
+  Future parse(LazyStream s){
+    return RedisParser.parseredisresponse(s);
+  }
+} 
+
 class RedisParser {
   static final UTF8 = const Utf8Codec();
   static const int CR = 13;

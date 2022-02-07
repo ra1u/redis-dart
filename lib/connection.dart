@@ -53,9 +53,9 @@ class RedisConnection {
   //this doesnt send anything
   //it just wait something to come from socket
   //it parse it and execute future
-  Future _senddummy() {
+  Future _senddummy(Parser parser) {
     _future = _future.then((_) {
-      return RedisParser.parseredisresponse(_stream!);
+      return parser.parse(_stream!);
     });
     return _future;
   }
@@ -71,9 +71,9 @@ class RedisConnection {
   }
 
   // ignore: unused_element
-  Future _sendraw(List<int> data) {
+  Future _sendraw(Parser parser,List<int> data) {
     _socket!.add(data);
-    return _senddummy();
+    return _senddummy(parser);
   }
 
   void disable_nagle(bool v) {

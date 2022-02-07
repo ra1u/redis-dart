@@ -21,6 +21,13 @@ class RedisBulk {
 
 typedef Consumer = void Function(Iterable<int> s);
 
+
+class Serialiser {
+  List<int> serialise(Object? object){
+    return RedisSerialise.Serialise(object);
+  }  
+}
+
 class RedisSerialise {
   static final ASCII = const AsciiCodec();
   static final UTF8 = const Utf8Codec();
