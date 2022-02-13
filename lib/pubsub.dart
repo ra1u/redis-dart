@@ -47,6 +47,6 @@ class PubSub {
   void _sendcmd_and_list(String cmd, List<String> s) {
     List list = [cmd];
     list.addAll(s);
-    _command._connection._socket.add(RedisSerialise.Serialise(list));
+    _command._connection._socket.add(_command.serializer.serialize(list));
   }
 }

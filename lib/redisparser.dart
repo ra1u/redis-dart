@@ -9,13 +9,11 @@
 
 part of redis;
 
-class Parser {
-  Future parse(LazyStream s){
-    return RedisParser.parseredisresponse(s);
-  }
-} 
+class RedisParser extends Parser {
+  
+}
 
-class RedisParser {
+class Parser {
   static final UTF8 = const Utf8Codec();
   static const int CR = 13;
   static const int LF = 10;
@@ -30,7 +28,7 @@ class RedisParser {
   //by protocol it is enough to find just CR and LF folows
   //this method can be used only on types that complies with such rule
   //it consumes both CR and LF from stream, but is not returned
-  static Future read_simple(LazyStream s) {
+  Future read_simple(LazyStream s) {
     return s.take_while((c) => (c != CR)).then((list) {
       //takeWile consumed CR from stream,
       //now check for LF
@@ -45,7 +43,7 @@ class RedisParser {
 
   //return Future<r> if next two elemets are CRLF
   //or thows if failed
-  static Future takeCRLF(LazyStream s, r) {
+  Future takeCRLF(LazyStream s, r) {
     return s.take_n(2).then((data) {
       if (data[0] == CR && data[1] == LF) {
         return r;
@@ -55,7 +53,11 @@ class RedisParser {
     });
   }
 
-  static Future parseredisresponse(LazyStream s) {
+  Future parse(LazyStream s){
+    return parseredisresponse(s);
+  }
+  
+  Future parseredisresponse(LazyStream s) {
     return s.take_n(1).then((list) {
       int cmd = list[0];
       switch (cmd) {
@@ -76,21 +78,21 @@ class RedisParser {
     });
   }
 
-  static Future<String> parseSimpleString(LazyStream s) {
+  Future<String> parseSimpleString(LazyStream s) {
     return read_simple(s).then((v) {
       return UTF8.decode(v);
     });
   }
 
-  static Future<RedisError> parseError(LazyStream s) {
+  Future<RedisError> parseError(LazyStream s) {
     return parseSimpleString(s).then((str) => RedisError(str));
   }
 
-  static Future<int> parseInt(LazyStream s) {
+  Future<int> parseInt(LazyStream s) {
     return read_simple(s).then((v) => _ParseIntRaw(v));
   }
 
-  static Future parseBulk(LazyStream s) {
+  Future parseBulk(LazyStream s) {
     return parseInt(s).then((i) {
       //get len
       if (i == -1) //null
@@ -108,7 +110,7 @@ class RedisParser {
 
   //it first consume array as N and then
   //consume  N elements with parseredisresponse function
-  static Future<List> parseArray(LazyStream s) {
+  Future<List> parseArray(LazyStream s) {
     //closure
     Future<List> consumeList(LazyStream s, int len, List lst) {
       assert(len >= 0);

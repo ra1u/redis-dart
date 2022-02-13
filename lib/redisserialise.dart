@@ -8,7 +8,7 @@ part of redis;
  * Luka Rahne
  */
 
-Utf8Encoder RedisSerialiseEncoder = Utf8Encoder();
+Utf8Encoder RedisSerializeEncoder = Utf8Encoder();
 
 class RedisBulk {
   Iterable<int> iterable;
@@ -22,13 +22,13 @@ class RedisBulk {
 typedef Consumer = void Function(Iterable<int> s);
 
 
-class Serialiser {
-  List<int> serialise(Object? object){
-    return RedisSerialise.Serialise(object);
+class Serializer {
+  List<int> serialize(Object? object){
+    return RedisSerialize.Serialize(object);
   }  
 }
 
-class RedisSerialise {
+class RedisSerialize {
   static final ASCII = const AsciiCodec();
   static final UTF8 = const Utf8Codec();
   static final _dollar = ASCII.encode("\$");
@@ -37,13 +37,13 @@ class RedisSerialise {
   static final _linesep = ASCII.encode("\r\n");
   static final _dollarminus1 = ASCII.encode("\$-1");
 
-  static List<int> Serialise(Object? object) {
+  static List<int> Serialize(Object? object) {
     final s = <int>[];
-    SerialiseConsumable(object, (v) => s.addAll(v));
+    SerializeConsumable(object, (v) => s.addAll(v));
     return s;
   }
 
-  static void SerialiseConsumable(Object? object, Consumer consumer) {
+  static void SerializeConsumable(Object? object, Consumer consumer) {
     if (object is String) {
       var data = UTF8.encode(object);
       consumer(_dollar);
@@ -57,7 +57,7 @@ class RedisSerialise {
       consumer(_IntToRaw(len));
       consumer(_linesep);
       object.forEach(
-          (v) => SerialiseConsumable(v is int ? v.toString() : v, consumer));
+          (v) => SerializeConsumable(v is int ? v.toString() : v, consumer));
     } else if (object is int) {
       consumer(_semicol);
       consumer(_IntToRaw(object));
@@ -70,7 +70,7 @@ class RedisSerialise {
     } else if (object == null) {
       consumer(_dollarminus1); //null bulk
     } else {
-      throw ("cant serialise such type");
+      throw ("cant serialize such type");
     }
   }
 
