@@ -67,6 +67,7 @@ class RedisSerialize {
       consumer(_IntToRaw(object.iterable.length));
       consumer(_linesep);
       consumer(object.iterable);
+      consumer(_linesep);
     } else if (object == null) {
       consumer(_dollarminus1); //null bulk
     } else {

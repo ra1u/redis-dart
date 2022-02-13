@@ -13,6 +13,25 @@ class RedisParser extends Parser {
   
 }
 
+class RedisParserBulkBinary extends Parser {
+  Future parseBulk(LazyStream s) {
+    return parseInt(s).then((i) {
+      //get len
+      if (i == -1) //null
+        return null;
+      if (i >= 0) {
+        //i of bulk data
+        return s.take_n(i).then((lst) => takeCRLF(
+            s, lst)); //consume CRLF and return list
+      } else {
+        return Future.error(
+            RedisRuntimeError("cant process buld data less than -1"));
+      }
+    });
+  }  
+}
+
+
 class Parser {
   static final UTF8 = const Utf8Codec();
   static const int CR = 13;
