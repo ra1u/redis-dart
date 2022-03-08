@@ -43,7 +43,7 @@ podman run \
            cd /workdir
            dart --version
            dart pub get
-           dart analyze || true
+           dart analyze --fatal-infos
            dart test
            dart test/performance.dart"
 
