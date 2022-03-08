@@ -22,7 +22,6 @@ class StreamNext {
   late int _npack;
   late bool done;
   late Socket socket;
-  late StreamSubscription<List<int>> _sub;
   StreamNext.fromstream(Socket _socket) {
     _queue = Queue<Completer<List<int>>>();
     _nfut = 0;
