@@ -12,9 +12,12 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-    
+    strategy:
+      matrix:
+        sdk: [stable, dev, 2.12]
+        
     env:
       REDIS_URL: localhost
       REDIS_PORT: 6379
@@ -32,7 +35,9 @@ jobs:
       # https://github.com/dart-lang/setup-dart/blob/main/README.md
       # - uses: dart-lang/setup-dart@v1
       - uses: dart-lang/setup-dart@v1
-
+        with:
+          sdk: ${{ matrix.sdk }}
+          
       - name: Install dependencies
         run: dart pub get
 
