@@ -1,6 +1,10 @@
 
 [README.md](README.md)
 
+### 3.0.0
+- Feature: Binary data parsing, [Issue #56](https://github.com/ra1u/redis-dart/issues/56) 
+- we upgraded to new major version due to minor backward incompatibility. 
+ Incompatibility is in publicly exposed parser class. Most users should not notice incompatibility.
 
 ### 2.2.0
 - Bugfix: Handle socket exception on close [Issue #49](https://github.com/ra1u/redis-dart/issues/49)

@@ -115,13 +115,16 @@ Mapping
 | Redis         | Dart          |
 | ------------- |:-------------:| 
 | String        | String        | 
-| Integer       | Integer       |  
-| Array         | List          |   
-| Error         | RedisError    |  
+| Integer       | Integer       |
+| Array         | List          |
+| Error         | RedisError    |
+| Bulk          | String or Binary |
 
 \* Both simple string and bulk string from Redis are serialized to Dart string.
 Strings from Dart to Redis are converted to bulk string. UTF8 encoding is used
 in both directions.
+
+New feature since 3.0: Support for converting received data as [binary data](#Binary data).
 
 Lists can be nested. This is useful when executing the [EVAL](http://redis.io/commands/EVAL) command.
 
@@ -288,6 +291,25 @@ cas.watch(["key"], (){
 By default UTF8 encoding/decoding for string is used. Each string is converted 
 in binary array using UTF8 encoding. This makes ascii string compatible in both
 direction.
+
+## Binary data
+
+Default conversion response from Redis of Bulk data is converted to utf-8 string. 
+In case when binary interpretation is needed, there is option to request such parsing.
+
+```dart
+final conn = RedisConnection();
+Command cmd = await conn.connect('localhost',6379);
+Command cmd_bin = Command.from(cmd).setParser(RedisParserBulkBinary());
+List<int> d = [1,2,3,4,5,6,7,8,9]; 
+// send binary
+await cmd_bin.send_object(["SET", key, RedisBulk(d)]);
+// receive binary from binary command handler
+var r = await cmd_bin.send_object(["GET", key])
+// r is now same as d
+```
+
+
 
 ## [PubSub](http://redis.io/topics/pubsub)
 
