@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        sdk: [stable, dev, 2.12]
+        sdk: [stable, dev, 2.12.0]
         
     env:
       REDIS_URL: localhost
