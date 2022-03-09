@@ -28,8 +28,11 @@ podman run \
 	   ${REDIS_IMAGE}
 
 # run dart in pod
-DART_IMAGE=google/dart:2.12
-podman run \
+for TAG in "2.12" "stable" "beta"
+do
+	DART_IMAGE=docker.io/dart:${TAG}
+	echo "image ${DART_IMAGE}"
+	podman run \
 	   --rm \
 	   --pod ${POD} \
 	   --entrypoint "/bin/sh" \
@@ -43,7 +46,8 @@ podman run \
            cd /workdir
            dart --version
            dart pub get
-           dart analyze --fatal-infos
+           dart analyze
+           #dart analyze --fatal-infos
            dart test
            dart test/performance.dart"
-
+done
