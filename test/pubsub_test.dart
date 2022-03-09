@@ -1,16 +1,13 @@
-// helper function to check
-// if Stream data is same as provided test Iterable
-import 'dart:cli';
-
 import 'package:redis/redis.dart';
 import 'package:test/test.dart';
 
 import 'main.dart';
 
-void main() {
-  group("Test Redis Pub-Sub", () {
-    Command cmdP = waitFor(generate_connect());
-    Command cmdS = waitFor(generate_connect());
+void main() async {
+  Command cmdP = await generate_connect();
+  Command cmdS = await generate_connect();
+
+  group("Test Redis Pub-Sub", ()  {
 
     PubSub subscriber = PubSub(cmdS);
 

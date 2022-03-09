@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:cli';
 import 'dart:collection';
 
 import 'package:redis/redis.dart';
@@ -8,15 +7,15 @@ import 'package:test/test.dart';
 import 'main.dart';
 
 void main() {
-  test("Basic Transaction Test", () {
-    Command cmd1 = waitFor(generate_connect());
-    Command cmd2 = waitFor(generate_connect());
+  test("Basic Transaction Test", () async {
+    Command cmd1 = await generate_connect();
+    Command cmd2 = await generate_connect();
 
     const String key = "transaction_key";
     int n = 2;
 
     // Start Transaction
-    Transaction trans = waitFor(cmd1.multi());
+    Transaction trans = await cmd1.multi();
     trans.send_object(["SET", key, "0"]);
 
     cmd2.send_object(["SET", key, "10"]);
