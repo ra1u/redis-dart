@@ -157,6 +157,19 @@ conn.connectSecure('localhost',6379).then((Command command){
 or by passing any other [`Socket`](https://api.dart.dev/stable/dart-io/Socket-class.html) to
 `RedisConnection.connectWithSocket(Socket s)` in similar fashion.
 
+\* If you want to connect to a redis database that has authentication, you need first send an authentication object like this:
+```dart
+final conn = RedisConnection();
+conn.connectSecure(<args>).then((Command command){
+     command.send_object(["AUTH","username","password"])
+     .then((var response) {
+       print(response);
+       command.send_object(["SET","token","value"]).then(
+          (var response) => print(response));
+     });
+});
+```
+
 ## Fast
 
 Tested on a laptop, we can execute and process 180K INCR operations per second.
