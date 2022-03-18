@@ -147,11 +147,14 @@ Secure ssl/tls with `RedisConnection.connectSecure(host,port)`
 
 ```dart
 final conn = RedisConnection();
-conn.connectSecure('localhost',6379).then((Command command){
-    command.send_object(["SET","key","0"]).then((var response)
-        print(response);
-    )
-}
+conn.connectSecure('localhost', 6379).then((Command command) {
+  command
+      .send_object(["AUTH", "username", "password"]).then((var response) {
+    print(response);
+    command.send_object(["SET", "key", "0"]).then(
+        (var response) => print(response));
+  });
+});
 ```
 
 or by passing any other [`Socket`](https://api.dart.dev/stable/dart-io/Socket-class.html) to
