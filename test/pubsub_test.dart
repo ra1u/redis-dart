@@ -58,6 +58,18 @@ void main() async {
               "Publishing a message after unsubscribe should be received by zero clients.");
 
       // TODO: Multiple channels, Pattern (un)subscribe
-    });
+     });
+  
+     test("Test close", () async {
+        // test that we can close connection
+        // creates new connection as prevously used in test
+        // does not expect errors 
+        Command cmdClose = await generate_connect();
+        PubSub ps_c = PubSub(cmdClose);
+        cmdClose.get_connection().close();    
+        expect(ps_c.getStream(),
+            emitsError(anything), // todo catch CloseError
+            reason: "Number of subscribers should be 0 after unsubscribe");
+     });
   });
 }

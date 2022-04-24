@@ -1,8 +1,21 @@
 part of redis;
 
-class _WarrningPubSubInProgress {
-  noSuchMethod(_) => throw "PubSub on this connaction in progress"
-      "It is not allowed to issue commands trough this handler";
+class _WarrningPubSubInProgress extends RedisConnection {
+  RedisConnection _connection;
+  _WarrningPubSubInProgress(this._connection) {}
+  
+  _err() => throw "PubSub on this connaction in progress"
+    "It is not allowed to issue commands trough this handler";
+
+  // swap this relevant methods in Conenction with exception
+  Future _sendraw(Parser parser,List<int> data) => _err();
+  Future _getdummy() => _err();
+  Future _senddummy(Parser parser) => _err();
+
+  // this fake PubSub connection can be closed
+  Future close() {
+    return this._connection.close();
+  }  
 }
 
 class PubSub {
@@ -13,12 +26,30 @@ class PubSub {
     _command = Command.from(command);
     command.send_nothing()!.then((_) {
       //override socket with warrning
-      command._connection = _WarrningPubSubInProgress();
+      command._connection = _WarrningPubSubInProgress(_command._connection);
       // listen and process forever
       return Future.doWhile(() {
         return _command._connection._senddummy(_command.parser).then<bool>((var data) {
-          _stream_controler.add(data);
-          return true;
+           try{
+             _stream_controler.add(data);
+             return true; // run doWhile more
+           } catch(e){
+             try{
+               _stream_controler.addError(e);
+             } catch(_){
+               // we could not notfy stream that we have eror
+             }
+             // stop doWhile()
+             return false;
+           }
+        }).catchError((e){
+          try{
+            _stream_controler.addError(e);
+          } catch(_){
+            // we could not notfy stream that we have eror
+          }
+          // stop doWhile()
+          return false;
         });
       });
     });
