@@ -8,7 +8,9 @@ class _WarrningPubSubInProgress extends RedisConnection {
     "It is not allowed to issue commands trough this handler";
 
   // swap this relevant methods in Conenction with exception
+  // ignore: unused_element
   Future _sendraw(Parser parser,List<int> data) => _err();
+  // ignore: unused_element
   Future _getdummy() => _err();
   Future _senddummy(Parser parser) => _err();
 
