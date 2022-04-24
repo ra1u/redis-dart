@@ -53,7 +53,6 @@ class StreamNext {
       if (_nfut >= 1) {
         _nfut = 0;
         for (Completer<List<int>> e in _queue) {
-          print("complete error");
           e.completeError(error);
         }
       }

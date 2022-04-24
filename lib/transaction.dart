@@ -62,8 +62,6 @@ class Transaction extends Command {
         //return null;
       } else {
         if (list.length != _queue.length) {
-          print(
-              "list.length = ${list.length} _queue.length = ${_queue.length}");
           int? diff = list.length - _queue.length;
           //return
           throw RedisRuntimeError(
