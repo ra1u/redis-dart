@@ -1,6 +1,9 @@
 
 [README.md](README.md)
 
+### 3.1.0
+- PubSub can be closed and errors can be caught as per PubSub example in [README.md](README.md)
+
 ### 3.0.0
 - Feature: Binary data parsing, [Issue #56](https://github.com/ra1u/redis-dart/issues/56) 
 - we upgraded to new major version due to minor backward incompatibility. 

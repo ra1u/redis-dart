@@ -340,9 +340,46 @@ and additional `Stream getStream()`
 Example for receiving and printing messages
 
 ```dart
-pubsub.getStream().listen((message){
-  print("message: $message");
-});
+import 'dart:async';
+import 'package:redis/redis.dart';
+
+Future<void> rx() async {
+  Command cmd = await RedisConnection().connect('localhost', 6379);
+  final pubsub = PubSub(cmd);
+  pubsub.subscribe(["monkey"]);
+  final stream = pubsub.getStream();
+  var streamWithoutErrors = stream.handleError((e) => print("error $e"));
+  await for (final msg in streamWithoutErrors) {
+    var kind = msg[0];
+    var food = msg[2];
+    if (kind == "message") {
+      print("monkey got ${food}");
+      if (food == "cucumber") {
+        print("monkey does not like cucumber");
+        cmd.get_connection().close();
+      }
+    }
+    else {
+      print("received non-message ${msg}");
+    }
+  }
+}
+
+Future<void> tx() async {
+  Command cmd = await RedisConnection().connect('localhost', 6379);
+  await cmd.send_object(["PUBLISH", "monkey", "banana"]);
+  await cmd.send_object(["PUBLISH", "monkey", "apple"]);
+  await cmd.send_object(["PUBLISH", "monkey", "peanut"]);
+  await cmd.send_object(["PUBLISH", "monkey", "cucumber"]);
+  cmd.get_connection().close();
+}
+
+void main() async {
+  var frx = rx();
+  var ftx = tx();
+  await ftx;
+  await frx;
+}
 ```
 
 Sending messages can be done from different connection for example
