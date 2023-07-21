@@ -9,27 +9,78 @@
 
 part of redis;
 
-
-// this class is returned when redis response is type error
-class RedisError  {
+@Deprecated('Use RedisException instead')
+class RedisError extends RedisException {
   String e;
-  RedisError(this.e);
-  String toString() { return "RedisError($e)";}
+
+  RedisError(this.e) : super(e);
+
+  String get error => message;
+
+  String toString() {
+    return "RedisError($message)";
+  }
+}
+
+/// This class is returned when redis response is type error
+class RedisException implements Exception {
+  String message;
+
+  RedisException(this.message);
+
+  String toString() {
+    return "RedisException($message)";
+  }
+}
+
+@Deprecated('Use RedisRuntimeException instead')
+class RedisRuntimeError extends RedisRuntimeException {
+  String e;
+
+  RedisRuntimeError(this.e) : super(e);
+
+  String toString() {
+    return "RedisRuntimeError($e)";
+  }
+
   String get error => e;
 }
 
-// thiss class is returned when parsing in client side (aka this libraray)
-// get error
-class RedisRuntimeError  {
+/// This class is returned when parsing in client side (aka this libraray)
+class RedisRuntimeException implements Exception {
   String e;
-  RedisRuntimeError(this.e);
-  String toString() { return "RedisRuntimeError($e)";}
+
+  RedisRuntimeException(this.e);
+
+  String toString() {
+    return "RedisRuntimeException($e)";
+  }
+
   String get error => e;
 }
 
-class TransactionError  {
+@Deprecated('Use TransactionException instead')
+class TransactionError extends RedisException {
   String e;
-  TransactionError(this.e);
-  String toString() { return "TranscationError($e)";}
-  String get error => e; 
+
+  TransactionError(this.e) : super(e);
+
+  String toString() {
+    return "TransactionError($e)";
+  }
+
+  String get error => e;
+}
+
+/// This class is returned when transaction fails
+class TransactionException implements Exception {
+  String e;
+
+  TransactionException(this.e);
+
+  String toString() {
+    return "TranscationException($e)";
+  }
+
+  String get error => e;
 }
