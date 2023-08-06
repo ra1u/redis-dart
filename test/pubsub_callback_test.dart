@@ -12,7 +12,7 @@ void main() async {
   Command cmdP = await generate_connect();
   Command cmdS = await generate_connect();
 
-  group("Test Redis Pub-Sub", () {
+  group("Test Redis Pub-Sub subscribe with onMessage callback", () {
     PubSub subscriber = PubSub(cmdS);
 
     test("Subscribe to channel and listen via callback", () async {
