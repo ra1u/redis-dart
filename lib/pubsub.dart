@@ -27,7 +27,7 @@ class PubSub {
 
   bool streamAlreadyListened = false;
 
-  StreamController<List> _stream_controller = StreamController<List>();
+  StreamController<List> _streamController = StreamController<List>();
 
   PubSub(Command command) {
     _command = Command.from(command);
@@ -40,26 +40,26 @@ class PubSub {
             ._senddummy(_command.parser)
             .then<bool>((var data) {
           try {
-            _stream_controller.add(data);
+            _streamController.add(data);
             return true; // run doWhile more
           } catch (e) {
             try {
-              _stream_controller.addError(e);
+              _streamController.addError(e);
             } catch (_) {
               // we could not notify stream that we have error
             }
             // stop doWhile()
-            _stream_controller.close();
+            _streamController.close();
             return false;
           }
         }).catchError((e) {
           try {
-            _stream_controller.addError(e);
+            _streamController.addError(e);
           } catch (_) {
             // we could not notify stream that we have error
           }
           // stop doWhile()
-          _stream_controller.close();
+          _streamController.close();
           return false;
         });
       });
@@ -67,7 +67,7 @@ class PubSub {
   }
 
   Stream getStream() {
-    return _stream_controller.stream;
+    return _streamController.stream;
   }
 
   /// Subscribes the client to the specified channels.
