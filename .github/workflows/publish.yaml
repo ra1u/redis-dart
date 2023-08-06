@@ -1,0 +1,21 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  Publish:
+    permissions:
+      id-token: write
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1
+
+      - run: dart pub get
+      - run: dart test
+      - run: dart analyze
+      - run: dart pub publish --force
