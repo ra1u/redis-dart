@@ -1,6 +1,9 @@
 
 [README.md](README.md)
 
+### 4.0.0
+- Change licencse to Mit License [Issue #82](https://github.com/ra1u/redis-dart/issues/82)
+
 ### 3.1.0
 - PubSub can be closed and errors can be caught as per PubSub example in [README.md](README.md)
 
