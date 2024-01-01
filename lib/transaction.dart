@@ -10,7 +10,7 @@
 part of redis;
 
 class _WarningConnection {
-  noSuchMethod(_) => throw RedisRuntimeError("Transaction in progress. "
+  noSuchMethod(_) => throw RedisRuntimeException("Transaction in progress. "
       "Please complete Transaction with .exec");
 }
 
@@ -28,7 +28,8 @@ class Transaction extends Command {
 
   Future send_object(object) {
     if (transaction_completed) {
-      return Future.error(RedisRuntimeError("Transaction already completed."));
+      return Future.error(
+          RedisRuntimeException("Transaction already completed."));
     }
 
     Completer c = Completer();
@@ -36,9 +37,11 @@ class Transaction extends Command {
     super.send_object(object).then((msg) {
       if (msg.toString().toLowerCase() != "queued") {
         c.completeError(
-            RedisError("Could not enqueue command: " + msg.toString()));
+            RedisException("Could not enqueue command: " + msg.toString()));
       }
-    }).catchError((error){ c.completeError(error); });
+    }).catchError((error) {
+      c.completeError(error);
+    });
     return c.future;
   }
 
@@ -57,14 +60,14 @@ class Transaction extends Command {
         while (_queue.isNotEmpty) {
           _queue.removeFirst();
         }
-        // return Future.error(TransactionError("transaction error "));
-        throw TransactionError("transaction error ");
+        // return Future.error(TransactionException("transaction error "));
+        throw TransactionException("transaction error ");
         //return null;
       } else {
         if (list.length != _queue.length) {
           int? diff = list.length - _queue.length;
           //return
-          throw RedisRuntimeError(
+          throw RedisRuntimeException(
               "There was $diff command(s) executed during transcation,"
               "not going trough Transation handler");
         }

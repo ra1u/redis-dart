@@ -27,7 +27,7 @@ void main() {
                 "Transaction value should not be interfered by actions outside of transaction");
       }).catchError((e) {
         print("got test error $e");
-        expect(e, TypeMatcher<TransactionError>());
+        expect(e, TypeMatcher<TransactionException>());
       });
 
       // Increase value out of transaction
@@ -39,7 +39,7 @@ void main() {
 
     //Test using command fail during transaction
     expect(() => cmd1.send_object(['SET', key, 0]),
-        throwsA(TypeMatcher<RedisRuntimeError>()),
+        throwsA(TypeMatcher<RedisRuntimeException>()),
         reason: "Command should not be usable during transaction");
 
     expect(trans.exec(), completion(equals("OK")),
@@ -49,7 +49,7 @@ void main() {
         reason: "Value should be final value $n after transaction complete");
 
     expect(() => trans.send_object(["GET", key]),
-        throwsA(TypeMatcher<RedisRuntimeError>()),
+        throwsA(TypeMatcher<RedisRuntimeException>()),
         reason:
             "Transaction object should not be usable after finishing transaction");
   });

@@ -35,4 +35,4 @@ main() {
   });
 }
 
-const Matcher isRedisError = TypeMatcher<RedisError>();
+const Matcher isRedisError = TypeMatcher<RedisException>();

@@ -52,12 +52,12 @@ class Cas {
         } else {
           // exec completes only with valid response
           _completer_bool.completeError(
-              RedisError("exec response is not expected, but is $resp"));
+              RedisException("exec response is not expected, but is $resp"));
         }
       }).catchError((e) {
         // dont do anything
         _completer_bool.complete(true); // retry
-      }, test: (e) => e is TransactionError);
+      }, test: (e) => e is TransactionException);
     });
   }
 }
