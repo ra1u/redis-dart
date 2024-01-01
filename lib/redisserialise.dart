@@ -1,7 +1,7 @@
 part of redis;
 /*
  * Free software licenced under 
- * GNU AFFERO GENERAL PUBLIC LICENSE
+ * MIT License 
  * 
  * Check for document LICENCE forfull licence text
  * 

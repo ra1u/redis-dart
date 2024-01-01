@@ -20,6 +20,14 @@ main() {
       await cmd.get_connection().close();
       //expect(cmd.send_object("GARBAGE"), throwsA(isRedisError));
     });
+
+    test("Open/Close in loop", () async {
+      for( int i=0;i<1000;++i) {
+        Command cmd = await generate_connect();
+        await cmd.send_object(["SET", "test", "0"]);
+        await cmd.get_connection().close();
+      }
+    });
   });
 }
 
