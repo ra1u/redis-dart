@@ -23,16 +23,15 @@ class Command {
     this.serializer = other.serializer;
   }
 
-  Command setParser(Parser p){
+  Command setParser(Parser p) {
     this.parser = p;
     return this;
   }
 
-  Command setSerializer(Serializer s){
+  Command setSerializer(Serializer s) {
     this.serializer = s;
     return this;
   }
-  
 
   /// Serialize and send data to server
   ///
@@ -44,7 +43,7 @@ class Command {
   ///     send_object(["SET","key","value"]);
   Future send_object(Object obj) {
     try {
-      return _connection._sendraw(parser,serializer.serialize(obj)).then((v) {
+      return _connection._sendraw(parser, serializer.serialize(obj)).then((v) {
         // turn RedisError into exception
         if (v is RedisError) {
           return Future.error(v);

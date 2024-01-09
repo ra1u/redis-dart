@@ -9,9 +9,7 @@
 
 part of redis;
 
-class RedisParser extends Parser {
-  
-}
+class RedisParser extends Parser {}
 
 class RedisParserBulkBinary extends Parser {
   Future parseBulk(LazyStream s) {
@@ -21,16 +19,16 @@ class RedisParserBulkBinary extends Parser {
         return null;
       if (i >= 0) {
         //i of bulk data
-        return s.take_n(i).then((lst) => takeCRLF(
-            s, lst)); //consume CRLF and return list
+        return s
+            .take_n(i)
+            .then((lst) => takeCRLF(s, lst)); //consume CRLF and return list
       } else {
         return Future.error(
             RedisRuntimeError("cant process buld data less than -1"));
       }
     });
-  }  
+  }
 }
-
 
 class Parser {
   static final UTF8 = const Utf8Codec();
@@ -72,10 +70,10 @@ class Parser {
     });
   }
 
-  Future parse(LazyStream s){
+  Future parse(LazyStream s) {
     return parseredisresponse(s);
   }
-  
+
   Future parseredisresponse(LazyStream s) {
     return s.take_n(1).then((list) {
       int cmd = list[0];

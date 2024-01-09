@@ -21,11 +21,10 @@ class RedisBulk {
 
 typedef Consumer = void Function(Iterable<int> s);
 
-
 class Serializer {
-  List<int> serialize(Object? object){
+  List<int> serialize(Object? object) {
     return RedisSerialize.Serialize(object);
-  }  
+  }
 }
 
 class RedisSerialize {

@@ -9,27 +9,35 @@
 
 part of redis;
 
-
 // this class is returned when redis response is type error
-class RedisError  {
+class RedisError {
   String e;
   RedisError(this.e);
-  String toString() { return "RedisError($e)";}
+  String toString() {
+    return "RedisError($e)";
+  }
+
   String get error => e;
 }
 
 // thiss class is returned when parsing in client side (aka this libraray)
 // get error
-class RedisRuntimeError  {
+class RedisRuntimeError {
   String e;
   RedisRuntimeError(this.e);
-  String toString() { return "RedisRuntimeError($e)";}
+  String toString() {
+    return "RedisRuntimeError($e)";
+  }
+
   String get error => e;
 }
 
-class TransactionError  {
+class TransactionError {
   String e;
   TransactionError(this.e);
-  String toString() { return "TranscationError($e)";}
-  String get error => e; 
+  String toString() {
+    return "TranscationError($e)";
+  }
+
+  String get error => e;
 }
