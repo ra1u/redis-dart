@@ -71,7 +71,7 @@ class RedisConnection {
   }
 
   // ignore: unused_element
-  Future _sendraw(Parser parser,List<int> data) {
+  Future _sendraw(Parser parser, List<int> data) {
     _socket!.add(data);
     return _senddummy(parser);
   }

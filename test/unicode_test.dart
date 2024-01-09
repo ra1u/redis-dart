@@ -9,7 +9,6 @@ void main() {
       Command cmd = await generate_connect();
       String unicodeString = "中华人民共和😊👍📱😀😬";
 
-
       expect(cmd.send_object(["SET", "unicode_test", unicodeString]),
           completion(equals("OK")));
 

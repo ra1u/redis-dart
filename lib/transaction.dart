@@ -38,7 +38,9 @@ class Transaction extends Command {
         c.completeError(
             RedisError("Could not enqueue command: " + msg.toString()));
       }
-    }).catchError((error){ c.completeError(error); });
+    }).catchError((error) {
+      c.completeError(error);
+    });
     return c.future;
   }
 

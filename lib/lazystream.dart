@@ -49,7 +49,7 @@ class StreamNext {
     // close socket on error
     // follow bug https://github.com/ra1u/redis-dart/issues/49
     // and bug https://github.com/dart-lang/sdk/issues/47538
-    socket.close().then<void>((_){
+    socket.close().then<void>((_) {
       if (_nfut >= 1) {
         _nfut = 0;
         for (Completer<List<int>> e in _queue) {

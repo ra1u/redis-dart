@@ -10,5 +10,4 @@ void main() {
       expect(cmd.send_object(["SADD", "test_list", 1]), completion(isA<int>()));
     });
   });
-
 }
