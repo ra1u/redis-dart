@@ -10,3 +10,5 @@ environment:
 
 dev_dependencies:
   test: ^1.6.5
+dependencies:
+  universal_io: ^2.2.2

@@ -2,7 +2,7 @@ import 'package:redis/redis.dart';
 import 'package:test/test.dart';
 
 import 'main.dart';
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 Future<Command> generate_connect_broken() {
   return RedisConnection().connect("localhost", 2);

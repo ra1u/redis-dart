@@ -9,7 +9,7 @@
 
 library redis;
 
-import 'dart:io';
+import 'package:universal_io/io.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:collection';

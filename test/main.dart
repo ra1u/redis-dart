@@ -11,7 +11,7 @@ import 'dart:async';
 
 import 'package:redis/redis.dart';
 import 'package:test/test.dart';
-import 'dart:io' show Platform;
+import 'package:universal_io/io.dart' show Platform;
 
 bool g_redis_initialsed = false;
 String g_db_uri = "";
