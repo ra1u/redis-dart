@@ -43,7 +43,7 @@ class Cas {
   ///
   /// !!! DO NOT call exec() on Transaction
 
-  Future multiAndExec(Future func(Transation)) {
+  Future multiAndExec(Future func(Transaction transaction)) {
     return _cmd.multi().then((Transaction _trans) {
       func(_trans);
       return _trans.exec().then((var resp) {
