@@ -5,44 +5,38 @@ import 'package:async/async.dart';
 import 'main.dart';
 
 void main() async {
-
-
   group("Test Redis Pub-Sub", () {
-
-
     test("Publishing to channel before subscription", () async {
       Command cmdP = await generate_connect();
       Command cmdS = await generate_connect();
       PubSub subscriber = PubSub(cmdS);
 
       String chan = "test_pub_before_sub";
-      expect(cmdP.send_object(["PUBLISH", chan, "hello"]),
-          completion(equals(0)));
+      expect(
+          cmdP.send_object(["PUBLISH", chan, "hello"]), completion(equals(0)));
     });
 
     test("Subscribe to channel", () async {
       Command cmdP = await generate_connect();
       Command cmdS = await generate_connect();
       PubSub subscriber = PubSub(cmdS);
-      
+
       String chan = "test_sub";
       expect(() => subscriber.subscribe([chan]), returnsNormally,
           reason: "No error should be thrown when subscribing to channel.");
 
       var queue = StreamQueue(subscriber.getStream());
       expect(await queue.next, equals(["subscribe", chan, 1]));
-      
+
       expect(cmdP.send_object(["PUBSUB", "NUMSUB", chan]),
           completion(equals([chan, 1])),
           reason: "Number of subscribers should be 1 after subscription");
 
-      
       expect(
           () => cmdS.send_object("PING"),
           throwsA(equals("PubSub on this connaction in progress"
               "It is not allowed to issue commands trough this handler")),
           reason: "After subscription, command should not be able to send");
-      
     });
 
     test("Publishing to channel", () async {
@@ -58,9 +52,9 @@ void main() async {
       var queue = StreamQueue(subscriber.getStream());
       expect(await queue.next, equals(["subscribe", chan, 1]));
 
-      expect( cmdP.send_object(["PUBLISH", chan, "goodbye"]),
+      expect(cmdP.send_object(["PUBLISH", chan, "goodbye"]),
           completion(equals(1)));
-      
+
       expect(await queue.next, equals(["message", chan, "goodbye"]));
     });
 
@@ -84,8 +78,8 @@ void main() async {
           completion(equals([chan, 0])),
           reason: "Number of subscribers should be 0 after unsubscribe");
 
-      expect(cmdP.send_object(["PUBLISH", chan, "goodbye"]),
-          completion(equals(0)),
+      expect(
+          cmdP.send_object(["PUBLISH", chan, "goodbye"]), completion(equals(0)),
           reason:
               "Publishing a message after unsubscribe should be received by zero clients.");
 
