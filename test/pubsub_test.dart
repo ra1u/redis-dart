@@ -8,9 +8,6 @@ void main() async {
   group("Test Redis Pub-Sub", () {
     test("Publishing to channel before subscription", () async {
       Command cmdP = await generate_connect();
-      Command cmdS = await generate_connect();
-      PubSub subscriber = PubSub(cmdS);
-
       String chan = "test_pub_before_sub";
       expect(
           cmdP.send_object(["PUBLISH", chan, "hello"]), completion(equals(0)));
@@ -87,10 +84,8 @@ void main() async {
     });
 
     test("Test close", () async {
-      Command cmdP = await generate_connect();
-      Command cmdS = await generate_connect();
-      PubSub subscriber = PubSub(cmdS);
       // test that we can close connection
+
       // creates new connection as prevously used in test
       // does not expect errors
       Command cmdClose = await generate_connect();
