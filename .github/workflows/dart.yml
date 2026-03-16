@@ -10,6 +10,8 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  schedule:
+    - cron: '0 0 1 * *'  # once a month, on the 1st at midnight UTC
   workflow_dispatch:
     inputs:
       sdk:
