@@ -44,6 +44,7 @@ do
 	   -c "set -e 
            sleep 1
            cd /workdir
+		   rm -f pubspec.lock
            dart --version
            dart pub get
            dart analyze
