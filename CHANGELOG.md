@@ -1,6 +1,10 @@
 
 [README.md](README.md)
 
+
+### 4.1.0
+- Relax restriction on upper sdk version
+
 ### 4.0.0
 - Change licencse to Mit License [Issue #82](https://github.com/ra1u/redis-dart/issues/82)
 
