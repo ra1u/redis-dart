@@ -43,9 +43,13 @@ void main() async {
           reason: "After subscribing, the message should be received.");
     });
 
-    test("Unsubscribe channel", () {
+    test("Unsubscribe channel", () async {
       expect(() => subscriber.unsubscribe(["test"]), returnsNormally,
           reason: "No error should be thrown when subscribing to channel.");
+
+      // Wait for Redis to confirm the unsubscribe before asserting
+      await subscriber.getStream().firstWhere(
+          (msg) => msg[0] == "unsubscribe" && msg[1] == "test");
 
       expect(cmdP.send_object(["PUBSUB", "NUMSUB", "test"]),
           completion(equals(["test", 0])),
