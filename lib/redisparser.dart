@@ -102,8 +102,8 @@ class Parser {
     });
   }
 
-  Future parseError(LazyStream s) {
-    return parseSimpleString(s).then((str) => Future.error(RedisException(str)));
+  Future<RedisException> parseError(LazyStream s) {
+    return parseSimpleString(s).then((str) => RedisException(str));
   }
 
   Future<int> parseInt(LazyStream s) {
