@@ -47,7 +47,7 @@ class Command {
         // Redis server error responses are parsed as RedisException values;
         // promote them to Future errors for the public API
         if (v is RedisException) {
-          return Future.error(v);
+          return Future.error(v, StackTrace.current);
         }
         return v;
       });
