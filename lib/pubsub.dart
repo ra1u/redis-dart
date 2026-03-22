@@ -4,9 +4,9 @@ class _WarrningPubSubInProgress extends RedisConnection {
   RedisConnection _connection;
   _WarrningPubSubInProgress(this._connection) {}
 
-  _err() => throw RedisRuntimeException(
-      "PubSub on this connection in progress. "
-      "It is not allowed to issue commands through this handler");
+  _err() =>
+      throw RedisRuntimeException("PubSub on this connection in progress. "
+          "It is not allowed to issue commands through this handler");
 
   // swap this relevant methods in Conenction with exception
   // ignore: unused_element

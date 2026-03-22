@@ -70,7 +70,8 @@ class RedisSerialize {
     } else if (object == null) {
       consumer(_dollarminus1); //null bulk
     } else {
-      throw RedisRuntimeException("cannot serialize type: ${object.runtimeType}");
+      throw RedisRuntimeException(
+          "cannot serialize type: ${object.runtimeType}");
     }
   }
 
