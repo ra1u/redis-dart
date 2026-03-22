@@ -44,7 +44,7 @@ class StreamNext {
     }
   }
 
-  void onError(error) {
+  void onError(Object error) {
     done = true;
     // close socket on error
     // follow bug https://github.com/ra1u/redis-dart/issues/49

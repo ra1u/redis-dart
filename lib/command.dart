@@ -51,8 +51,8 @@ class Command {
           return v;
         }
       });
-    } catch (e) {
-      return Future.error(e);
+    } catch (e, st) {
+      return Future.error(e, st);
     }
   }
 

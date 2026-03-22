@@ -54,7 +54,7 @@ class Cas {
           _completer_bool.completeError(
               RedisException("exec response is not expected, but is $resp"));
         }
-      }).catchError((e) {
+      }).catchError((Object e) {
         // dont do anything
         _completer_bool.complete(true); // retry
       }, test: (e) => e is TransactionException);
