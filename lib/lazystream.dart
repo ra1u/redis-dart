@@ -60,13 +60,13 @@ class StreamNext {
   }
 
   void onDone() {
-    onError("stream is closed");
+    onError(RedisRuntimeException("stream is closed"));
   }
 
   Future<List<int>> next() {
     if (_npack == 0) {
       if (done) {
-        return Future<List<int>>.error("stream closed");
+        return Future<List<int>>.error(RedisRuntimeException("stream closed"));
       }
       _nfut += 1;
       _queue.addLast(Completer<List<int>>());
