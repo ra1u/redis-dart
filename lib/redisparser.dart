@@ -152,7 +152,7 @@ class Parser {
         return consumeList(s, i, a);
       } else {
         return Future.error(
-            RedisRuntimeException("cant process array data less than -1"));
+            RedisRuntimeException("cannot process array data less than -1"));
       }
     });
   }
