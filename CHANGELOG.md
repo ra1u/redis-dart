@@ -2,6 +2,10 @@
 [README.md](README.md)
 
 
+### 5.0.0
+- **Breaking change**: Replace `RedisError`, `RedisRuntimeError`, and `TransactionError` with idiomatic Dart exception classes `RedisException`, `RedisRuntimeException`, and `TransactionException` that implement `Exception`. [PR #77](https://github.com/ra1u/redis-dart/pull/77) by [@exaby73](https://github.com/exaby73)
+- Exception classes expose a `message` field instead of `e`/`error`
+
 ### 4.1.0
 - Relax restriction on upper sdk version
 
