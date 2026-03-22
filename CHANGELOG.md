@@ -4,7 +4,7 @@
 
 ### 5.0.0
 - **Breaking change**: Replace `RedisError`, `RedisRuntimeError`, and `TransactionError` with idiomatic Dart exception classes `RedisException`, `RedisRuntimeException`, and `TransactionException` that implement `Exception`. [PR #77](https://github.com/ra1u/redis-dart/pull/77) by [@exaby73](https://github.com/exaby73)
-- Exception classes expose a `message` field instead of `e`/`error`
+- **Breaking change**: Exception classes expose a `message` field instead of `e`/`error`. The `.error` getter has been removed; use `.message` instead
 - `LazyStream`/`StreamNext` now throw `RedisRuntimeException` instead of a plain `String` on stream close, making errors catchable by type. [Issue #35](https://github.com/ra1u/redis-dart/issues/35)
 - `PubSub` and `Serializer` no longer throw plain strings; all throws now use typed exception classes
 - `StackTrace` is now propagated correctly through all `catch`/`catchError` blocks
