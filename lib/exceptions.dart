@@ -1,43 +1,40 @@
 /*
- * Free software licenced under 
+ * Free software licenced under
  * MIT License
- * 
+ *
  * Check for document LICENCE forfull licence text
- * 
+ *
  * Luka Rahne
  */
 
 part of redis;
 
-// this class is returned when redis response is type error
-class RedisError {
-  String e;
-  RedisError(this.e);
-  String toString() {
-    return "RedisError($e)";
-  }
+/// Thrown when Redis server returns an error response
+class RedisException implements Exception {
+  final String message;
 
-  String get error => e;
+  RedisException(this.message);
+
+  @override
+  String toString() => "RedisException($message)";
 }
 
-// thiss class is returned when parsing in client side (aka this libraray)
-// get error
-class RedisRuntimeError {
-  String e;
-  RedisRuntimeError(this.e);
-  String toString() {
-    return "RedisRuntimeError($e)";
-  }
+/// Thrown when a client-side parsing or protocol error occurs
+class RedisRuntimeException implements Exception {
+  final String message;
 
-  String get error => e;
+  RedisRuntimeException(this.message);
+
+  @override
+  String toString() => "RedisRuntimeException($message)";
 }
 
-class TransactionError {
-  String e;
-  TransactionError(this.e);
-  String toString() {
-    return "TranscationError($e)";
-  }
+/// Thrown when a Redis transaction fails
+class TransactionException implements Exception {
+  final String message;
 
-  String get error => e;
+  TransactionException(this.message);
+
+  @override
+  String toString() => "TransactionException($message)";
 }

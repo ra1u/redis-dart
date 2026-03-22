@@ -24,7 +24,7 @@ class RedisParserBulkBinary extends Parser {
             .then((lst) => takeCRLF(s, lst)); //consume CRLF and return list
       } else {
         return Future.error(
-            RedisRuntimeError("cant process buld data less than -1"));
+            RedisRuntimeException("cant process buld data less than -1"));
       }
     });
   }
@@ -51,7 +51,8 @@ class Parser {
       //now check for LF
       return s.take_n(1).then((lf) {
         if (lf[0] != LF) {
-          return Future.error(RedisRuntimeError("received element is not LF"));
+          return Future.error(
+              RedisRuntimeException("received element is not LF"));
         }
         return list;
       });
@@ -65,7 +66,7 @@ class Parser {
       if (data[0] == CR && data[1] == LF) {
         return r;
       } else {
-        return Future.error(RedisRuntimeError("expeting CRLF"));
+        return Future.error(RedisRuntimeException("expeting CRLF"));
       }
     });
   }
@@ -90,7 +91,7 @@ class Parser {
           return parseError(s);
         default:
           return Future.error(
-              RedisRuntimeError("got element that cant not be parsed"));
+              RedisRuntimeException("got element that cant not be parsed"));
       }
     });
   }
@@ -101,8 +102,8 @@ class Parser {
     });
   }
 
-  Future<RedisError> parseError(LazyStream s) {
-    return parseSimpleString(s).then((str) => RedisError(str));
+  Future<RedisException> parseError(LazyStream s) {
+    return parseSimpleString(s).then((str) => RedisException(str));
   }
 
   Future<int> parseInt(LazyStream s) {
@@ -120,7 +121,7 @@ class Parser {
             s, UTF8.decode(lst))); //consume CRLF and return decoded list
       } else {
         return Future.error(
-            RedisRuntimeError("cant process buld data less than -1"));
+            RedisRuntimeException("cant process buld data less than -1"));
       }
     });
   }
@@ -151,7 +152,7 @@ class Parser {
         return consumeList(s, i, a);
       } else {
         return Future.error(
-            RedisRuntimeError("cant process array data less than -1"));
+            RedisRuntimeException("cant process array data less than -1"));
       }
     });
   }
@@ -161,13 +162,13 @@ class Parser {
     int sign = 1;
     var v = arr.fold(0, (dynamic a, b) {
       if (b == 45) {
-        if (a != 0) throw RedisRuntimeError("cannot parse int");
+        if (a != 0) throw RedisRuntimeException("cannot parse int");
         sign = -1;
         return 0;
       } else if ((b >= 48) && (b < 58)) {
         return a * 10 + b - 48;
       } else {
-        throw RedisRuntimeError("cannot parse int");
+        throw RedisRuntimeException("cannot parse int");
       }
     });
     return v * sign;

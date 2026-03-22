@@ -12,14 +12,14 @@ main() {
   group("Throw  received Redis Errors", () {
     test("Expect error when sending Garbage", () async {
       Command cmd = await generate_connect();
-      expect(() => cmd.send_object("GARBAGE"), throwsA(isRedisError));
+      expect(() => cmd.send_object("GARBAGE"), throwsA(isRedisException));
     });
   });
 
   group("Recover after received Redis Errors", () {
     test("Expect error when sending Garbage 2", () async {
       Command cmd = await generate_connect();
-      expect(() => cmd.send_object(["GARBAGE"]), throwsA(isRedisError));
+      expect(() => cmd.send_object(["GARBAGE"]), throwsA(isRedisException));
       // next two commands over same connection should be fine
       var ok = await cmd.send_object(["SET", "garbage_test", "grb"]);
       expect(ok, equals("OK"));
@@ -35,4 +35,4 @@ main() {
   });
 }
 
-const Matcher isRedisError = TypeMatcher<RedisError>();
+const Matcher isRedisException = TypeMatcher<RedisException>();

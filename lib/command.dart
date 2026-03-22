@@ -44,8 +44,8 @@ class Command {
   Future send_object(Object obj) {
     try {
       return _connection._sendraw(parser, serializer.serialize(obj)).then((v) {
-        // turn RedisError into exception
-        if (v is RedisError) {
+        // turn RedisException into a Future error
+        if (v is RedisException) {
           return Future.error(v);
         } else {
           return v;
