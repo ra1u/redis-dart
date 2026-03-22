@@ -38,3 +38,18 @@ class TransactionException implements Exception {
   @override
   String toString() => "TransactionException($message)";
 }
+
+@Deprecated('Use RedisException instead')
+class RedisError extends RedisException {
+  RedisError(String message) : super(message);
+}
+
+@Deprecated('Use RedisRuntimeException instead')
+class RedisRuntimeError extends RedisRuntimeException {
+  RedisRuntimeError(String message) : super(message);
+}
+
+@Deprecated('Use TransactionException instead')
+class TransactionError extends TransactionException {
+  TransactionError(String message) : super(message);
+}
