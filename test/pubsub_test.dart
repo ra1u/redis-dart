@@ -31,8 +31,7 @@ void main() async {
 
       expect(
           () => cmdS.send_object("PING"),
-          throwsA(equals("PubSub on this connaction in progress"
-              "It is not allowed to issue commands trough this handler")),
+          throwsA(isA<RedisRuntimeException>()),
           reason: "After subscription, command should not be able to send");
     });
 
