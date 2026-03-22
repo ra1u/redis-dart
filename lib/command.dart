@@ -44,15 +44,15 @@ class Command {
   Future send_object(Object obj) {
     try {
       return _connection._sendraw(parser, serializer.serialize(obj)).then((v) {
-        // turn RedisError into exception
-        if (v is RedisError) {
-          return Future.error(v);
-        } else {
-          return v;
+        // Redis server error responses are parsed as RedisException values;
+        // promote them to Future errors for the public API
+        if (v is RedisException) {
+          return Future.error(v, StackTrace.current);
         }
+        return v;
       });
-    } catch (e) {
-      return Future.error(e);
+    } catch (e, st) {
+      return Future.error(e, st);
     }
   }
 

@@ -44,8 +44,15 @@ class RedisConnection {
     return Command(this);
   }
 
+  void _checkConnected() {
+    if (_socket == null || _stream == null) {
+      throw RedisRuntimeException("not connected");
+    }
+  }
+
   /// close connection to Redis server
   Future close() {
+    _checkConnected();
     _stream!.close();
     return _socket!.close();
   }
@@ -54,6 +61,7 @@ class RedisConnection {
   //it just wait something to come from socket
   //it parse it and execute future
   Future _senddummy(Parser parser) {
+    _checkConnected();
     _future = _future.then((_) {
       return parser.parse(_stream!);
     });
@@ -64,6 +72,7 @@ class RedisConnection {
   // when all prevous _future finished
   // ignore: unused_element
   Future _getdummy() {
+    _checkConnected();
     _future = _future.then((_) {
       return "dummy data";
     });
@@ -72,11 +81,15 @@ class RedisConnection {
 
   // ignore: unused_element
   Future _sendraw(Parser parser, List<int> data) {
+    _checkConnected();
     _socket!.add(data);
     return _senddummy(parser);
   }
 
   void disable_nagle(bool v) {
+    if (_socket == null) {
+      throw RedisRuntimeException("not connected");
+    }
     _socket!.setOption(SocketOption.tcpNoDelay, v);
   }
 }

@@ -4,8 +4,9 @@ class _WarrningPubSubInProgress extends RedisConnection {
   RedisConnection _connection;
   _WarrningPubSubInProgress(this._connection) {}
 
-  _err() => throw "PubSub on this connaction in progress"
-      "It is not allowed to issue commands trough this handler";
+  _err() =>
+      throw RedisRuntimeException("PubSub on this connection in progress. "
+          "It is not allowed to issue commands through this handler");
 
   // swap this relevant methods in Conenction with exception
   // ignore: unused_element
@@ -38,21 +39,21 @@ class PubSub {
           try {
             _stream_controler.add(data);
             return true; // run doWhile more
-          } catch (e) {
+          } catch (e, st) {
             try {
-              _stream_controler.addError(e);
+              _stream_controler.addError(e, st);
             } catch (_) {
-              // we could not notfy stream that we have eror
+              // we could not notify stream that we have error
             }
             // stop doWhile()
             _stream_controler.close();
             return false;
           }
-        }).catchError((e) {
+        }).catchError((Object e, StackTrace st) {
           try {
-            _stream_controler.addError(e);
+            _stream_controler.addError(e, st);
           } catch (_) {
-            // we could not notfy stream that we have eror
+            // we could not notify stream that we have error
           }
           // stop doWhile()
           _stream_controler.close();

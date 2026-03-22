@@ -30,9 +30,7 @@ void main() async {
           reason: "Number of subscribers should be 1 after subscription");
 
       expect(
-          () => cmdS.send_object("PING"),
-          throwsA(equals("PubSub on this connaction in progress"
-              "It is not allowed to issue commands trough this handler")),
+          () => cmdS.send_object("PING"), throwsA(isA<RedisRuntimeException>()),
           reason: "After subscription, command should not be able to send");
     });
 

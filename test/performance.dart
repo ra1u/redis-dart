@@ -178,7 +178,7 @@ Future test_long_running(int n) {
       }
       return command.send_object(["PING"]).then((v) {
         if (v != "PONG") {
-          throw "expeted $c but got $v";
+          throw RedisRuntimeException("expected $c but got $v");
         }
         return true;
       });
