@@ -61,15 +61,15 @@ class Transaction extends Command {
           _queue.removeFirst();
         }
         // return Future.error(TransactionException("transaction error "));
-        throw TransactionException("transaction error ");
+        throw TransactionException("transaction error");
         //return null;
       } else {
         if (list.length != _queue.length) {
           int? diff = list.length - _queue.length;
           //return
           throw RedisRuntimeException(
-              "There was $diff command(s) executed during transcation,"
-              "not going trough Transation handler");
+              "There was $diff command(s) executed during transaction, "
+              "not going through Transaction handler");
         }
         int len = list.length;
         for (int i = 0; i < len; ++i) {

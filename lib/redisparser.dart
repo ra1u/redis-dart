@@ -24,7 +24,7 @@ class RedisParserBulkBinary extends Parser {
             .then((lst) => takeCRLF(s, lst)); //consume CRLF and return list
       } else {
         return Future.error(
-            RedisRuntimeException("cant process buld data less than -1"));
+            RedisRuntimeException("cannot process bulk data less than -1"));
       }
     });
   }
@@ -66,7 +66,7 @@ class Parser {
       if (data[0] == CR && data[1] == LF) {
         return r;
       } else {
-        return Future.error(RedisRuntimeException("expeting CRLF"));
+        return Future.error(RedisRuntimeException("expecting CRLF"));
       }
     });
   }
@@ -91,7 +91,7 @@ class Parser {
           return parseError(s);
         default:
           return Future.error(
-              RedisRuntimeException("got element that cant not be parsed"));
+              RedisRuntimeException("got element that cannot be parsed"));
       }
     });
   }
@@ -102,8 +102,8 @@ class Parser {
     });
   }
 
-  Future<RedisException> parseError(LazyStream s) {
-    return parseSimpleString(s).then((str) => RedisException(str));
+  Future parseError(LazyStream s) {
+    return parseSimpleString(s).then((str) => Future.error(RedisException(str)));
   }
 
   Future<int> parseInt(LazyStream s) {
@@ -121,7 +121,7 @@ class Parser {
             s, UTF8.decode(lst))); //consume CRLF and return decoded list
       } else {
         return Future.error(
-            RedisRuntimeException("cant process buld data less than -1"));
+            RedisRuntimeException("cannot process bulk data less than -1"));
       }
     });
   }
